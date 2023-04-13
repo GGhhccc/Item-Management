@@ -1,15 +1,10 @@
 <template>
-	<view>
-		user 界面
-		<new />
-	</view>
+	<view>user 界面</view>
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user'
 const user = useUserStore()
 </script>
 
-<style>
-
-</style>
+<style lang="scss"></style>

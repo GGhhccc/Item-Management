@@ -1,20 +1,7 @@
 <template>
-	<view>
-		
-	</view>
+	<view></view>
 </template>
 
-<script>
-	export default {
-		name:"SearchList",
-		data() {
-			return {
-				
-			};
-		}
-	}
-</script>
+<script setup lang="ts"></script>
 
-<style>
-
-</style>
+<style lang="scss"></style>

@@ -1,13 +1,7 @@
 <template>
-	<view>
-		new 界面
-	</view>
+	<view>new 界面</view>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts"></script>
 
-</script>
-
-<style>
-
-</style>
+<style lang="scss"></style>

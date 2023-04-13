@@ -1,8 +1,7 @@
 <template>
+	<view>edit 界面</view>
 </template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
-<style>
-</style>
+<style lang="scss"></style>
