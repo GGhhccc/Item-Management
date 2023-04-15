@@ -61,7 +61,7 @@
     "babel-plugin-import": "^1.13.6",
     "eslint-plugin-import": "^2.27.5",
     "pinia": "^2.0.34",
-    "uview-ui": "^2.0.36",
+    "uview-plus": "^3.1.29",
     "vue": "3.2.47",
     "vue-i18n": "9.2.2"
   },
