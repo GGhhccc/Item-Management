@@ -6,6 +6,13 @@
 	},
 	"pages": [
 		{
+			"path": "pages/search/search",
+			"style": {
+				"navigationStyle": "custom"
+				// "navigationBarTextStyle": "white"
+			}
+		},
+		{
 			"path": "pages/home/home"
 		},
 		{
@@ -22,9 +29,6 @@
 		},
 		{
 			"path": "pages/edit/edit"
-		},
-		{
-			"path": "pages/search/search"
 		},
 		{
 			"path": "pages/user/user"
@@ -46,26 +50,26 @@
 			{
 				"pagePath": "pages/home/home",
 				"text": "首页",
-				"iconPath": "static/icons/首页.png",
-				"selectedIconPath": "static/icons/首页-选中.png"
+				"iconPath": "static/icons/tabBar/消息.png",
+				"selectedIconPath": "static/icons/tabBar/首页-选中.png"
 			},
 			{
 				"pagePath": "pages/message/message",
 				"text": "消息",
-				"iconPath": "static/icons/消息.png",
-				"selectedIconPath": "static/icons/消息-选中.png"
+				"iconPath": "static/icons/tabBar/消息.png",
+				"selectedIconPath": "static/icons/tabBar/消息-选中.png"
 			},
 			{
 				"pagePath": "pages/new/new",
 				"text": "新建",
-				"iconPath": "static/icons/添加.png",
-				"selectedIconPath": "static/icons/添加-选中.png"
+				"iconPath": "static/icons/tabBar/添加.png",
+				"selectedIconPath": "static/icons/tabBar/添加-选中.png"
 			},
 			{
 				"pagePath": "pages/user/user",
 				"text": "我的",
-				"iconPath": "static/icons/用户.png",
-				"selectedIconPath": "static/icons/用户-选中.png"
+				"iconPath": "static/icons/tabBar/用户.png",
+				"selectedIconPath": "static/icons/tabBar/用户-选中.png"
 			}
 		]
 	}

@@ -3,8 +3,8 @@
 		<image class="logo" src="/static/logo.png" />
 		<view class="text-area">
 			<text class="title">{{ title }}</text>
-			<u-button type="primary" text="你好"></u-button>
 		</view>
+		<SearchList />
 	</view>
 </template>
 

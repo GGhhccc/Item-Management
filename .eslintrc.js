@@ -26,6 +26,11 @@ module.exports = {
 		// 强制使用 === 和 !==
 		eqeqeq: 2,
 		'vue/multi-word-component-names': 'off',
-		'@typescript-eslint/no-explicit-any': 'off'
+		'@typescript-eslint/no-explicit-any': 'off',
+		'no-empty': ['error', { allowEmptyCatch: true }]
+	},
+	globals: {
+		uni: true,
+		wx: true
 	}
 }

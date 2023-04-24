@@ -3,6 +3,7 @@ import uviewPlus from 'uview-plus'
 import App from './App.vue'
 import * as Pinia from 'pinia'
 import 'uview-plus/index.scss'
+import '@/static/icons/iconfont/iconfont.css'
 
 export function createApp() {
 	const app = createSSRApp(App)

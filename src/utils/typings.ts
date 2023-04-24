@@ -71,3 +71,62 @@ export interface FullUserInfo {
 	 */
 	state: 0 | 1
 }
+
+export interface FullItemInfo {
+	/**
+	 * 物品 id
+	 */
+	id: string
+	/**
+	 * 物品名称
+	 */
+	name: string
+	/**
+	 * 隐私
+	 */
+	privacy: 0 | 1
+	/**
+	 * 预览图
+	 */
+	previewImg: string
+	/**
+	 * 物品属性，0表示空间，1表示物品
+	 */
+	properties: 1
+	/**
+	 * 物品数量
+	 */
+	quantity: number
+	/**
+	 * 物品金额
+	 */
+	price: number
+	/**
+	 * 物品状态
+	 */
+	state: string
+	/**
+	 * 物品标签
+	 */
+	tags: string[]
+	/**
+	 * 入库日期时间戳
+	 */
+	storageTime: number
+	/**
+	 * 关联物品
+	 */
+	relatedItems: string[]
+	/**
+	 * 从属空间
+	 */
+	dependentSpace: string
+	/**
+	 * 管理人
+	 */
+	manager: string[]
+	/**
+	 * 物品备注
+	 */
+	notes: string
+}
