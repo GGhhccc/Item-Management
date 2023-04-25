@@ -1,28 +1,28 @@
 <template>
-	<u-skeleton rows="10" :loading="isLoading" title animate class="search-list">
-		<view v-if="!isLoading">
-			<!-- 总列表 -->
-			<template v-if="!isSearch && !isSort">
-				<view v-for="searchList in currentSearchList.searchList" :key="searchList.id">
-					<SearchListItem :search-list-data="searchList" />
-				</view>
-			</template>
-			<!-- 搜索结果 -->
-			<template v-if="isSearch">
-				<view v-for="searchResult in searchResultList.value" :key="searchResult.id">
-					<SearchListItem :search-list-data="searchResult" />
-				</view>
-			</template>
-			<!-- 排序结果 -->
-			<template v-if="isSort && !isSearch">
-				<view v-for="sortResult in sortResultList" :key="sortResult.id">
-					<SearchListItem :search-list-data="sortResult" />
-				</view>
-			</template>
-			<!-- 空 -->
-			<Empty v-if="isEmpty" />
-		</view>
-	</u-skeleton>
+  <u-skeleton rows="10" :loading="isLoading" title animate class="search-list">
+    <view v-if="!isLoading">
+      <!-- 总列表 -->
+      <template v-if="!isSearch && !isSort">
+        <view v-for="searchList in currentSearchList.searchList" :key="searchList.id">
+          <SearchListItem :search-list-data="searchList" />
+        </view>
+      </template>
+      <!-- 搜索结果 -->
+      <template v-if="isSearch">
+        <view v-for="searchResult in searchResultList.value" :key="searchResult.id">
+          <SearchListItem :search-list-data="searchResult" />
+        </view>
+      </template>
+      <!-- 排序结果 -->
+      <template v-if="isSort && !isSearch">
+        <view v-for="sortResult in sortResultList" :key="sortResult.id">
+          <SearchListItem :search-list-data="sortResult" />
+        </view>
+      </template>
+      <!-- 空 -->
+      <Empty v-if="isEmpty" />
+    </view>
+  </u-skeleton>
 </template>
 
 <script setup lang="ts">
@@ -32,8 +32,8 @@ import { ref, computed, watch } from 'vue'
 import type { FullItemInfo } from '@/utils/typings'
 
 const props = defineProps<{
-	sortResultList: FullItemInfo[]
-	isClickSort: boolean
+  sortResultList: FullItemInfo[]
+  isClickSort: boolean
 }>()
 
 const searchStore = useSearchStore()
@@ -56,50 +56,50 @@ const isLoadingMore = ref(false)
 
 // 是否无法加载更多了
 const isNoMore = computed(
-	() =>
-		currentSearchList.value.currentPage === currentSearchList.value.total &&
-		currentSearchList.value.searchList.length
+  () =>
+    currentSearchList.value.currentPage === currentSearchList.value.total &&
+    currentSearchList.value.searchList.length
 )
 
 async function loadSearchList() {
-	manualDisable.value = false
-	currentSearchList.value.searchList.length = 0
-	currentSearchList.value.currentPage = 0
-	isLoading.value = true
+  manualDisable.value = false
+  currentSearchList.value.searchList.length = 0
+  currentSearchList.value.currentPage = 0
+  isLoading.value = true
 
-	try {
-		await fetchNewSearchList()
-	} catch {
-		manualDisable.value = true
-	} finally {
-		isLoading.value = false
-	}
+  try {
+    await fetchNewSearchList()
+  } catch {
+    manualDisable.value = true
+  } finally {
+    isLoading.value = false
+  }
 }
 
 async function loadMoreItem() {
-	isLoadingMore.value = true
-	manualDisable.value = true
+  isLoadingMore.value = true
+  manualDisable.value = true
 
-	try {
-		// await fetchNewPageItem()
-		manualDisable.value = false
-	} catch {
-		manualDisable.value = true
-	} finally {
-		isLoadingMore.value = false
-	}
+  try {
+    // await fetchNewPageItem()
+    manualDisable.value = false
+  } catch {
+    manualDisable.value = true
+  } finally {
+    isLoadingMore.value = false
+  }
 }
 
 // 搜索结果
 let searchResultList = ref<any>([])
 
 watch(
-	() => props.isClickSort,
-	() => {
-		isSort.value = props.isClickSort
-		currentSearchList.value.searchList = props.sortResultList
-		console.log(currentSearchList.value.searchList)
-	}
+  () => props.isClickSort,
+  () => {
+    isSort.value = props.isClickSort
+    currentSearchList.value.searchList = props.sortResultList
+    console.log(currentSearchList.value.searchList)
+  }
 )
 
 // 初始化搜索列表

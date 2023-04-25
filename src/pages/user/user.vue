@@ -1,5 +1,5 @@
 <template>
-	<view>user 界面</view>
+  <view>user 界面</view>
 </template>
 
 <script setup lang="ts">

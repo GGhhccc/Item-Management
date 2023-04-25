@@ -6,10 +6,10 @@ import 'uview-plus/index.scss'
 import '@/static/icons/iconfont/iconfont.css'
 
 export function createApp() {
-	const app = createSSRApp(App)
-	app.use(Pinia.createPinia()).use(uviewPlus)
-	return {
-		app,
-		Pinia
-	}
+  const app = createSSRApp(App)
+  app.use(Pinia.createPinia()).use(uviewPlus)
+  return {
+    app,
+    Pinia
+  }
 }
