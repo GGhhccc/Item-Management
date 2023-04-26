@@ -11,10 +11,10 @@
         <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
       </view>
     </view>
-    <view v-if="!floor" class="home__hello">
+    <view v-if="showEmpty()" class="home__hello">
       <u-text size="80rpx" text="HELLO!"></u-text>
     </view>
-    <view v-if="!floor" class="home__empty">
+    <view v-if="showEmpty()" class="home__empty">
       尚未添加物品,快去添加吧
       <image class="home__empty-chair" src="../../static/chair.png" />
       <image class="home__empty-plant" src="../../static/plant.png" />
@@ -41,7 +41,13 @@
       />
     </view>
     <view v-for="(item, index) in useForm.allItemData[props.floor]" :key="index">
-      <view v-if="!floor || item.parent === useForm.currentId" class="home__item">
+      <view
+        @click="chooseItem(index)"
+        @longpress="showOperate = true"
+        v-if="!floor || item.parent === useForm.currentId"
+        :style="bgColor(index)"
+        class="home__item"
+      >
         <image
           @click="toDetail(item.id, item.attribute, item.name, item.floor)"
           class="home__item-img"
@@ -82,12 +88,30 @@
         </view>
       </view>
     </view>
+    <view v-show="showOperate" class="home__operate">
+      <view>
+        <u-icon @click="toEdit" size="60rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
+        <u-text size="30rpx" color="#88898c" align="center" text="编辑" :bold="true" />
+      </view>
+      <view>
+        <u-icon @click="move" size="60rpx" name="rewind-right-fill" color="#3988ff"></u-icon>
+        <u-text size="30rpx" color="#88898c" align="center" text="移动" :bold="true" />
+      </view>
+      <view>
+        <u-icon @click="deleteItem" size="60rpx" name="trash" color="#898a8d"></u-icon>
+        <u-text size="30rpx" color="#88898c" align="center" text="删除" :bold="true" />
+      </view>
+      <view>
+        <u-icon @click="cancel" size="60rpx" name="close" color="#898a8d"></u-icon>
+        <u-text size="30rpx" color="#88898c" align="center" text="取消" :bold="true" />
+      </view>
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 const props = withDefaults(
   defineProps<{
     floor?: number
@@ -96,15 +120,56 @@ const props = withDefaults(
     floor: 0
   }
 )
-const useForm = useFormStore()
-const toDetail = (id: number, attribute: number, name: string, floor: number) => {
-  useForm.currentId = id
-  useForm.currentFloor = floor
-  useForm.currentName = name
-  useForm.spaces[floor - 1] = name
+const showOperate = ref(false)
+const cancel = () => {
+  showOperate.value = false
+  for (let i = 0; i < checkbox.value.length; i++) {
+    checkbox.value[i] = false
+  }
+}
+const move = () => {
+  console.log(1)
+}
+const toEdit = () => {
   uni.navigateTo({
-    url: `/pages/details/details?id=${id}&attribute=${attribute}&name=${name}`
+    url: '/pages/edit/edit'
   })
+}
+const showEmpty = () => {
+  if (!props.floor) return false
+  let judge = true
+  if (useForm.allItemData[props.floor])
+    useForm.allItemData[props.floor].map((item: any) => {
+      if (item.parent === useForm.currentId) judge = false
+    })
+  return judge
+}
+const useForm = useFormStore()
+const deleteItem = () => {
+  console.log(1)
+}
+const chooseItem = (index: number) => {
+  if (showOperate.value) {
+    checkbox.value[index] = !checkbox.value[index]
+  }
+}
+const bgColor = (index: number) => {
+  if (checkbox.value[index]) return 'background-color: #c8dbfe;'
+}
+const toDetail = (id: number, attribute: number, name: string, floor: number) => {
+  if (!showOperate.value) {
+    useForm.currentId = id
+    useForm.currentFloor = floor
+    useForm.currentName = name
+    useForm.spaces[floor - 1] = name
+    uni.navigateTo({
+      url: `/pages/details/details?id=${id}&attribute=${attribute}&name=${name}`
+    })
+  }
+}
+const checkbox = ref<boolean[]>([])
+for (let i = 0; i < useForm.allItemData[props.floor].length; i++) {
+  checkbox.value[i] = false
 }
 onMounted(() => {
   uni.showShareMenu({
@@ -134,7 +199,8 @@ const toAdd = (): void => {
 <style lang="scss">
 .home {
   padding-top: 150rpx;
-  height: 100vh;
+  height: calc(100vh - 150rpx);
+  overflow: auto;
   background: linear-gradient(
     to top left,
     #dfecff 0%,
@@ -166,6 +232,18 @@ const toAdd = (): void => {
     width: 600rpx;
     margin: 0 auto;
     margin-top: 100rpx;
+  }
+
+  &__operate {
+    box-sizing: border-box;
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 750rpx;
+    height: 200rpx;
+    padding: 0 50rpx 0 50rpx;
+    justify-content: space-around;
   }
 
   &__empty {
@@ -250,6 +328,7 @@ const toAdd = (): void => {
   }
 
   &__tabs {
+    padding-top: 80rpx;
     width: 650rpx;
     margin: 0 auto;
   }
