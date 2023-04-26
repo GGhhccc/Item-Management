@@ -27,7 +27,10 @@
 			"path": "pages/new/dependence/dependence"
 		},
 		{
-			"path": "pages/new/tag/tag"
+			"path": "pages/new/tag/tag",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
 			"path": "pages/edit/edit",
@@ -55,7 +58,7 @@
 			{
 				"pagePath": "pages/home/home",
 				"text": "首页",
-				"iconPath": "static/icons/tabBar/消息.png",
+				"iconPath": "static/icons/tabBar/首页.png",
 				"selectedIconPath": "static/icons/tabBar/首页-选中.png"
 			},
 			{
