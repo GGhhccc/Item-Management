@@ -1,5 +1,7 @@
 <template>
-	<view>new 界面</view>
+	<view>
+		<Form />
+	</view>
 </template>
 
 <script setup lang="ts"></script>

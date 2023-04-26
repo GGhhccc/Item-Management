@@ -1,5 +1,7 @@
 <template>
-  <view>edit 界面</view>
+	<view>
+		<Form :isEdit="true" />
+	</view>
 </template>
 
 <script setup lang="ts"></script>
