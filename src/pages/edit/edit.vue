@@ -1,7 +1,7 @@
 <template>
-	<view>
-		<Form :isEdit="true" />
-	</view>
+  <view>
+    <Form :isEdit="true" />
+  </view>
 </template>
 
 <script setup lang="ts"></script>

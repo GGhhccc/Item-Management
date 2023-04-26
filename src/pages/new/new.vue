@@ -1,7 +1,7 @@
 <template>
-	<view>
-		<Form />
-	</view>
+  <view>
+    <Form />
+  </view>
 </template>
 
 <script setup lang="ts"></script>
