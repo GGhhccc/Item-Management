@@ -6,20 +6,22 @@
 	},
 	"pages": [
 		{
-			"path": "pages/search/search",
-			"style": {
-				"navigationStyle": "custom"
-				// "navigationBarTextStyle": "white"
-			}
+			"path": "pages/home/home",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
-			"path": "pages/home/home"
+			"path": "pages/details/details",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
-			"path": "pages/details/details"
-		},
-		{
-			"path": "pages/new/new"
+			"path": "pages/new/new",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
 			"path": "pages/new/dependence/dependence"
@@ -28,7 +30,10 @@
 			"path": "pages/new/tag/tag"
 		},
 		{
-			"path": "pages/edit/edit"
+			"path": "pages/edit/edit",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
 			"path": "pages/user/user"
