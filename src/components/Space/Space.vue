@@ -1,40 +1,40 @@
 <template>
-  <view class="home">
+  <view class="space">
     <view>
-      <view class="home__icon">
+      <view class="space__icon">
         <u-icon color="#fff" size="50rpx" @click="toSearch()" name="search"></u-icon>
       </view>
-      <view class="home__icon">
+      <view class="space__icon">
         <u-icon color="#fff" size="40rpx" @click="toAdd()" name="plus"></u-icon>
       </view>
-      <view class="home__icon">
+      <view class="space__icon">
         <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
       </view>
     </view>
-    <view v-if="showEmpty()" class="home__hello">
+    <view v-if="showEmpty()" class="space__hello">
       <u-text size="80rpx" text="HELLO!"></u-text>
     </view>
-    <view v-if="showEmpty()" class="home__empty">
+    <view v-if="showEmpty()" class="space__empty">
       尚未添加物品,快去添加吧
-      <image class="home__empty-chair" src="../../static/chair.png" />
-      <image class="home__empty-plant" src="../../static/plant.png" />
+      <image class="space__empty-chair" src="../../static/chair.png" />
+      <image class="space__empty-plant" src="../../static/plant.png" />
     </view>
-    <view v-if="floor" class="home__spaces">
-      <view class="home__spaces__wrapper">
+    <view v-if="floor" class="space__spaces">
+      <view class="space__spaces__wrapper">
         <view
           v-for="(item, index) in useForm.spaces.slice(0, floor)"
           :key="index"
-          class="home__spaces__wrapper-unit"
+          class="space__spaces__wrapper-unit"
         >
-          <view class="home__spaces__wrapper-unit-circle" />
-          <view class="home__spaces__wrapper-unit-line" />
-          <view class="home__spaces__wrapper-unit-name">
+          <view class="space__spaces__wrapper-unit-circle" />
+          <view class="space__spaces__wrapper-unit-line" />
+          <view class="space__spaces__wrapper-unit-name">
             {{ item }}
           </view>
         </view>
       </view>
     </view>
-    <view class="home__tabs">
+    <view class="space__tabs">
       <u-tabs
         itemStyle="color:#666666;padding:0; margin-right:20rpx;height: 34px;"
         :list="[{ name: '我的' }, { name: '共同管理' }]"
@@ -44,51 +44,14 @@
       <view
         @click="chooseItem(index)"
         @longpress="showOperate = true"
-        v-if="!floor || item.parent === useForm.currentId"
+        v-if="!floor || item.parent === id"
         :style="bgColor(index)"
-        class="home__item"
+        class="space__item"
       >
-        <image
-          @click="toDetail(item.id, item.attribute, item.name, item.floor)"
-          class="home__item-img"
-          :src="item.url"
-        />
-        <view class="home__item-attribute">
-          <u-icon size="40rpx" color="#4d94ff" :name="item.attribute ? 'grid' : 'home'" />
-        </view>
-        <view v-if="item.privary" class="home__item-lock">
-          <u-icon size="40rpx" color="#4d94ff" name="lock"></u-icon>
-        </view>
-        <view class="home__item__imformation">
-          <view class="home__item__imformation-name">
-            {{ item.name }}
-          </view>
-          <view class="home__item__imformation-administrator">
-            <u-icon size="40rpx" color="#4c92fb" name="account"></u-icon>
-          </view>
-          <view class="home__item__imformation-avatar">
-            <u-avatar-group size="40rpx" :urls="item.administrator"></u-avatar-group>
-          </view>
-          <view class="home__item__imformation-list">
-            <u-icon color="#5096fe" size="40rpx" name="list"></u-icon>
-          </view>
-          <view class="home__item__imformation-time">
-            <u-icon size="40rpx" name="clock"></u-icon>
-            <u-text margin="0 0 0 10rpx" size="30rpx" color="#979797" text="2018-8-21" />
-          </view>
-        </view>
-        <view class="home__item__content">
-          <u-avatar
-            v-for="(item2, index2) in item.content"
-            :key="index2"
-            :src="item2"
-            customStyle="margin-right:20rpx"
-            size="50rpx"
-          />
-        </view>
+        <SpaceItem :item="item" :showOperate="showOperate" />
       </view>
     </view>
-    <view v-show="showOperate" class="home__operate">
+    <view v-show="showOperate" class="space__operate">
       <view>
         <u-icon @click="toEdit" size="60rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
         <u-text size="30rpx" color="#88898c" align="center" text="编辑" :bold="true" />
@@ -112,71 +75,76 @@
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
 import { ref, onMounted } from 'vue'
+onMounted(() => {
+  //开启分享功能
+  uni.showShareMenu({
+    withShareTicket: true,
+    menus: ['shareAppMessage', 'shareTimeline']
+  })
+})
 const props = withDefaults(
   defineProps<{
+    //层数
     floor?: number
   }>(),
   {
     floor: 0
   }
 )
+//是否显示操作菜单
 const showOperate = ref(false)
+//关闭操作菜单的回调
 const cancel = () => {
   showOperate.value = false
   for (let i = 0; i < checkbox.value.length; i++) {
     checkbox.value[i] = false
   }
 }
+//移动到事件
 const move = () => {
   console.log(1)
 }
+//跳转至编辑页
 const toEdit = () => {
   uni.navigateTo({
     url: '/pages/edit/edit'
   })
 }
+const useForm = useFormStore()
+//当前id
+const id = useForm.currentId
+//是否显示无物提示
 const showEmpty = () => {
   if (!props.floor) return false
   let judge = true
   if (useForm.allItemData[props.floor])
     useForm.allItemData[props.floor].map((item: any) => {
-      if (item.parent === useForm.currentId) judge = false
+      if (item.parent === id) judge = false
     })
   return judge
 }
-const useForm = useFormStore()
+//删除触发的回调
 const deleteItem = () => {
   console.log(1)
 }
+//选择物品或空间触发的回调
 const chooseItem = (index: number) => {
   if (showOperate.value) {
     checkbox.value[index] = !checkbox.value[index]
   }
 }
+//修改背景颜色
 const bgColor = (index: number) => {
   if (checkbox.value[index]) return 'background-color: #c8dbfe;'
 }
-const toDetail = (id: number, attribute: number, name: string, floor: number) => {
-  if (!showOperate.value) {
-    useForm.currentId = id
-    useForm.currentFloor = floor
-    useForm.currentName = name
-    useForm.spaces[floor - 1] = name
-    uni.navigateTo({
-      url: `/pages/details/details?id=${id}&attribute=${attribute}&name=${name}`
-    })
-  }
-}
+//是否选择的数组
 const checkbox = ref<boolean[]>([])
-for (let i = 0; i < useForm.allItemData[props.floor].length; i++) {
-  checkbox.value[i] = false
-}
-onMounted(() => {
-  uni.showShareMenu({
-    withShareTicket: true,
-    menus: ['shareAppMessage', 'shareTimeline']
-  })
-})
+//初始化是否选择的数组
+if (useForm.allItemData[props.floor])
+  for (let i = 0; i < useForm.allItemData[props.floor].length; i++) {
+    checkbox.value[i] = false
+  }
+//扫码
 const scanCode = (): void => {
   uni.scanCode({
     success() {
@@ -184,11 +152,13 @@ const scanCode = (): void => {
     }
   })
 }
+//跳转搜索页
 const toSearch = (): void => {
   uni.navigateTo({
     url: '/pages/search/search'
   })
 }
+//跳转添加页
 const toAdd = (): void => {
   uni.switchTab({
     url: '/pages/new/new'
@@ -197,7 +167,7 @@ const toAdd = (): void => {
 </script>
 
 <style lang="scss">
-.home {
+.space {
   padding-top: 150rpx;
   height: calc(100vh - 150rpx);
   overflow: auto;
@@ -344,90 +314,6 @@ const toAdd = (): void => {
     border-radius: 30rpx;
     height: 200rpx;
     padding: 25rpx;
-
-    &-img {
-      width: 150rpx;
-      height: 150rpx;
-      border-radius: 20rpx;
-    }
-
-    &-attribute {
-      position: absolute;
-      left: 35rpx;
-      top: 35rpx;
-      background-color: #fff;
-      border-radius: 10rpx;
-    }
-
-    &-lock {
-      position: absolute;
-      left: 80rpx;
-      top: 35rpx;
-      background-color: #fff;
-      border-radius: 10rpx;
-    }
-
-    &__imformation {
-      position: absolute;
-      right: 25rpx;
-      top: 25rpx;
-      width: 430rpx;
-      height: 40rpx;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-
-      &-name {
-        line-height: 40rpx;
-        white-space: nowrap;
-        overflow: hidden;
-        width: 120rpx;
-        text-overflow: ellipsis;
-        font-weight: 1000;
-        display: inline-block;
-        margin-right: 10rpx;
-      }
-
-      &-administrator {
-        display: inline-block;
-        background-color: #d8d7db;
-        border-radius: 10rpx;
-        margin-right: 10rpx;
-      }
-
-      &-avatar {
-        display: inline-block;
-      }
-
-      &-list {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 10rpx;
-        width: 50rpx;
-        height: 50rpx;
-        background-color: #f2f2f2;
-        position: absolute;
-        right: 30rpx;
-        top: -5rpx;
-      }
-
-      &-time {
-        position: absolute;
-        left: 10rpx;
-        top: 50rpx;
-        display: flex;
-        align-items: center;
-      }
-    }
-
-    &__content {
-      width: 400rpx;
-      overflow: hidden;
-      display: inline-flex;
-      margin-left: 20rpx;
-      justify-content: flex-start;
-    }
   }
 }
 </style>

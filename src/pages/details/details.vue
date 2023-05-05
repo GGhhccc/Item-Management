@@ -1,6 +1,6 @@
 <template>
   <view v-if="attribute">
-    <Form :isDetail="true" />
+    <Form :itemData="useFormStore().itemData" :isDetail="true" />
     <view v-show="attribute" class="delete">
       <u-icon @click="showDelete = true" size="70rpx" name="trash" color="#565b6d"></u-icon>
     </view>
