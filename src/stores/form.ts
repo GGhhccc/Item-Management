@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
 
 export const useFormStore = defineStore('form', () => {
+  //物品数据
   const itemData = reactive<ItemData>({
     id: 8,
     photo: [{ url: 'https://cdn.seovx.com/d/?mom=302' }],
@@ -13,18 +14,22 @@ export const useFormStore = defineStore('form', () => {
     tag: [
       {
         name: '电子产品',
+        id: 1,
         checked: true
       },
       {
         name: '生活用品',
+        id: 1,
         checked: false
       },
       {
         name: '回血道具',
+        id: 1,
         checked: false
       },
       {
         name: '神装',
+        id: 1,
         checked: false
       }
     ],
@@ -108,22 +113,27 @@ export const useFormStore = defineStore('form', () => {
     administrator: [
       {
         name: '灵梦',
+        id: 1,
         avatar: 'https://cdn.seovx.com/d/?mom=302'
       },
       {
         name: '魔理沙',
+        id: 1,
         avatar: 'https://cdn.seovx.com/d/?mom=302'
       },
       {
         name: '幽幽子',
+        id: 1,
         avatar: 'https://cdn.seovx.com/d/?mom=302'
       },
       {
         name: '妖梦',
+        id: 1,
         avatar: 'https://cdn.seovx.com/d/?mom=302'
       },
       {
         name: '八云紫',
+        id: 1,
         avatar: 'https://cdn.seovx.com/d/?mom=302'
       }
     ],
@@ -149,6 +159,7 @@ export const useFormStore = defineStore('form', () => {
       }
     ]
   })
+  //暂存编辑物品数据
   const tempItemData = reactive<ItemData>({
     id: 0,
     photo: [],
@@ -171,6 +182,7 @@ export const useFormStore = defineStore('form', () => {
     },
     history: []
   })
+  //暂存新建物品数据
   const itemFormData = reactive<ItemData>({
     id: 0,
     photo: [],
@@ -185,17 +197,19 @@ export const useFormStore = defineStore('form', () => {
     url: '',
     state: '',
     associatedItem: [],
-    subordinateSpace: [],
-    administrator: [[]],
+    subordinateSpace: [[]],
+    administrator: [],
     comment: {
       url: [],
       content: ''
     },
     history: []
   })
+  //提交表单
   const submitForm = () => {
     console.log(1)
   }
+  //所有物品及空间数据
   const allItemData = reactive([
     [
       {
@@ -457,9 +471,13 @@ export const useFormStore = defineStore('form', () => {
       }
     ]
   ])
+  //当前物品或空间id
   const currentId = ref(0)
+  //当前层数
   const currentFloor = ref(0)
+  //当前名
   const currentName = ref('')
+  //空间列表
   const spaces = ref<string[]>([])
   return {
     itemData,
