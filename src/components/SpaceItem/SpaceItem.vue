@@ -1,5 +1,5 @@
 <template>
-  <view class="spaceItem">
+  <view @click="chooseItem" @longpress="showOperate" :style="bgColor" class="spaceItem">
     <image
       @click="toDetail(item.id, item.attribute, item.name, item.floor)"
       class="spaceItem-img"
@@ -43,11 +43,12 @@
 
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
-const props = defineProps(['item', 'showOperate'])
+const props = defineProps(['item', 'show', 'bgColor'])
+const emits = defineEmits(['click', 'longpress'])
 const useForm = useFormStore()
 //进入下一层
 const toDetail = (id: number, attribute: number, name: string, floor: number) => {
-  if (!props.showOperate) {
+  if (!props.show) {
     useForm.currentId = id
     useForm.currentFloor = floor
     useForm.currentName = name
@@ -57,10 +58,28 @@ const toDetail = (id: number, attribute: number, name: string, floor: number) =>
     })
   }
 }
+//长按回调
+const showOperate = () => {
+  emits('longpress')
+}
+//点击回调
+const chooseItem = () => {
+  emits('click')
+}
 </script>
 
 <style lang="scss">
 .spaceItem {
+  box-shadow: 0 5px 5px #e3ebfe;
+  box-sizing: border-box;
+  position: relative;
+  width: 650rpx;
+  margin: 0 auto;
+  margin-top: 30rpx;
+  border: #eeeef0 solid 2px;
+  border-radius: 30rpx;
+  height: 200rpx;
+  padding: 25rpx;
   &-img {
     width: 150rpx;
     height: 150rpx;

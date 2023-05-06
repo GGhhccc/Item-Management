@@ -41,15 +41,14 @@
       />
     </view>
     <view v-for="(item, index) in useForm.allItemData[props.floor]" :key="index">
-      <view
+      <SpaceItem
+        :bgColor="bgColor(index)"
+        v-if="!floor || item.parent === id"
         @click="chooseItem(index)"
         @longpress="showOperate = true"
-        v-if="!floor || item.parent === id"
-        :style="bgColor(index)"
-        class="space__item"
-      >
-        <SpaceItem :item="item" :showOperate="showOperate" />
-      </view>
+        :item="item"
+        :show="showOperate"
+      />
     </view>
     <view v-show="showOperate" class="space__operate">
       <view>
@@ -301,19 +300,6 @@ const toAdd = (): void => {
     padding-top: 80rpx;
     width: 650rpx;
     margin: 0 auto;
-  }
-
-  &__item {
-    box-shadow: 0 5px 5px #e3ebfe;
-    box-sizing: border-box;
-    position: relative;
-    width: 650rpx;
-    margin: 0 auto;
-    margin-top: 30rpx;
-    border: #eeeef0 solid 2px;
-    border-radius: 30rpx;
-    height: 200rpx;
-    padding: 25rpx;
   }
 }
 </style>

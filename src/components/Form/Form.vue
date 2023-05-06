@@ -85,11 +85,7 @@
           </u-col>
         </u-row>
         <FormShow v-model:show="showTag" :url="'new/tag/tag'" :name="'标签'" :isDetail="isDetail" />
-        <view v-if="showTag" class="form__imformation__tag">
-          <view :style="tagSize(item.name.length)" v-for="(item, index) in form.tag" :key="index">
-            <u-tag :text="item.name" :plain="!item.checked" :name="index" @click="checkboxClick" />
-          </view>
-        </view>
+        <FormMultiple v-if="showTag" :tags="form.tag" @checkboxClick="checkboxClick" />
         <FormInput
           :type="'number'"
           :name="'金额'"
@@ -115,53 +111,50 @@
           :placeHolder="'输入物品/空间的购买链接'"
           v-model:input="form.url"
         />
-        <u-row>
-          <u-col span="2" customStyle="position: relative;">
-            <u-text :bold="true" text="状态" />
+        <FormInput
+          :type="'text'"
+          :name="'状态'"
+          :maxLength="30"
+          :isDetail="isDetail"
+          :placeHolder="'输入物品状态'"
+          v-model:input="form.state"
+        >
+          <template #icon>
             <u-icon
               @click="showState = true"
               name="question-circle"
               customStyle="position: absolute;top:-5px;left:30px"
             />
-            <u-popup
-              :safeAreaInsetBottom="false"
-              round="30rpx"
-              mode="center"
-              :show="showState"
-              @close="showState = false"
-            >
-              <view class="form__imformation__state">
-                <u-text
-                  color="#000"
-                  customStyle="margin-bottom:10px"
-                  size="20px"
-                  align="center"
-                  text="状态"
-                />
-                <u-text
-                  color="#000"
-                  align="center"
-                  text="用于描述物品的使用状态,比如可以填入'五成新'、'未使用过'、'已借出'等"
-                />
-                <u-button
-                  @click="showState = false"
-                  customStyle="width:200rpx;margin:50rpx auto;"
-                  text="确认"
-                  color="#9bc2ff"
-                />
-              </view>
-            </u-popup>
-          </u-col>
-          <u-col span="10">
-            <u-input
-              v-model="form.state"
-              border="none"
-              maxlength="30"
-              type="text"
-              :readonly="isDetail"
+          </template>
+        </FormInput>
+        <u-popup
+          :safeAreaInsetBottom="false"
+          round="30rpx"
+          mode="center"
+          :show="showState"
+          @close="showState = false"
+        >
+          <view class="form__imformation__state">
+            <u-text
+              color="#000"
+              customStyle="margin-bottom:10px"
+              size="20px"
+              align="center"
+              text="状态"
             />
-          </u-col>
-        </u-row>
+            <u-text
+              color="#000"
+              align="center"
+              text="用于描述物品的使用状态,比如可以填入'五成新'、'未使用过'、'已借出'等"
+            />
+            <u-button
+              @click="showState = false"
+              customStyle="width:200rpx;margin:50rpx auto;"
+              text="确认"
+              color="#9bc2ff"
+            />
+          </view>
+        </u-popup>
       </view>
       <view class="form__imformation">
         <FormShow
@@ -170,11 +163,7 @@
           :name="'关联物品'"
           :isDetail="isDetail"
         />
-        <view v-if="showTag" class="form__imformation__tag">
-          <view :style="tagSize(item.name.length)" v-for="(item, index) in form.tag" :key="index">
-            <u-tag :text="item.name" :plain="!item.checked" :name="index" @click="checkboxClick" />
-          </view>
-        </view>
+        <FormMultiple v-if="showAssociate" :tags="form.tag" @checkboxClick="checkboxClick" />
         <FormShow
           v-model:show="showSpace"
           :url="'new/tag/tag'"
@@ -188,24 +177,18 @@
             name="index"
             :key="index"
           >
-            <u-row customStyle="display: flex;justify-content: flex-start;flex-flow:row wrap;">
-              <view
+            <view class="form__imformation__tag">
+              <FormTag
+                :tag="item2"
                 v-for="(item2, index2) in item"
-                :style="tagSize(item2.name.length)"
                 :key="index2"
-              >
-                <u-tag
-                  :bgColor="bgColor(item2.floor, item2.parent)"
-                  :borderColor="bgColor(item2.floor, item2.parent)"
-                  :color="textColor(item2.floor, item2.parent)"
-                  @click="radioClick(index2, item2.floor, item2.parent)"
-                  :key="index2"
-                  :plain="!item2.checked"
-                  shape="circle"
-                  :text="item2.name"
-                />
-              </view>
-            </u-row>
+                :bgColor="bgColor(item2.floor, item2.parent)"
+                :borderColor="bgColor(item2.floor, item2.parent)"
+                :color="textColor(item2.floor, item2.parent)"
+                @click="radioClick(index2, item2.floor, item2.parent)"
+                :shape="'circle'"
+              />
+            </view>
           </u-collapse-item>
         </u-collapse>
         <FormShow
@@ -240,14 +223,7 @@
       <view v-if="isEdit || isDetail" class="form__imformation">
         <FormShow v-model:show="showHistory" :name="'历史记录'" :isDetail="true" />
         <view v-show="showHistory" :key="index" v-for="(item, index) in form.history">
-          <view class="form__imformation__history">
-            <view class="form__imformation__history__user">
-              <text class="form__imformation__history__user-username">{{ item.username }}</text>
-              <u-text lines="1" size="22rpx" :text="item.content" />
-            </view>
-            <u-text align="right" color="#aaadb7" :text="changeTime(item.date)" />
-          </view>
-          <u-line customStyle="margin:0 auto" direction="row" length="80%"></u-line>
+          <FormHistory :history="item" />
         </view>
       </view>
     </u-form>
@@ -295,7 +271,7 @@ const props = withDefaults(
     itemData?: ItemData
   }>(),
   {
-    isEdit: false,
+    isEdit: true,
     isDetail: false,
     itemData: () => ({
       id: 0,
@@ -330,21 +306,12 @@ const showState = ref(false)
 const showCode = ref(false)
 //显示标签
 const showTag = ref(true)
-//标签样式
-const tagSize = (length: number) => {
-  return `width:${length * 15 + 18}px;margin:0 10rpx 20rpx 0;`
-}
 //多选事件
 const checkboxClick = (name: number) => {
   if (!props.isDetail) form.tag[name].checked = !form.tag[name].checked
 }
 //显示历史记录
 const showHistory = ref(false)
-//时间戳转换为年月日
-const changeTime = (timestamp: number): string => {
-  const date = new Date(timestamp)
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`
-}
 //显示从属空间
 const showAssociate = ref(false)
 //文字颜色
@@ -514,19 +481,6 @@ const submitForm = () => {
     &__administrator {
       width: 80rpx;
       margin-right: 20rpx;
-    }
-
-    &__history {
-      display: flex;
-
-      &__user {
-        display: flex;
-        width: 70%;
-
-        &-username {
-          margin-right: 20rpx;
-        }
-      }
     }
   }
 

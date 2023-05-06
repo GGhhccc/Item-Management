@@ -17,7 +17,7 @@ interface T1 {
   id: number
 }
 //标签类型
-interface Tag extends T1 {
+export interface Tag extends T1 {
   checked: boolean
 }
 //从属空间类型

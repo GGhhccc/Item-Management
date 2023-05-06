@@ -1,8 +1,9 @@
 <template>
   <view class="formInputItem">
     <u-row>
-      <u-col span="2">
+      <u-col span="2" customStyle="position: relative;">
         <u-text :bold="true" :text="name" />
+        <slot name="icon" />
       </u-col>
       <u-col span="10">
         <u-input
