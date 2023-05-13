@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts">
+import FormTag from '@/components/Form/FormTag/FormTag.vue'
 defineProps(['tags'])
 const emits = defineEmits(['checkboxClick'])
 //单击事件回调

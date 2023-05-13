@@ -2,24 +2,24 @@
   <view class="formDate">
     <u-row>
       <u-col span="3">
-        <u-text :bold="true" text="入库日期" />
+        <u-text color="#353535" :bold="true" text="入库日期" />
       </u-col>
-      <u-col span="2">
+      <u-col span="1.6">
         <u-text @click="showDate = !isDetail" :text="year" />
       </u-col>
-      <u-col span="1">
+      <u-col span="0.7">
         <u-text :bold="true" text="年" />
       </u-col>
-      <u-col span="1">
+      <u-col span="0.8">
         <u-text @click="showDate = !isDetail" :text="month" />
       </u-col>
-      <u-col span="1">
+      <u-col span="0.7">
         <u-text :bold="true" text="月" />
       </u-col>
-      <u-col span="1">
+      <u-col span="0.8">
         <u-text @click="showDate = !isDetail" :text="day" />
       </u-col>
-      <u-col span="1">
+      <u-col span="0.7">
         <u-text :bold="true" text="日" />
       </u-col>
     </u-row>

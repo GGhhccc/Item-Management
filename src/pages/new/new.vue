@@ -1,6 +1,6 @@
 <template>
   <view>
-    <Form :itemData="useFormStore().itemData" />
+    <Form :itemData="useFormStore().itemFormData" />
   </view>
 </template>
 

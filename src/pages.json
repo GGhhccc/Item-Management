@@ -43,6 +43,9 @@
 		},
 		{
 			"path": "pages/message/message"
+		},
+		{
+			"path": "pages/search/search"
 		}
 	],
 	"globalStyle": {

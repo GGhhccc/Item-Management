@@ -74,6 +74,7 @@
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
 import { ref, onMounted } from 'vue'
+import SpaceItem from '@/components/Space/SpaceItem/SpaceItem.vue'
 onMounted(() => {
   //开启分享功能
   uni.showShareMenu({

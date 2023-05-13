@@ -41,7 +41,7 @@
         />
         <u-row>
           <u-col span="2">
-            <u-text :bold="true" text="二维码" />
+            <u-text color="#353535" :bold="true" text="二维码" />
           </u-col>
           <u-col span="10">
             <u-input
@@ -78,7 +78,7 @@
       <view class="form__imformation">
         <u-row customStyle="margin-bottom: 10px">
           <u-col span="10.5">
-            <u-text :bold="true" text="隐私" />
+            <u-text color="#353535" :bold="true" text="隐私" />
           </u-col>
           <u-col span="1.5">
             <u-switch :disabled="isDetail" v-model="isPrivacy" size="20" :activeValue="true" />
@@ -93,7 +93,14 @@
           :isDetail="isDetail"
           :placeHolder="'请输入金额'"
           v-model:input="form.amount"
-        />
+          :span="4"
+        >
+          <template #text>
+            <u-col span="2">
+              <u-text text="元"></u-text>
+            </u-col>
+          </template>
+        </FormInput>
         <FormInput
           :type="'number'"
           :name="'数量'"
@@ -110,6 +117,7 @@
           :isDetail="isDetail"
           :placeHolder="'输入物品/空间的购买链接'"
           v-model:input="form.url"
+          :display="!isDetail"
         />
         <FormInput
           :type="'text'"
@@ -121,40 +129,13 @@
         >
           <template #icon>
             <u-icon
-              @click="showState = true"
+              @click="showToast()"
               name="question-circle"
               customStyle="position: absolute;top:-5px;left:30px"
             />
           </template>
         </FormInput>
-        <u-popup
-          :safeAreaInsetBottom="false"
-          round="30rpx"
-          mode="center"
-          :show="showState"
-          @close="showState = false"
-        >
-          <view class="form__imformation__state">
-            <u-text
-              color="#000"
-              customStyle="margin-bottom:10px"
-              size="20px"
-              align="center"
-              text="状态"
-            />
-            <u-text
-              color="#000"
-              align="center"
-              text="用于描述物品的使用状态,比如可以填入'五成新'、'未使用过'、'已借出'等"
-            />
-            <u-button
-              @click="showState = false"
-              customStyle="width:200rpx;margin:50rpx auto;"
-              text="确认"
-              color="#9bc2ff"
-            />
-          </view>
-        </u-popup>
+        <u-toast ref="toast"></u-toast>
       </view>
       <view class="form__imformation">
         <FormShow
@@ -209,7 +190,7 @@
         </u-row>
       </view>
       <view class="form__imformation">
-        <u-text customStyle="margin-bottom: 10px" :bold="true" text="备注" />
+        <u-text color="#353535" customStyle="margin-bottom: 10px" :bold="true" text="备注" />
         <FormPhoto :size="'140rpx'" v-model:photoList="form.comment.url" :isDetail="isDetail" />
         <u-textarea
           maxlength="200"
@@ -246,6 +227,12 @@
 import { ref, onMounted, reactive } from 'vue'
 import { useFormStore } from '@/stores/form'
 import { onShareAppMessage } from '@dcloudio/uni-app'
+import FormDate from '@/components/Form/FormDate/FormDate.vue'
+import FormShow from '@/components/Form/FormShow/FormShow.vue'
+import FormPhoto from '@/components/Form/FormPhoto/FormPhoto.vue'
+import FormInput from '@/components/Form/FormInput/FormInput.vue'
+import FormMultiple from '@/components/Form/FormMultiple/FormMultiple.vue'
+import FormHistory from '@/components/Form/FormHistory/FormHistory.vue'
 import type { ItemData } from '@/types/form'
 // 分享时的图片及链接
 onShareAppMessage(() => {
@@ -271,7 +258,7 @@ const props = withDefaults(
     itemData?: ItemData
   }>(),
   {
-    isEdit: true,
+    isEdit: false,
     isDetail: false,
     itemData: () => ({
       id: 0,
@@ -300,8 +287,6 @@ const props = withDefaults(
 const useForm = useFormStore()
 //显示从属空间
 const showSpace = ref(true)
-//显示状态
-const showState = ref(false)
 //显示二维码
 const showCode = ref(false)
 //显示标签
@@ -342,23 +327,31 @@ const bgColor = (floor: number, parent: number) => {
 }
 //单选事件
 const radioClick = (index: number, floor: number, parent: number) => {
-  if (!props.isDetail) {
-    if (!bgColor(floor, parent)) {
-      if (form.subordinateSpace[floor - 1][index].checked === false) {
-        for (let index = floor; index < form.subordinateSpace.length; index++) {
-          for (let index2 = 0; index2 < form.subordinateSpace[floor].length; index2++) {
-            form.subordinateSpace[floor].map((item: any) => {
-              item.checked = false
-            })
-          }
-        }
+  if (
+    !props.isDetail &&
+    !bgColor(floor, parent) &&
+    form.subordinateSpace[floor - 1][index].checked === false
+  ) {
+    for (let index = floor; index < form.subordinateSpace.length; index++) {
+      for (let index2 = 0; index2 < form.subordinateSpace[floor].length; index2++) {
+        form.subordinateSpace[floor].map((item: any) => {
+          item.checked = false
+        })
       }
-      form.subordinateSpace[floor - 1].map((item: any) => {
-        item.checked = false
-      })
-      form.subordinateSpace[floor - 1][index].checked = true
     }
+    form.subordinateSpace[floor - 1].map((item: any) => {
+      item.checked = false
+    })
+    form.subordinateSpace[floor - 1][index].checked = true
   }
+}
+//弹出消息提示
+const toast = ref()
+//弹出提示
+const showToast = () => {
+  toast.value.show({
+    message: "用于描述物品的使用状态,比如可以填入'五成新'、'未使用过'、'已借出'等"
+  })
 }
 //显示管理人
 const showAdministrator = ref(false)
@@ -381,8 +374,8 @@ const title = form.name
 //取消暂存
 const cancelSave = () => {
   showSave.value = false
-  uni.switchTab({
-    url: '/pages/home/home'
+  uni.navigateBack({
+    delta: 1 //返回层数，2则上上页
   })
 }
 //暂存表单数据
@@ -390,8 +383,8 @@ const saveForm = () => {
   if (props.isEdit) Object.assign(useForm.tempItemData, form)
   else Object.assign(useForm.itemFormData, form)
   showSave.value = false
-  uni.switchTab({
-    url: '/pages/home/home'
+  uni.navigateBack({
+    delta: 1 //返回层数，2则上上页
   })
 }
 //表单规则

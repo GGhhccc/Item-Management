@@ -2,7 +2,7 @@
   <view class="formShowItem">
     <u-row>
       <u-col :span="isDetail ? 11.5 : 10.5">
-        <u-text :bold="true" :text="name" />
+        <u-text color="#353535" :bold="true" :text="name" />
       </u-col>
       <u-col :span="isDetail ? 0.5 : 1">
         <u-icon
