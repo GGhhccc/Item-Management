@@ -8,5 +8,6 @@
 		"source.fixAll.eslint": true
 	},
 	"editor.formatOnSave": true,
-	"i18n-ally.localesPaths": []
+	"i18n-ally.localesPaths": [],
+	"vue.features.codeActions.enable": false
 }

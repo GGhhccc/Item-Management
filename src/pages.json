@@ -6,35 +6,46 @@
 	},
 	"pages": [
 		{
-			"path": "pages/search/search",
-			"style": {
-				"navigationStyle": "custom"
-				// "navigationBarTextStyle": "white"
-			}
+			"path": "pages/home/home",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
-			"path": "pages/home/home"
+			"path": "pages/details/details",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
-			"path": "pages/details/details"
-		},
-		{
-			"path": "pages/new/new"
+			"path": "pages/new/new",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
 			"path": "pages/new/dependence/dependence"
 		},
 		{
-			"path": "pages/new/tag/tag"
+			"path": "pages/new/tag/tag",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
-			"path": "pages/edit/edit"
+			"path": "pages/edit/edit",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
 			"path": "pages/user/user"
 		},
 		{
 			"path": "pages/message/message"
+		},
+		{
+			"path": "pages/search/search"
 		}
 	],
 	"globalStyle": {
@@ -50,7 +61,7 @@
 			{
 				"pagePath": "pages/home/home",
 				"text": "首页",
-				"iconPath": "static/icons/tabBar/消息.png",
+				"iconPath": "static/icons/tabBar/首页.png",
 				"selectedIconPath": "static/icons/tabBar/首页-选中.png"
 			},
 			{
