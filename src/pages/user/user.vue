@@ -1,11 +1,12 @@
 <template>
   <view class="user">
-    <u-navbar bgColor="transparent" leftIcon="" placeholder>
-      <template #center>
-        <view>
-          <u-text bold text="个人中心" size="16px"></u-text>
-        </view>
-      </template>
+    <u-navbar
+      bgColor="transparent"
+      leftIcon=""
+      placeholder
+      title="个人中心"
+      titleStyle="font-weight:bold"
+    >
     </u-navbar>
 
     <view class="user__info">
@@ -25,7 +26,7 @@
     </view>
 
     <view class="user__settings">
-      <view class="user__settings__item" @click="update">
+      <view class="user__settings__item" @click="goToSettings(0)">
         <view class="user__settings__item__left">
           <u-icon name="reload" size="24" custom-style="margin-right: 22rpx;"></u-icon>
           <u-text text="版本更新" size="15"></u-text>
@@ -33,15 +34,15 @@
         <u-icon name="arrow-right" color="#0F0F0F"></u-icon>
         <u-divider line-color="#EBEFFF"></u-divider>
       </view>
-      <view class="user__settings__item">
+      <view class="user__settings__item" @click="goToSettings(1)">
         <view class="user__settings__item__left">
           <u-icon name="setting" size="24" custom-style="margin-right: 22rpx;"></u-icon>
-          <u-text text="好友" size="15"></u-text>
+          <u-text text="设置" size="15"></u-text>
         </view>
         <u-icon name="arrow-right" color="#0F0F0F"></u-icon>
         <u-divider line-color="#EBEFFF"></u-divider>
       </view>
-      <view class="user__settings__item">
+      <view class="user__settings__item" @click="goToSettings(2)">
         <view class="user__settings__item__left">
           <u-icon name="email" size="24" custom-style="margin-right: 22rpx;"></u-icon>
           <u-text text="意见反馈" size="15"></u-text>
@@ -49,7 +50,7 @@
         <u-icon name="arrow-right" color="#0F0F0F"></u-icon>
         <u-divider line-color="#EBEFFF"></u-divider>
       </view>
-      <view class="user__settings__item">
+      <view class="user__settings__item" @click="goToSettings(3)">
         <view class="user__settings__item__left">
           <u-icon name="scan" size="24" custom-style="margin-right: 22rpx;"></u-icon>
           <u-text text="我的二维码" size="15"></u-text>
@@ -57,14 +58,14 @@
         <u-icon name="arrow-right" color="#0F0F0F"></u-icon>
         <u-divider line-color="#EBEFFF"></u-divider>
       </view>
-      <view class="user__settings__item">
+      <view class="user__settings__item" @click="goToSettings(4)">
         <view class="user__settings__item__left">
           <u-icon name="bag" size="24" custom-style="margin-right: 22rpx;"></u-icon>
           <u-text text="最近删除" size="15"></u-text>
         </view>
         <u-divider line-color="#EBEFFF"></u-divider>
       </view>
-      <view class="user__settings__item">
+      <view class="user__settings__item" @click="goToSettings(5)">
         <view class="user__settings__item__left">
           <u-icon name="bag" size="24" custom-style="margin-right: 22rpx;"></u-icon>
           <u-text text="物品修改记录" size="15"></u-text>
@@ -87,13 +88,48 @@ import { storeToRefs } from 'pinia'
 const user = useUserStore()
 const { userInfo } = storeToRefs(user)
 
-const update = () => {
-  uni.showToast({
-    title: '已是最新版本',
-    icon: 'none'
-  })
+// 点击跳转
+const goToSettings = (index: number) => {
+  switch (index) {
+    // 版本更新
+    case 0:
+      uni.navigateTo({
+        url: '/pages/user/update/update'
+      })
+      break
+    // 设置
+    case 1:
+      uni.navigateTo({
+        url: '/pages/user/settings/settings'
+      })
+      break
+    // 意见反馈
+    case 2:
+      uni.navigateTo({
+        url: '/pages/user/feedback/feedback'
+      })
+      break
+    // 我的二维码
+    case 3:
+      uni.showToast({
+        title: '该功能暂未开放',
+        icon: 'error'
+      })
+      break
+    // 最近删除
+    case 4:
+      uni.navigateTo({
+        url: '/pages/user/deleted/deleted'
+      })
+      break
+    // 物品修改记录
+    case 5:
+      uni.navigateTo({
+        url: '/pages/user/history/history'
+      })
+      break
+  }
 }
-console.log(userInfo.value.avatar)
 </script>
 
 <style lang="scss" scoped>

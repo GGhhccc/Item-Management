@@ -1,15 +1,6 @@
 <template>
   <view class="search" :style="{ paddingTop: navBarHeight + 'px' }">
-    <u-navbar bgColor="transparent">
-      <template #left>
-        <view class="search__nav-bar">
-          <u-icon name="arrow-left" size="24px" @click="goBack()"></u-icon>
-          <view class="search__nav-bar__sort">
-            <u-text bold text="搜索" size="16px"></u-text>
-          </view>
-        </view>
-      </template>
-    </u-navbar>
+    <u-navbar title="搜索" autoBack></u-navbar>
 
     <SearchInput :search-list-data="currentSearchList.searchList" @reset-input="resetInput" />
 
@@ -173,6 +164,13 @@
   </view>
 </template>
 
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  options: { styleIsolation: 'shared' }
+})
+</script>
+
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app'
 import { ref, reactive } from 'vue'
@@ -286,10 +284,6 @@ const resetInput = () => {
   // isSearch.value = false
 }
 
-const goBack = () => {
-  uni.navigateBack()
-}
-
 const navBarHeight = ref<number>(44)
 // 获取小程序胶囊按钮
 const getCapsule = () => {
@@ -360,17 +354,6 @@ onShow(() => {
   //     rgba(57, 136, 255, 0.08) 100%
   //   ),
   //   #fff;
-  &__nav-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    &__sort {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-  }
 
   &__screen {
     display: flex;
@@ -467,10 +450,6 @@ onShow(() => {
     margin: 0 auto;
   }
 }
-
-// :deep(.u-navbar--fixed) {
-// 	z-index: 999999 !important;
-// }
 
 :deep(.u-form) {
   display: flex;
