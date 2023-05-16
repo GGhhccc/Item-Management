@@ -28,10 +28,6 @@
 </template>
 
 <script setup lang="ts">
-const goBack = () => {
-  uni.navigateBack()
-}
-
 const checkUpdate = () => {
   uni.showToast({
     title: '已是最新版本',

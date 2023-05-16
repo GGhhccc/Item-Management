@@ -30,35 +30,18 @@ export default defineComponent({
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { FullItemInfo } from '@/utils/typings'
 import { useSearchStore } from '@/stores/search'
 
 const searchStore = useSearchStore()
 const { fetchNewSearchList } = searchStore
 
-const props = defineProps<{
-  // 当前通知列表
-  searchListData: FullItemInfo[]
-}>()
-
 const emits = defineEmits<{
-  // 搜索框发生改变的回调
-  (e: 'submitSearch', searchResult: any): void
   (e: 'resetInput'): void
 }>()
 
 const inputBox = ref('')
 
 const submitSearch = () => {
-  // let searchResult = ref<any>([])
-  // searchListData.value = props.searchListData
-  // if (inputBox.value !== '') {
-  // 	searchResult.value = searchListData.value.filter((value: any) => {
-  // 		return value.name.includes(inputBox.value)
-  // 	})
-  // 	emits('submitSearch', searchResult)
-  // }
-
   // 发送请求获取新的数据
   fetchNewSearchList()
 }
