@@ -1,10 +1,165 @@
 <template>
-  <view>user 界面</view>
+  <view class="user">
+    <u-navbar bgColor="transparent" leftIcon="" placeholder>
+      <template #center>
+        <view>
+          <u-text bold text="个人中心" size="16px"></u-text>
+        </view>
+      </template>
+    </u-navbar>
+
+    <view class="user__info">
+      <u-avatar :src="userInfo.avatar" size="84"></u-avatar>
+      <view class="user__info__main">
+        <view class="user__info__main__name">
+          <u-text :text="userInfo.username" size="18" color="#353535"></u-text>
+          <u-icon
+            name="edit-pen"
+            size="22"
+            color="#8389BE"
+            custom-style="margin-top: 5rpx;"
+          ></u-icon>
+        </view>
+        <u-text :text="`ID: ${userInfo.id}`" color="#A0A7BA" size="13"></u-text>
+      </view>
+    </view>
+
+    <view class="user__settings">
+      <view class="user__settings__item" @click="update">
+        <view class="user__settings__item__left">
+          <u-icon name="reload" size="24" custom-style="margin-right: 22rpx;"></u-icon>
+          <u-text text="版本更新" size="15"></u-text>
+        </view>
+        <u-icon name="arrow-right" color="#0F0F0F"></u-icon>
+        <u-divider line-color="#EBEFFF"></u-divider>
+      </view>
+      <view class="user__settings__item">
+        <view class="user__settings__item__left">
+          <u-icon name="setting" size="24" custom-style="margin-right: 22rpx;"></u-icon>
+          <u-text text="好友" size="15"></u-text>
+        </view>
+        <u-icon name="arrow-right" color="#0F0F0F"></u-icon>
+        <u-divider line-color="#EBEFFF"></u-divider>
+      </view>
+      <view class="user__settings__item">
+        <view class="user__settings__item__left">
+          <u-icon name="email" size="24" custom-style="margin-right: 22rpx;"></u-icon>
+          <u-text text="意见反馈" size="15"></u-text>
+        </view>
+        <u-icon name="arrow-right" color="#0F0F0F"></u-icon>
+        <u-divider line-color="#EBEFFF"></u-divider>
+      </view>
+      <view class="user__settings__item">
+        <view class="user__settings__item__left">
+          <u-icon name="scan" size="24" custom-style="margin-right: 22rpx;"></u-icon>
+          <u-text text="我的二维码" size="15"></u-text>
+        </view>
+        <u-icon name="arrow-right" color="#0F0F0F"></u-icon>
+        <u-divider line-color="#EBEFFF"></u-divider>
+      </view>
+      <view class="user__settings__item">
+        <view class="user__settings__item__left">
+          <u-icon name="bag" size="24" custom-style="margin-right: 22rpx;"></u-icon>
+          <u-text text="最近删除" size="15"></u-text>
+        </view>
+        <u-divider line-color="#EBEFFF"></u-divider>
+      </view>
+      <view class="user__settings__item">
+        <view class="user__settings__item__left">
+          <u-icon name="bag" size="24" custom-style="margin-right: 22rpx;"></u-icon>
+          <u-text text="物品修改记录" size="15"></u-text>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  options: { styleIsolation: 'shared' }
+})
+</script>
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 const user = useUserStore()
+const { userInfo } = storeToRefs(user)
+
+const update = () => {
+  uni.showToast({
+    title: '已是最新版本',
+    icon: 'none'
+  })
+}
+console.log(userInfo.value.avatar)
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+      167.84deg,
+      rgba(155, 195, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0.44) 38.02%,
+      rgba(255, 255, 255, 0.31) 41.67%,
+      rgba(161, 159, 241, 0.12) 72.92%,
+      rgba(57, 136, 255, 0.08) 100%
+    ),
+    #fff;
+
+  &__info {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    height: 200rpx;
+    margin-top: 20px;
+
+    &__main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 60%;
+      margin: 20rpx 0 0 40rpx;
+
+      &__name {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+    }
+  }
+
+  &__settings {
+    width: 80%;
+    height: 700rpx;
+    border-radius: 29px;
+    margin-top: 22px;
+    padding: 30rpx 40rpx;
+    background-color: #fff;
+
+    &__item {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      height: 100rpx;
+      margin-bottom: 22rpx;
+
+      &__left {
+        display: flex;
+      }
+    }
+  }
+}
+:deep(.u-divider) {
+  position: absolute;
+  bottom: -44rpx;
+  width: 100%;
+}
+</style>

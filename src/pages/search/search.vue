@@ -1,10 +1,10 @@
 <template>
   <view class="search" :style="{ paddingTop: navBarHeight + 'px' }">
-    <u-navbar>
+    <u-navbar bgColor="transparent">
       <template #left>
         <view class="search__nav-bar">
           <u-icon name="arrow-left" size="24px" @click="goBack()"></u-icon>
-          <view class="search__nav-bar__sort" @click="openPopup">
+          <view class="search__nav-bar__sort">
             <u-text bold text="搜索" size="16px"></u-text>
           </view>
         </view>
@@ -291,6 +291,7 @@ const goBack = () => {
 }
 
 const navBarHeight = ref<number>(44)
+// 获取小程序胶囊按钮
 const getCapsule = () => {
   const menuButton = uni.getMenuButtonBoundingClientRect()
   navBarHeight.value = menuButton.bottom + 16
@@ -350,6 +351,15 @@ onShow(() => {
 
 <style lang="scss" scoped>
 .search {
+  // background: linear-gradient(
+  //     167.84deg,
+  //     rgba(155, 195, 255, 0.35) 0%,
+  //     rgba(255, 255, 255, 0.44) 38.02%,
+  //     rgba(255, 255, 255, 0.31) 41.67%,
+  //     rgba(161, 159, 241, 0.12) 72.92%,
+  //     rgba(57, 136, 255, 0.08) 100%
+  //   ),
+  //   #fff;
   &__nav-bar {
     display: flex;
     align-items: center;

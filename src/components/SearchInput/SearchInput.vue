@@ -3,12 +3,13 @@
     <view class="search-input__content">
       <u-search
         placeholder="搜索空间物品"
-        placeholderColor="#f8f9fd"
+        placeholderColor="#979797"
         searchIconColor="#565b6d"
         v-model="inputBox"
         :showAction="false"
         shape="square"
         height="40px"
+        bgColor="#F8F9FD"
       ></u-search>
       <view class="search-input__content__confirm" @click="submitSearch">
         <span>确认</span>
@@ -19,6 +20,13 @@
     </view>
   </view>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  options: { styleIsolation: 'shared' }
+})
+</script>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
@@ -87,8 +95,8 @@ watch(
       position: absolute;
       right: 30px;
       width: 50px;
-      height: 104%;
-      border-radius: 0 4px 4px 0;
+      height: 102.6%;
+      border-radius: 0 10px 10px 0;
       font-size: 14px;
       color: #fff;
       background-color: #3988ff;
@@ -99,16 +107,16 @@ watch(
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 40px;
-      height: 100%;
+      width: 44px;
+      height: 104%;
       margin-left: 58px;
+      border-radius: 10px;
       color: #3988ff;
       background-color: #f8f9fd;
     }
   }
 }
-
-// :deep(.u-search__content) {
-// 	border-radius: 10px !important;
-// }
+:deep(.u-search__content) {
+  border-radius: 10px 0 0 10px !important;
+}
 </style>

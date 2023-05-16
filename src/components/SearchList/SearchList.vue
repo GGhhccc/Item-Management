@@ -3,8 +3,8 @@
     <view v-if="!isLoading">
       <!-- 总列表 -->
       <template v-if="!isSearch && !isSort">
-        <view v-for="searchList in currentSearchList.searchList" :key="searchList.id">
-          <SearchListItem :search-list-data="searchList" />
+        <view v-for="(searchList, index) in currentSearchList.searchList" :key="index">
+          <SearchListItem :bgColor="bgColor(index)" :search-list-data="searchList" />
         </view>
       </template>
       <!-- 搜索结果 -->
@@ -92,6 +92,17 @@ async function loadMoreItem() {
 
 // 搜索结果
 let searchResultList = ref<any>([])
+
+const checkbox = ref<boolean[]>([])
+//修改背景颜色
+const bgColor = (index: number) => {
+  if (checkbox.value[index]) return 'background-color: #c8dbfe;'
+}
+
+if (currentSearchList.value.searchList)
+  for (let i = 0; i < currentSearchList.value.searchList.length; i++) {
+    checkbox.value[i] = false
+  }
 
 watch(
   () => props.isClickSort,

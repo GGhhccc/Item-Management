@@ -1,5 +1,5 @@
 <template>
-  <view class="search-list-item">
+  <view class="search-list-item" @longpress="showOperate" :bgColor="bgColor">
     <view class="search-list-item__img-wrapper">
       <view class="search-list-item__img-wrapper__img">
         <u-image :src="searchListData.previewImg" width="65px" height="65px" radius="4px"></u-image>
@@ -17,16 +17,34 @@
         <u-text :text="searchListData.dependentSpace" color="#666"></u-text>
       </view>
     </view>
-    <u-divider class="search-list-item__divider" line-color="#000"></u-divider>
+    <u-divider line-color="#DAE1FF"></u-divider>
   </view>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  options: { styleIsolation: 'shared' }
+})
+</script>
 
 <script setup lang="ts">
 import type { FullItemInfo } from '@/utils/typings'
 const props = defineProps<{
   // 所要渲染的通知信息
   searchListData: FullItemInfo
+  // 背景颜色
+  bgColor: string
 }>()
+
+const emits = defineEmits<{
+  // 长按操作
+  (e: 'longpress'): void
+}>()
+
+const showOperate = () => {
+  emits('longpress')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -63,9 +81,16 @@ const props = defineProps<{
       }
 
       &__icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20px;
+        height: 20px;
         font-size: 14px;
         margin-right: 5px;
+        border-radius: 4px;
         color: #3988ff;
+        background-color: rgba($color: #d8d7db, $alpha: 0.37);
       }
     }
 
@@ -74,11 +99,10 @@ const props = defineProps<{
       bottom: 0;
     }
   }
-
-  &__divider {
-    position: absolute;
-    bottom: -32px;
-    width: 100%;
-  }
+}
+:deep(.u-divider) {
+  position: absolute;
+  bottom: -32px;
+  width: 100%;
 }
 </style>

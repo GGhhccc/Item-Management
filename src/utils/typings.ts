@@ -41,7 +41,7 @@ export interface FullUserInfo {
   /**
    * 头像
    */
-  headPhoto: string
+  avatar: string
   /**
    * 用户id
    */
