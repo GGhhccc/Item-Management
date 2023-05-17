@@ -13,7 +13,7 @@
       <u-avatar :src="userInfo.avatar" size="84"></u-avatar>
       <view class="user__info__main">
         <view class="user__info__main__name">
-          <u-text :text="userInfo.username" size="18" color="#353535"></u-text>
+          <u-text :text="userInfo.username" size="18" color="#353535" bold></u-text>
           <u-icon
             name="edit-pen"
             size="22"
@@ -139,22 +139,14 @@ const goToSettings = (index: number) => {
   align-items: center;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(
-      167.84deg,
-      rgba(155, 195, 255, 0.35) 0%,
-      rgba(255, 255, 255, 0.44) 38.02%,
-      rgba(255, 255, 255, 0.31) 41.67%,
-      rgba(161, 159, 241, 0.12) 72.92%,
-      rgba(57, 136, 255, 0.08) 100%
-    ),
-    #fff;
+  background: $uni-bg-color-gradient;
 
   &__info {
     display: flex;
     align-items: center;
     width: 80%;
     height: 200rpx;
-    margin-top: 20px;
+    margin-top: 38rpx;
 
     &__main {
       display: flex;
@@ -175,7 +167,7 @@ const goToSettings = (index: number) => {
     width: 80%;
     height: 700rpx;
     border-radius: 29px;
-    margin-top: 22px;
+    margin-top: 40rpx;
     padding: 30rpx 40rpx;
     background-color: #fff;
 

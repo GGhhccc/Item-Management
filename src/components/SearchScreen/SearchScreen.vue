@@ -325,7 +325,7 @@ onShow(() => {
     font-size: 14px;
     padding-right: 6px;
     margin-bottom: 15px;
-    margin-left: 7%;
+    margin-left: 6.4%;
 
     &__icon {
       font-size: 22px;

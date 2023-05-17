@@ -42,16 +42,6 @@ onShow(() => {
 
 <style lang="scss" scoped>
 .search {
-  // background: linear-gradient(
-  //     167.84deg,
-  //     rgba(155, 195, 255, 0.35) 0%,
-  //     rgba(255, 255, 255, 0.44) 38.02%,
-  //     rgba(255, 255, 255, 0.31) 41.67%,
-  //     rgba(161, 159, 241, 0.12) 72.92%,
-  //     rgba(57, 136, 255, 0.08) 100%
-  //   ),
-  //   #fff;
-
   &__list {
     display: flex;
     flex-direction: column;

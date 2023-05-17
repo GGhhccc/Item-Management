@@ -118,7 +118,4 @@ watch(
 fetchNewSearchList()
 </script>
 
-<style lang="scss" scoped>
-.search-list {
-}
-</style>
+<style lang="scss" scoped></style>

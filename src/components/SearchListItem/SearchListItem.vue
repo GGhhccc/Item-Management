@@ -89,8 +89,8 @@ const showOperate = () => {
         font-size: 14px;
         margin-right: 5px;
         border-radius: 4px;
-        color: #3988ff;
-        background-color: rgba($color: #d8d7db, $alpha: 0.37);
+        color: $uni-theme-color;
+        background-color: $uni-icon-bg-color;
       }
     }
 
