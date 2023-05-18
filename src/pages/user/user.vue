@@ -170,6 +170,7 @@ const goToSettings = (index: number) => {
     margin-top: 40rpx;
     padding: 30rpx 40rpx;
     background-color: #fff;
+    box-shadow: $uni-box-shadow;
 
     &__item {
       position: relative;

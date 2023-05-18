@@ -117,6 +117,7 @@ const onClick = () => {
         color: #666;
 
         &__text {
+          color: $uni-text-color;
           margin-right: 26rpx;
           font-size: 32rpx;
         }

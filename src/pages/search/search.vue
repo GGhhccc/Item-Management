@@ -6,9 +6,7 @@
 
     <SearchScreen />
 
-    <view class="search__list">
-      <SearchList />
-    </view>
+    <SearchList />
   </view>
 </template>
 
@@ -27,7 +25,9 @@ const resetInput = () => {
   // isSearch.value = false
 }
 
+// navbar 高度
 const navBarHeight = ref<number>(44)
+
 // 获取小程序胶囊按钮
 const getCapsule = () => {
   const menuButton = uni.getMenuButtonBoundingClientRect()

@@ -24,7 +24,10 @@
 			}
 		},
 		{
-			"path": "pages/new/dependence/dependence"
+			"path": "pages/new/dependence/dependence",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/new/tag/tag",

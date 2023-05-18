@@ -16,23 +16,25 @@
       <view
         v-if="checkboxOperate"
         class="search-list__operate animate__animated"
-        :class="{ animate__bounceInUp: checkboxOperate, animate__bounceOutDown: !checkboxOperate }"
+        :class="{ animate__fadeInUp: checkboxOperate, animate__bounceOutDown: !checkboxOperate }"
       >
         <view>
           <u-icon @click="toEdit" size="60rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
-          <u-text size="30rpx" color="#88898c" align="center" text="编辑" :bold="true" />
+          <u-text size="30rpx" color="#88898c" align="center" text="编辑" />
         </view>
         <view>
-          <u-icon @click="move" size="60rpx" name="rewind-right-fill" color="#3988ff"></u-icon>
-          <u-text size="30rpx" color="#88898c" align="center" text="移动" :bold="true" />
+          <view class="iconfont" style="font-size: 60rpx; color: #3988ff" @click="move">
+            &#xe6c4;
+          </view>
+          <u-text size="30rpx" color="#88898c" align="center" text="移动" />
         </view>
         <view>
           <u-icon @click="deleteItem" size="60rpx" name="trash" color="#898a8d"></u-icon>
-          <u-text size="30rpx" color="#88898c" align="center" text="删除" :bold="true" />
+          <u-text size="30rpx" color="#88898c" align="center" text="删除" />
         </view>
         <view>
           <u-icon @click="cancel" size="60rpx" name="close" color="#898a8d"></u-icon>
-          <u-text size="30rpx" color="#88898c" align="center" text="取消" :bold="true" />
+          <u-text size="30rpx" color="#88898c" align="center" text="取消" />
         </view>
       </view>
       <!-- 空 -->
