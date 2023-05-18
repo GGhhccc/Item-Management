@@ -1,6 +1,9 @@
 <template>
   <view class="search-input">
     <view class="search-input__content">
+      <view class="search-input__content__mic">
+        <view class="iconfont" style="font-size: 18px">&#xe656;</view>
+      </view>
       <u-search
         placeholder="搜索空间物品"
         placeholderColor="#979797"
@@ -13,9 +16,6 @@
       ></u-search>
       <view class="search-input__content__confirm" @click="submitSearch">
         <span>确认</span>
-      </view>
-      <view class="search-input__content__right-icon">
-        <view class="iconfont" style="font-size: 18px">&#xe656;</view>
       </view>
     </view>
   </view>
@@ -76,7 +76,7 @@ watch(
       justify-content: center;
       align-items: center;
       position: absolute;
-      right: 30px;
+      right: -23px;
       width: 50px;
       height: 102.6%;
       border-radius: 0 10px 10px 0;
@@ -86,13 +86,13 @@ watch(
       transform: translateX(-50%);
     }
 
-    &__right-icon {
+    &__mic {
       display: flex;
       justify-content: center;
       align-items: center;
       width: 44px;
       height: 104%;
-      margin-left: 58px;
+      margin-right: 8px;
       border-radius: 10px;
       color: #3988ff;
       background-color: #f8f9fd;
@@ -100,6 +100,6 @@ watch(
   }
 }
 :deep(.u-search__content) {
-  border-radius: 10px 0 0 10px !important;
+  border-radius: 10px !important;
 }
 </style>

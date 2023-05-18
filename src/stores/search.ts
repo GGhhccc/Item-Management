@@ -28,11 +28,12 @@ export const useSearchStore = defineStore('search', () => {
         tag: '书柜'
       }
     ],
-    searchList: [
+    itemList: [
       {
         id: '1',
         name: '帽子',
-        properties: 1,
+        property: 1,
+        privacy: 1,
         state: '在库',
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室->衣柜'
@@ -40,7 +41,8 @@ export const useSearchStore = defineStore('search', () => {
       {
         id: '2',
         name: '衣柜',
-        properties: 0,
+        property: 0,
+        privacy: 1,
         state: '五成新',
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室'
@@ -48,56 +50,64 @@ export const useSearchStore = defineStore('search', () => {
       {
         id: '3',
         name: '手包',
-        properties: 1,
+        property: 1,
+        privacy: 0,
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室->衣柜'
       },
       {
         id: '4',
         name: '牛仔裤',
-        properties: 1,
+        property: 1,
+        privacy: 1,
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室->衣柜'
       },
       {
         id: '5',
         name: '书柜',
-        properties: 0,
+        property: 0,
+        privacy: 1,
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室'
       },
       {
         id: '6',
         name: '牛仔裤1',
-        properties: 1,
+        property: 1,
+        privacy: 0,
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室->衣柜'
       },
       {
         id: '7',
         name: '洗手间',
-        properties: 0,
+        property: 0,
+        privacy: 1,
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室->衣柜'
       },
       {
         id: '8',
         name: '牛仔裤2',
-        properties: 1,
+        property: 1,
+        privacy: 1,
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室->衣柜'
       },
       {
         id: '9',
         name: '牛仔裤3',
-        properties: 0,
+        property: 0,
+        privacy: 1,
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室->衣柜'
       },
       {
         id: '10',
         name: '牛仔裤4',
-        properties: 0,
+        property: 0,
+        privacy: 1,
         previewImg: '/static/cap.png',
         dependentSpace: '房子1->卧室->衣柜'
       }
@@ -107,6 +117,12 @@ export const useSearchStore = defineStore('search', () => {
   function setTagsList(tagList: TagList[]) {
     tagList.forEach((value) => {
       value.checked = false
+    })
+  }
+
+  function setItemList(itemList: any[]) {
+    itemList.forEach((value) => {
+      value.isChecked = false
     })
   }
 
@@ -121,6 +137,7 @@ export const useSearchStore = defineStore('search', () => {
   return {
     currentSearchList,
     setTagsList,
+    setItemList,
     fetchNewSearchList,
     fetchScreenSearchList
   }

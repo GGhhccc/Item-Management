@@ -16,8 +16,8 @@ export interface SearchList {
   /**
    * 物品数组
    */
-  // searchList: FullItemInfo[]
-  searchList: any[]
+  // itemList: ExtendItemList[]
+  itemList: any[]
 }
 
 export interface TagList {
@@ -33,6 +33,14 @@ export interface TagList {
    * 是否选中
    */
   checked?: boolean
+}
+
+// export type ItemList = Omit<FullItemInfo, 'isChecked'>[]
+export interface ExtendItemList extends FullItemInfo {
+  /**
+   * 是否选中
+   */
+  isChecked: boolean
 }
 
 export interface ShowControl {

@@ -273,7 +273,7 @@ const selectDate = (index: number) => {
 
 const closePopupEvent = () => {
   showPopup.value = false
-  currentSearchList.value.searchList = uni.getStorageSync('searchList')
+  currentSearchList.value.itemList = uni.getStorageSync('searchList')
 }
 
 const openPopup = () => {
@@ -324,7 +324,6 @@ onShow(() => {
     border-radius: 10px;
     font-size: 14px;
     padding-right: 6px;
-    margin-bottom: 15px;
     margin-left: 6.4%;
 
     &__icon {

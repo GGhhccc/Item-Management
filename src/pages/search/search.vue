@@ -1,8 +1,8 @@
 <template>
   <view class="search" :style="{ paddingTop: navBarHeight + 'px' }">
-    <u-navbar title="搜索" autoBack></u-navbar>
+    <u-navbar title="搜索" autoBack titleStyle="font-weight:bold"></u-navbar>
 
-    <SearchInput :search-list-data="currentSearchList.searchList" @reset-input="resetInput" />
+    <SearchInput :search-list-data="currentSearchList.itemList" @reset-input="resetInput" />
 
     <SearchScreen />
 
@@ -20,7 +20,7 @@ import { storeToRefs } from 'pinia'
 
 const searchStore = useSearchStore()
 const { currentSearchList } = storeToRefs(searchStore)
-const { setTagsList } = searchStore
+const { setTagsList, setItemList } = searchStore
 
 // 重置搜索状态
 const resetInput = () => {
@@ -37,6 +37,7 @@ const getCapsule = () => {
 onShow(() => {
   getCapsule()
   setTagsList(currentSearchList.value.tagsList)
+  setItemList(currentSearchList.value.itemList)
 })
 </script>
 
@@ -46,7 +47,6 @@ onShow(() => {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 85%;
     margin: 0 auto;
   }
 }
