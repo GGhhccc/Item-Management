@@ -43,17 +43,9 @@
           <u-text :text="itemData.dependentSpace" color="#898A8D"></u-text>
         </view>
       </view>
-      <u-divider line-color="#DAE1FF"></u-divider>
     </view>
   </view>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-export default defineComponent({
-  options: { styleIsolation: 'shared' }
-})
-</script>
 
 <script setup lang="ts">
 import type { ExtendItemList } from '@/types/search'
@@ -83,18 +75,21 @@ const onClick = () => {
 <style lang="scss" scoped>
 .search-list-item {
   width: 100vw;
-  padding: 18px 30px 20px 30px;
+  padding: 30rpx 30rpx 0 55rpx;
+  height: 168rpx;
 
   &__content {
     position: relative;
     display: flex;
     width: 86%;
+    height: 100%;
+    border-bottom: 1px solid #dae1ff;
 
     &__img-wrapper {
       position: relative;
 
       &__img {
-        margin-right: 20px;
+        margin-right: 38rpx;
         border: 1px solid #c4dcff;
         border-radius: 4px;
       }
@@ -113,7 +108,7 @@ const onClick = () => {
       display: flex;
       flex-direction: column;
       width: 100%;
-      height: 65px;
+      height: 135rpx;
 
       &__info {
         display: flex;
@@ -122,18 +117,18 @@ const onClick = () => {
         color: #666;
 
         &__text {
-          margin-right: 16px;
-          font-size: 18px;
+          margin-right: 26rpx;
+          font-size: 32rpx;
         }
 
         &__icon {
           display: flex;
           justify-content: center;
           align-items: center;
-          width: 20px;
-          height: 20px;
-          font-size: 12px;
-          margin-right: 5px;
+          width: 42rpx;
+          height: 40rpx;
+          font-size: 22rpx;
+          margin-right: 18rpx;
           border-radius: 4px;
           color: $uni-theme-color;
           background-color: $uni-icon-bg-color;
@@ -159,10 +154,5 @@ const onClick = () => {
       }
     }
   }
-}
-:deep(.u-divider) {
-  position: absolute;
-  bottom: -35px;
-  width: 100%;
 }
 </style>

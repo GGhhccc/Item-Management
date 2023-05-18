@@ -14,7 +14,7 @@ uni.loadFontFace({
   family: 'Microsoft YaHei',
   source: 'url("/static/fonts/MSYH.TTC")',
   success() {
-    console.log('success')
+    console.log('success load font.')
   },
   fail(e) {
     console.log('err：', e)

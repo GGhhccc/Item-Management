@@ -13,7 +13,11 @@
         </view>
       </template>
       <!-- 多选状态的弹出框 -->
-      <view v-if="checkboxOperate" class="search-list__operate">
+      <view
+        v-if="checkboxOperate"
+        class="search-list__operate animate__animated"
+        :class="{ animate__bounceInUp: checkboxOperate, animate__bounceOutDown: !checkboxOperate }"
+      >
         <view>
           <u-icon @click="toEdit" size="60rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
           <u-text size="30rpx" color="#88898c" align="center" text="编辑" :bold="true" />
@@ -141,16 +145,20 @@ fetchNewSearchList()
 <style lang="scss" scoped>
 .search-list {
   &__operate {
-    box-sizing: border-box;
     display: flex;
     justify-content: space-around;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 750rpx;
-    height: 200rpx;
-    padding: 0 50rpx 0 50rpx;
+    align-items: center;
+    bottom: 140rpx;
+    left: 42rpx;
+    width: 630rpx;
+    height: 150rpx;
+    padding: 0 20rpx 0 20rpx;
+    border-radius: 50rpx;
     background-color: $uni-bg-color-grey;
   }
+}
+.animate__animated {
+  --animate-duration: 500ms;
 }
 </style>

@@ -322,12 +322,13 @@ onShow(() => {
     height: 33px;
     background-color: #f8f9fd;
     border-radius: 10px;
-    font-size: 14px;
     padding-right: 6px;
-    margin-left: 6.4%;
+    margin: 0 0 10rpx 6.4%;
+    font-size: 14px;
+    font-weight: bold;
 
     &__icon {
-      font-size: 22px;
+      font-size: 24px;
     }
   }
 

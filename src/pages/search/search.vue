@@ -41,13 +41,4 @@ onShow(() => {
 })
 </script>
 
-<style lang="scss" scoped>
-.search {
-  &__list {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 0 auto;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

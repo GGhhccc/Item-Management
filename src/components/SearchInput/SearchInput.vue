@@ -8,10 +8,11 @@
         placeholder="搜索空间物品"
         placeholderColor="#979797"
         searchIconColor="#565b6d"
+        searchIconSize="52rpx"
         v-model="inputBox"
         :showAction="false"
         shape="square"
-        height="40px"
+        height="80rpx"
         bgColor="#F8F9FD"
       ></u-search>
       <view class="search-input__content__confirm" @click="submitSearch">
@@ -61,7 +62,7 @@ watch(
   display: flex;
   justify-content: center;
   width: 100vw;
-  margin: 4px 0 14px 0;
+  margin: 6rpx 0 30rpx 0;
 
   &__content {
     position: relative;
@@ -69,16 +70,16 @@ watch(
     justify-content: center;
     align-items: center;
     width: 86vw;
-    height: 40px;
+    height: 80rpx;
 
     &__confirm {
       display: flex;
       justify-content: center;
       align-items: center;
       position: absolute;
-      right: -23px;
-      width: 50px;
-      height: 102.6%;
+      right: -46rpx;
+      width: 100rpx;
+      height: 102.5%;
       border-radius: 0 10px 10px 0;
       font-size: 14px;
       color: #fff;
@@ -90,9 +91,9 @@ watch(
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 44px;
+      width: 92rpx;
       height: 104%;
-      margin-right: 8px;
+      margin-right: 16rpx;
       border-radius: 10px;
       color: #3988ff;
       background-color: #f8f9fd;
