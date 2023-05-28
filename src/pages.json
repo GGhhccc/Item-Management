@@ -1,51 +1,90 @@
 {
 	"easycom": {
-		"custom": {  
-	        "^u-(.*)": "uview-plus/components/u-$1/u-$1.vue" 
+		"custom": {
+			"^u-(.*)": "uview-plus/components/u-$1/u-$1.vue" 
 		}
 	},
 	"pages": [
 		{
 			"path": "pages/home/home",
-             "style": {
-                 "navigationStyle": "custom"
-             }
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/details/details",
-             "style": {
-                 "navigationStyle": "custom"
-             }
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/new/new",
-             "style": {
-                 "navigationStyle": "custom"
-             }
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
-			"path": "pages/new/dependence/dependence"
+			"path": "pages/new/dependence/dependence",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/new/tag/tag",
-             "style": {
-                 "navigationStyle": "custom"
-             }
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/edit/edit",
-             "style": {
-                 "navigationStyle": "custom"
-             }
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
-			"path": "pages/user/user"
+			"path": "pages/user/user",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/update/update",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/feedback/feedback",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/deleted/deleted",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/settings/settings",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/history/history",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/message/message"
 		},
 		{
-			"path": "pages/search/search"
+			"path": "pages/search/search",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {
@@ -57,30 +96,31 @@
 	"tabBar": {
 		"backgroundColor": "#F2F2F2",
 		"color": "#000",
+		"selectedColor": "#3988FF",
 		"list": [
 			{
 				"pagePath": "pages/home/home",
 				"text": "首页",
-				"iconPath": "static/icons/tabBar/首页.png",
-				"selectedIconPath": "static/icons/tabBar/首页-选中.png"
+				"iconPath": "static/icons/tabBar/home.png",
+				"selectedIconPath": "static/icons/tabBar/home-selected.png"
 			},
 			{
 				"pagePath": "pages/message/message",
 				"text": "消息",
-				"iconPath": "static/icons/tabBar/消息.png",
-				"selectedIconPath": "static/icons/tabBar/消息-选中.png"
+				"iconPath": "static/icons/tabBar/message.png",
+				"selectedIconPath": "static/icons/tabBar/message-selected.png"
 			},
 			{
 				"pagePath": "pages/new/new",
 				"text": "新建",
-				"iconPath": "static/icons/tabBar/添加.png",
-				"selectedIconPath": "static/icons/tabBar/添加-选中.png"
+				"iconPath": "static/icons/tabBar/new.png",
+				"selectedIconPath": "static/icons/tabBar/new.png"
 			},
 			{
 				"pagePath": "pages/user/user",
 				"text": "我的",
-				"iconPath": "static/icons/tabBar/用户.png",
-				"selectedIconPath": "static/icons/tabBar/用户-选中.png"
+				"iconPath": "static/icons/tabBar/user.png",
+				"selectedIconPath": "static/icons/tabBar/user-selected.png"
 			}
 		]
 	}

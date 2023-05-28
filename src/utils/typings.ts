@@ -41,7 +41,7 @@ export interface FullUserInfo {
   /**
    * 头像
    */
-  headPhoto: string
+  avatar: string
   /**
    * 用户id
    */
@@ -74,6 +74,10 @@ export interface FullUserInfo {
 
 export interface FullItemInfo {
   /**
+   * 物品属性，0表示空间，1表示物品
+   */
+  property: 0 | 1
+  /**
    * 物品 id
    */
   id: string
@@ -82,17 +86,13 @@ export interface FullItemInfo {
    */
   name: string
   /**
-   * 隐私
+   * 隐私，0 表示公开，1 表示私密
    */
   privacy: 0 | 1
   /**
    * 预览图
    */
   previewImg: string
-  /**
-   * 物品属性，0表示空间，1表示物品
-   */
-  properties: 1
   /**
    * 物品数量
    */

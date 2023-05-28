@@ -70,16 +70,17 @@ const chooseItem = () => {
 
 <style lang="scss">
 .spaceItem {
-  box-shadow: 0 5px 5px #e3ebfe;
-  box-sizing: border-box;
   position: relative;
+  box-sizing: border-box;
   width: 650rpx;
+  height: 200rpx;
   margin: 0 auto;
   margin-top: 30rpx;
   border: #eeeef0 solid 2px;
   border-radius: 30rpx;
-  height: 200rpx;
   padding: 25rpx;
+  box-shadow: $uni-box-shadow;
+
   &-img {
     width: 150rpx;
     height: 150rpx;
