@@ -82,7 +82,11 @@
     >
       确认删除?
     </u-modal>
+<<<<<<< HEAD
     <u-popup round="20rpx" mode="bottom" :show="false">
+=======
+    <u-popup round="20rpx" mode="bottom" :show="true">
+>>>>>>> 5453ef2 (refactor: 注释类型标注完善及样式修改)
       <view class="space__subordinateSpace">
         <view class="space__subordinateSpace__title">
           <u-text lines="1" size="40rpx" :text="'从属空间'" />
