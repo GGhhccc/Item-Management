@@ -1,7 +1,7 @@
 import { requestIntercaptor } from './interceptor'
 
 const service = (options: UniApp.RequestOptions) => {
-  const baseUrl = ''
+  const baseUrl = 'http://mqczhv.natappfree.cc/smart/management/api'
   options.url = baseUrl + options.url
   options.timeout = 6000
   // 加入请求拦截

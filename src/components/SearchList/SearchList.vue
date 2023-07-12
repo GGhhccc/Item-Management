@@ -2,7 +2,7 @@
   <u-skeleton rows="10" :loading="isLoading" title animate class="search-list">
     <view v-if="!isLoading">
       <!-- 总列表 -->
-      <template>
+      <template v-if="!isEmpty">
         <view v-for="(item, index) in currentSearchList.itemList" :key="index">
           <SearchListItem
             :item-data="item"

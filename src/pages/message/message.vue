@@ -1,7 +1,15 @@
 <template>
-  <view>message 界面</view>
+  <view class="message">
+    <u-navbar title="消息" autoBack placeholder bgColor="#8CBAFF"></u-navbar>
+
+    <MessageList />
+  </view>
 </template>
 
 <script setup lang="ts"></script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.message {
+  overflow-x: hidden;
+}
+</style>

@@ -78,7 +78,16 @@
 			}
 		},
 		{
-			"path": "pages/message/message"
+			"path": "pages/message/message",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/message/chatbox/chatbox",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/search/search",

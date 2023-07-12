@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', () => {
     createTime: '',
     email: '',
     avatar: '/static/avatar.png',
-    id: '22369874',
+    id: '1234',
     integral: 0,
     phone: '',
     sex: 0,
