@@ -52,22 +52,56 @@
     </view>
     <view v-show="showOperate" class="space__operate">
       <view>
-        <u-icon @click="toEdit" size="60rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
-        <u-text size="30rpx" color="#88898c" align="center" text="编辑" :bold="true" />
+        <u-icon @click="toEdit" size="50rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
+        <u-text size="25rpx" color="#88898c" align="center" text="编辑" :bold="true" />
       </view>
       <view>
-        <u-icon @click="move" size="60rpx" name="rewind-right-fill" color="#3988ff"></u-icon>
-        <u-text size="30rpx" color="#88898c" align="center" text="移动" :bold="true" />
+        <u-icon
+          @click="showSpace = true"
+          size="50rpx"
+          name="rewind-right-fill"
+          color="#3988ff"
+        ></u-icon>
+        <u-text size="25rpx" color="#88898c" align="center" text="移动" :bold="true" />
       </view>
       <view>
-        <u-icon @click="deleteItem" size="60rpx" name="trash" color="#898a8d"></u-icon>
-        <u-text size="30rpx" color="#88898c" align="center" text="删除" :bold="true" />
+        <u-icon @click="deleteItem" size="50rpx" name="trash" color="#898a8d"></u-icon>
+        <u-text size="25rpx" color="#88898c" align="center" text="删除" :bold="true" />
       </view>
       <view>
-        <u-icon @click="cancel" size="60rpx" name="close" color="#898a8d"></u-icon>
-        <u-text size="30rpx" color="#88898c" align="center" text="取消" :bold="true" />
+        <u-icon @click="cancel" size="50rpx" name="close" color="#898a8d"></u-icon>
+        <u-text size="25rpx" color="#88898c" align="center" text="取消" :bold="true" />
       </view>
     </view>
+    <u-modal
+      @cancel="showDelete = false"
+      @confirm="comfirmDelete"
+      :showCancelButton="true"
+      :show="showDelete"
+      width="600rpx"
+    >
+      确认删除?
+    </u-modal>
+    <u-popup round="20rpx" mode="bottom" :show="true">
+      <view class="space__subordinateSpace">
+        <view class="space__subordinateSpace__title">
+          <u-text lines="1" size="40rpx" :text="'从属空间'" />
+        </view>
+        <view class="space__subordinateSpace__confirm">
+          <u-text @click="showSpace = false" lines="1" size="20rpx" :text="'取消'" />
+          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
+          <u-text @click="confirmMove()" color="#82b4fe" lines="1" size="20rpx" :text="'确认'" />
+        </view>
+      </view>
+      <view class="space__subordinateSpace__currentSpace">
+        <view class="space__subordinateSpace__currentSpace__icon">
+          <u-icon name="play-right-fill" color="#3988ff"></u-icon>
+        </view>
+        <text v-for="(item, index) in useForm.spaces.slice(0, 2)" :key="index">
+          {{ item }}
+        </text>
+      </view>
+    </u-popup>
   </view>
 </template>
 
@@ -91,30 +125,59 @@ const props = withDefaults(
     floor: 0
   }
 )
+const showSpace = ref(false)
 //是否显示操作菜单
 const showOperate = ref(false)
+//是否显示删除弹窗
+const showDelete = ref(false)
 //关闭操作菜单的回调
-const cancel = () => {
+const cancel = (): void => {
   showOperate.value = false
   for (let i = 0; i < checkbox.value.length; i++) {
     checkbox.value[i] = false
   }
 }
-//移动到事件
-const move = () => {
+const confirmMove = (): void => {
   console.log(1)
 }
 //跳转至编辑页
-const toEdit = () => {
-  uni.navigateTo({
-    url: '/pages/edit/edit'
-  })
+const toEdit = (): void => {
+  let multiple = true
+  let mount = 0
+  let firstAttribute = 0
+  let index = 0
+  for (const item of checkbox.value) {
+    if (item) {
+      if (!mount) firstAttribute = useForm.allItemData[props.floor][index].attribute
+      mount++
+      if (mount > 1 && (!firstAttribute || !useForm.allItemData[props.floor][index].attribute)) {
+        uni.showToast({
+          title: '只能对物品进行多选编辑操作',
+          icon: 'none'
+        })
+        multiple = false
+        return
+      }
+      useForm.IDbox = []
+      useForm.IDbox.push(useForm.allItemData[props.floor][index].id)
+    }
+    index++
+  }
+  if (multiple && mount > 1)
+    uni.navigateTo({
+      url: '/pages/edit/multiple/multiple'
+    })
+  else if (mount === 1) {
+    uni.navigateTo({
+      url: '/pages/edit/edit'
+    })
+  }
 }
 const useForm = useFormStore()
 //当前id
 const id = useForm.currentId
 //是否显示无物提示
-const showEmpty = () => {
+const showEmpty = (): boolean => {
   if (!props.floor) return false
   let judge = true
   if (useForm.allItemData[props.floor])
@@ -124,17 +187,19 @@ const showEmpty = () => {
   return judge
 }
 //删除触发的回调
-const deleteItem = () => {
-  console.log(1)
+const deleteItem = (): void => {
+  showDelete.value = true
+}
+//确认删除
+const comfirmDelete = (): void => {
+  showDelete.value = false
 }
 //选择物品或空间触发的回调
-const chooseItem = (index: number) => {
-  if (showOperate.value) {
-    checkbox.value[index] = !checkbox.value[index]
-  }
+const chooseItem = (index: number): void => {
+  if (showOperate.value) checkbox.value[index] = !checkbox.value[index]
 }
 //修改背景颜色
-const bgColor = (index: number) => {
+const bgColor = (index: number): string | undefined => {
   if (checkbox.value[index]) return 'background-color: #c8dbfe;'
 }
 //是否选择的数组
@@ -160,7 +225,7 @@ const toSearch = (): void => {
 }
 //跳转添加页
 const toAdd = (): void => {
-  uni.switchTab({
+  uni.navigateTo({
     url: '/pages/new/new'
   })
 }
@@ -168,7 +233,7 @@ const toAdd = (): void => {
 
 <style lang="scss">
 .space {
-  padding-top: 150rpx;
+  padding-top: 100px;
   height: calc(100vh - 150rpx);
   overflow: auto;
   background: linear-gradient(
@@ -301,6 +366,28 @@ const toAdd = (): void => {
     padding-top: 80rpx;
     width: 650rpx;
     margin: 0 auto;
+  }
+  &__subordinateSpace {
+    padding: 30rpx;
+    display: flex;
+    flex-wrap: wrap;
+    &__title {
+      width: 550rpx;
+    }
+    &__confirm {
+      width: 140rpx;
+      display: flex;
+    }
+    &__currentSpace {
+      padding-left: 30rpx;
+      padding-right: 30rpx;
+      display: flex;
+      flex-wrap: wrap;
+      &__icon {
+        margin-top: 7rpx;
+        margin-right: 10rpx;
+      }
+    }
   }
 }
 </style>

@@ -20,16 +20,29 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from 'vue'
-const props = defineProps(['show', 'isDetail', 'name', 'url'])
+const props = defineProps<{
+  //是否显示
+  show: boolean
+  //是否为详情页
+  isDetail: boolean
+  //名字
+  name: string
+  //链接
+  url?: string
+}>()
 const tempShow = ref(props.show)
-const emits = defineEmits(['update:show'])
+const emits = defineEmits<{
+  //更新是否显示布尔值
+  (e: 'update:show', show: boolean): void
+}>()
 watch(
   () => tempShow.value,
   () => {
     emits('update:show', tempShow.value)
   }
 )
-const toPlus = () => {
+//跳转页面
+const toPlus = (): void => {
   uni.navigateTo({
     url: `/pages/${props.url}`
   })

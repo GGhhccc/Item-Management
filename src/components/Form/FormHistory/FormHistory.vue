@@ -1,7 +1,7 @@
 <template>
   <view class="formHistory">
     <view class="formHistory__user">
-      <text class="formHistory__user-username">{{ history.username }}</text>
+      <text class="formHistory__user-username">{{ history.userName }}</text>
       <u-text lines="1" size="22rpx" :text="history.content" />
     </view>
     <u-text align="right" color="#aaadb7" :text="changeTime(history.date)" />
@@ -10,7 +10,11 @@
 </template>
 
 <script setup lang="ts">
-defineProps(['history'])
+import type { HistoryData } from '@/types/form'
+defineProps<{
+  //历史记录
+  history: HistoryData
+}>()
 //时间戳转换
 const changeTime = (timestamp: number): string => {
   const date = new Date(timestamp)

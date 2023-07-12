@@ -1,6 +1,7 @@
 <template>
   <view class="form">
     <u-form errorType="toast" :rules="rules" :model="form" ref="formVerify">
+      <!-- 表单验证 -->
       <u-form-item prop="amount" />
       <u-form-item prop="name" />
       <u-form-item prop="mount" />
@@ -22,7 +23,7 @@
           <u-col span="6">
             <u-radio-group
               @change="attributeClick"
-              :disabled="isDetail"
+              :disabled="isDetail || isMultiple"
               v-model="radioValue"
               placement="row"
             >
@@ -32,6 +33,7 @@
           </u-col>
         </u-row>
         <FormInput
+          v-if="!isMultiple"
           :type="'text'"
           :name="'名称'"
           :maxLength="30"
@@ -39,7 +41,7 @@
           :placeHolder="'最多输入三十字'"
           v-model:input="form.name"
         />
-        <u-row>
+        <u-row v-if="!isMultiple">
           <u-col span="2">
             <u-text color="#353535" :bold="true" text="二维码" />
           </u-col>
@@ -87,21 +89,18 @@
         <FormShow v-model:show="showTag" :url="'new/tag/tag'" :name="'标签'" :isDetail="isDetail" />
         <FormMultiple v-if="showTag" :tags="form.tag" @checkboxClick="checkboxClick" />
         <FormInput
+          v-if="!isMultiple"
           :type="'number'"
           :name="'金额'"
           :maxLength="10"
           :isDetail="isDetail"
           :placeHolder="'请输入金额'"
+          :unitName="'元'"
           v-model:input="form.amount"
           :span="4"
-        >
-          <template #text>
-            <u-col span="2">
-              <u-text text="元"></u-text>
-            </u-col>
-          </template>
-        </FormInput>
+        />
         <FormInput
+          v-if="!isMultiple"
           :type="'number'"
           :name="'数量'"
           :maxLength="10"
@@ -109,8 +108,9 @@
           :placeHolder="'请输入数量'"
           v-model:input="form.mount"
         />
-        <FormDate v-model:date="form.date" />
+        <FormDate :is-detail="isDetail" v-model:date="form.date" />
         <FormInput
+          v-if="!isMultiple"
           :type="'text'"
           :name="'链接'"
           :maxLength="100"
@@ -120,6 +120,7 @@
           :display="!isDetail"
         />
         <FormInput
+          v-if="!isMultiple"
           :type="'text'"
           :name="'状态'"
           :maxLength="30"
@@ -151,7 +152,7 @@
           :name="'从属空间'"
           :isDetail="isDetail"
         />
-        <u-collapse v-if="(isDetail || isEdit) && showSpace" :border="false">
+        <u-collapse v-if="(isDetail || isEdit || isMultiple) && showSpace" :border="false">
           <u-collapse-item
             v-for="(item, index) in form.subordinateSpace"
             :title="`第${index + 1}层`"
@@ -201,7 +202,7 @@
           placeholder="补充描述该物品/空间"
         />
       </view>
-      <view v-if="isEdit || isDetail" class="form__imformation">
+      <view v-if="(isEdit || isDetail) && !isMultiple" class="form__imformation">
         <FormShow v-model:show="showHistory" :name="'历史记录'" :isDetail="true" />
         <view v-show="showHistory" :key="index" v-for="(item, index) in form.history">
           <FormHistory :history="item" />
@@ -233,6 +234,7 @@ import FormPhoto from '@/components/Form/FormPhoto/FormPhoto.vue'
 import FormInput from '@/components/Form/FormInput/FormInput.vue'
 import FormMultiple from '@/components/Form/FormMultiple/FormMultiple.vue'
 import FormHistory from '@/components/Form/FormHistory/FormHistory.vue'
+import FormTag from '@/components/Form/FormTag/FormTag.vue'
 import type { ItemData } from '@/types/form'
 // 分享时的图片及链接
 onShareAppMessage(() => {
@@ -256,6 +258,8 @@ const props = withDefaults(
     isDetail?: boolean
     //表单数据
     itemData?: ItemData
+    //是否为多选编辑
+    isMultiple?: boolean
   }>(),
   {
     isEdit: false,
@@ -281,7 +285,8 @@ const props = withDefaults(
         content: ''
       },
       history: []
-    })
+    }),
+    isMultiple: false
   }
 )
 const useForm = useFormStore()
@@ -292,7 +297,7 @@ const showCode = ref(false)
 //显示标签
 const showTag = ref(true)
 //多选事件
-const checkboxClick = (name: number) => {
+const checkboxClick = (name: number): void => {
   if (!props.isDetail) form.tag[name].checked = !form.tag[name].checked
 }
 //显示历史记录
@@ -300,7 +305,7 @@ const showHistory = ref(false)
 //显示从属空间
 const showAssociate = ref(false)
 //文字颜色
-const textColor = (floor: number, parent: number) => {
+const textColor = (floor: number, parent: number): string | undefined => {
   if (floor !== 1) {
     for (let i = 0; i < form.subordinateSpace[floor - 2].length; i++) {
       if (
@@ -313,7 +318,7 @@ const textColor = (floor: number, parent: number) => {
   }
 }
 //背景颜色
-const bgColor = (floor: number, parent: number) => {
+const bgColor = (floor: number, parent: number): string | undefined => {
   if (floor !== 1) {
     for (let i = 0; i < form.subordinateSpace[floor - 2].length; i++) {
       if (
@@ -326,7 +331,7 @@ const bgColor = (floor: number, parent: number) => {
   }
 }
 //单选事件
-const radioClick = (index: number, floor: number, parent: number) => {
+const radioClick = (index: number, floor: number, parent: number): void => {
   if (
     !props.isDetail &&
     !bgColor(floor, parent) &&
@@ -348,7 +353,7 @@ const radioClick = (index: number, floor: number, parent: number) => {
 //弹出消息提示
 const toast = ref()
 //弹出提示
-const showToast = () => {
+const showToast = (): void => {
   toast.value.show({
     message: "用于描述物品的使用状态,比如可以填入'五成新'、'未使用过'、'已借出'等"
   })
@@ -359,27 +364,27 @@ const showAdministrator = ref(false)
 const showSave = ref(false)
 //是否设置隐私
 const isPrivacy = ref(true)
-//物品属性
-const radioValue = ref('空间')
 //属性点击事件
-const attributeClick = (name: string) => {
+const attributeClick = (name: string): void => {
   form.attribute = name === '空间' ? 0 : 1
 }
 //表单数据
 const form = reactive<ItemData>({
   ...props.itemData
 })
+//物品属性
+const radioValue = !form.attribute ? ref('空间') : ref('物品')
 //标题
 const title = form.name
 //取消暂存
-const cancelSave = () => {
+const cancelSave = (): void => {
   showSave.value = false
   uni.navigateBack({
     delta: 1 //返回层数，2则上上页
   })
 }
 //暂存表单数据
-const saveForm = () => {
+const saveForm = (): void => {
   if (props.isEdit) Object.assign(useForm.tempItemData, form)
   else Object.assign(useForm.itemFormData, form)
   showSave.value = false
@@ -413,15 +418,16 @@ const rules = {
   ]
 }
 //上传表单时的回调
-const submitForm = () => {
-  formVerify.value
-    .validate()
-    .then(() => {
-      console.log(1)
-    })
-    .catch(() => {
-      console.log(0)
-    })
+const submitForm = (): void => {
+  if (!props.isMultiple)
+    formVerify.value
+      .validate()
+      .then(() => {
+        console.log(1)
+      })
+      .catch(() => {
+        console.log(0)
+      })
 }
 </script>
 
