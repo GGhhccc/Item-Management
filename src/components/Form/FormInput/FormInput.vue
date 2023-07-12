@@ -17,7 +17,9 @@
         />
         <u-link v-if="isDetail && !display" text="点击复制" :href="tempInput"></u-link>
       </u-col>
-      <slot name="text" />
+      <u-col v-if="unitName" span="2">
+        <u-text text="元"></u-text>
+      </u-col>
     </u-row>
   </view>
 </template>
@@ -28,6 +30,8 @@ const props = withDefaults(
   defineProps<{
     //是否显示输入框
     display?: boolean
+    //单位名称
+    unitName?: string
     //输入内容
     input: string | number
     //最大长度
@@ -48,14 +52,19 @@ const props = withDefaults(
     input: '',
     maxLength: 0,
     isDetail: false,
+    unitName: '',
     placeHolder: '',
     name: '',
     type: '',
     span: 10
   }
 )
+//输入内容
 const tempInput = ref(props.input)
-const emits = defineEmits(['update:input'])
+const emits = defineEmits<{
+  //更新输入内容
+  (e: 'update:input', input: string | number): void
+}>()
 watch(
   () => tempInput.value,
   () => {

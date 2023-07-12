@@ -29,9 +29,21 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from 'vue'
-const props = defineProps(['size', 'photoList', 'isDetail'])
+import type { PhotoData } from '@/types/form'
+const props = defineProps<{
+  //大小
+  size: string
+  //是否为详情页
+  isDetail: boolean
+  //图片列表
+  photoList: PhotoData[]
+}>()
+//图片列表内容
 const tempPhoto = ref(props.photoList)
-const emits = defineEmits(['update:photoList'])
+const emits = defineEmits<{
+  //更新图片列表
+  (e: 'update:photoList', photoList: PhotoData[]): void
+}>()
 const index = ref()
 watch(
   () => tempPhoto.value,
@@ -40,7 +52,7 @@ watch(
   }
 )
 //新增图片的回调
-const photoAfterRead = (event: any) => {
+const photoAfterRead = (event: any): void => {
   for (let index = 0; index < event.file.length; index++) {
     tempPhoto.value.push({
       url: event.file[index].url
@@ -48,7 +60,7 @@ const photoAfterRead = (event: any) => {
   }
 }
 //删除图片的回调
-const deletePhoto = (index: number) => {
+const deletePhoto = (index: number): void => {
   tempPhoto.value.splice(index, 1)
 }
 </script>
@@ -56,7 +68,8 @@ const deletePhoto = (index: number) => {
 <style scoped lang="scss">
 .formPhoto {
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   &__swiper {
     margin-top: 30rpx;
     width: 300rpx;
@@ -70,6 +83,7 @@ const deletePhoto = (index: number) => {
     }
   }
   &__upload {
+    margin-left: 10rpx;
     margin-top: 30rpx;
     width: 300rpx;
   }

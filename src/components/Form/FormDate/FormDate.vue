@@ -37,14 +37,27 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, ref } from 'vue'
-const props = defineProps(['date', 'isDetail'])
-const emits = defineEmits(['update:date'])
+const props = defineProps<{
+  //日期时间戳
+  date: number
+  //是否为详情页
+  isDetail: boolean
+}>()
+const emits = defineEmits<{
+  //更新日期值
+  (e: 'update:date', date: Date): void
+}>()
+//是否显示日期
 const showDate = ref(false)
+//传入时间戳
 const time = new Date(props.date)
+//年
 const year = ref(time.getFullYear())
+//月
 const month = ref(time.getMonth() + 1)
+//日
 const day = ref(time.getDay())
-//默认日期
+//默认日期(当前日期)
 const defaultDate = ref([new Date().getFullYear() - year.value, month.value - 1, day.value - 1])
 //修改日期时触发的回调
 const changeDate = (e: any) => {
@@ -90,7 +103,7 @@ const dateList = ref([
   ]
 ])
 //设置日期的回调
-const setDate = (e: any) => {
+const setDate = (e: any): void => {
   year.value = e.value[0]
   month.value = e.value[1]
   day.value = e.value[2]

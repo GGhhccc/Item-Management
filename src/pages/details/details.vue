@@ -1,17 +1,13 @@
 <template>
-  <view v-if="attribute">
+  <view>
     <Form :itemData="useFormStore().itemData" :isDetail="true" />
-    <view v-show="attribute" class="delete">
+    <view class="delete">
       <u-icon @click="showDelete = true" size="70rpx" name="trash" color="#565b6d"></u-icon>
     </view>
-    <view v-show="attribute" class="edit">
+    <view class="edit">
       <u-icon @click="toEdit" size="70rpx" name="edit-pen-fill" color="#fff"></u-icon>
       编辑
     </view>
-  </view>
-  <view v-else>
-    <Space :floor="useFormStore().currentFloor" />
-    <u-navbar titleWidth="250rpx" :title="name" :autoBack="true" />
   </view>
   <u-modal
     @cancel="showDelete = false"
@@ -26,13 +22,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
 import { useFormStore } from '@/stores/form'
-const attribute = ref(0)
-const name = useFormStore().currentName
-onLoad((option: any) => {
-  attribute.value = option.attribute
-})
 const showDelete = ref(false)
 const deleteItem = () => {
   showDelete.value = false

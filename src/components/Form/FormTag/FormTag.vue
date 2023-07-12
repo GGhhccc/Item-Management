@@ -29,21 +29,25 @@ withDefaults(
     tag: () => ({
       name: '',
       id: 0,
-      checked: false
+      checked: false,
+      parent: 0,
+      floor: 0
     }),
     bgColor: '',
     color: '',
     shape: ''
   }
 )
-const emits = defineEmits(['click'])
-//标签大小
-const tagSize = (length: number) => {
-  return `width:${length * 15 + 18}px;`
-}
-//点击回调
-const tagClick = (name: number) => {
+const emits = defineEmits<{
+  //触发点击事件
+  (e: 'click', name: number): void
+}>()
+const tagClick = (name: number): void => {
   emits('click', name)
+}
+//标签大小
+const tagSize = (length: number): string => {
+  return `width:${length * 15 + 18}px;`
 }
 </script>
 

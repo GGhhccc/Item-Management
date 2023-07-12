@@ -1,4 +1,5 @@
 import type { ItemData } from '@/types/form'
+import type { SpaceData } from '@/types/form'
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
 
@@ -174,7 +175,77 @@ export const useFormStore = defineStore('form', () => {
     url: '',
     state: '',
     associatedItem: [],
-    subordinateSpace: [[]],
+    subordinateSpace: [
+      [
+        {
+          name: '汤臣一品',
+          checked: true,
+          id: 1,
+          parent: -1,
+          floor: 1
+        },
+        {
+          name: '碧桂园',
+          checked: false,
+          id: 2,
+          parent: -1,
+          floor: 1
+        },
+        {
+          name: '故宫',
+          checked: false,
+          id: 3,
+          parent: -1,
+          floor: 1
+        }
+      ],
+      [
+        {
+          name: '卧室',
+          checked: true,
+          id: 4,
+          parent: 1,
+          floor: 2
+        },
+        {
+          name: '厨房',
+          checked: false,
+          id: 5,
+          parent: 2,
+          floor: 2
+        },
+        {
+          name: '厕所',
+          checked: false,
+          id: 6,
+          parent: 3,
+          floor: 2
+        }
+      ],
+      [
+        {
+          name: '衣柜',
+          checked: true,
+          id: 7,
+          parent: 4,
+          floor: 3
+        },
+        {
+          name: '马桶',
+          checked: false,
+          id: 8,
+          parent: 5,
+          floor: 3
+        },
+        {
+          name: '床底',
+          checked: false,
+          id: 9,
+          parent: 6,
+          floor: 3
+        }
+      ]
+    ],
     administrator: [],
     comment: {
       url: [],
@@ -190,7 +261,142 @@ export const useFormStore = defineStore('form', () => {
     name: '0',
     code: '',
     privary: true,
-    tag: [],
+    tag: [
+      {
+        name: '电子产品',
+        id: 1,
+        checked: true
+      },
+      {
+        name: '生活用品',
+        id: 1,
+        checked: false
+      },
+      {
+        name: '回血道具',
+        id: 1,
+        checked: false
+      },
+      {
+        name: '神装',
+        id: 1,
+        checked: false
+      }
+    ],
+    amount: 0,
+    mount: 0,
+    date: 0,
+    url: '',
+    state: '',
+    associatedItem: [],
+    subordinateSpace: [
+      [
+        {
+          name: '汤臣一品',
+          checked: true,
+          id: 1,
+          parent: -1,
+          floor: 1
+        },
+        {
+          name: '碧桂园',
+          checked: false,
+          id: 2,
+          parent: -1,
+          floor: 1
+        },
+        {
+          name: '故宫',
+          checked: false,
+          id: 3,
+          parent: -1,
+          floor: 1
+        }
+      ],
+      [
+        {
+          name: '卧室',
+          checked: true,
+          id: 4,
+          parent: 1,
+          floor: 2
+        },
+        {
+          name: '厨房',
+          checked: false,
+          id: 5,
+          parent: 2,
+          floor: 2
+        },
+        {
+          name: '厕所',
+          checked: false,
+          id: 6,
+          parent: 3,
+          floor: 2
+        }
+      ],
+      [
+        {
+          name: '衣柜',
+          checked: true,
+          id: 7,
+          parent: 4,
+          floor: 3
+        },
+        {
+          name: '马桶',
+          checked: false,
+          id: 8,
+          parent: 5,
+          floor: 3
+        },
+        {
+          name: '床底',
+          checked: false,
+          id: 9,
+          parent: 6,
+          floor: 3
+        }
+      ]
+    ],
+    administrator: [],
+    comment: {
+      url: [],
+      content: ''
+    },
+    history: []
+  })
+  //多选物品数据
+  const multipleItemFormData = reactive<ItemData>({
+    id: 0,
+    photo: [],
+    attribute: 1,
+    name: '0',
+    code: '',
+    privary: true,
+    tag: [
+      {
+        name: '电子产品',
+        id: 1,
+        checked: true
+      },
+      {
+        name: '生活用品',
+        id: 1,
+        checked: false
+      },
+      {
+        name: '回血道具',
+        id: 1,
+        checked: false
+      },
+      {
+        name: '神装',
+        id: 1,
+        checked: false
+      }
+    ],
     amount: 0,
     mount: 0,
     date: 0,
@@ -210,7 +416,7 @@ export const useFormStore = defineStore('form', () => {
     console.log(1)
   }
   //所有物品及空间数据
-  const allItemData = reactive([
+  const allItemData = reactive<SpaceData[][]>([
     [
       {
         name: '汤臣一品',
@@ -478,7 +684,9 @@ export const useFormStore = defineStore('form', () => {
   //当前名
   const currentName = ref('')
   //空间列表
-  const spaces = ref<string[]>([])
+  const spaces = ref<string[]>(['厕所', '卧室'])
+  //多选ID列表
+  const IDbox = ref<number[]>([])
   return {
     itemData,
     itemFormData,
@@ -488,6 +696,8 @@ export const useFormStore = defineStore('form', () => {
     currentId,
     currentFloor,
     currentName,
-    spaces
+    spaces,
+    IDbox,
+    multipleItemFormData
   }
 })

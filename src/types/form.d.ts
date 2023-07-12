@@ -19,6 +19,8 @@ interface T1 {
 //标签类型
 export interface Tag extends T1 {
   checked: boolean
+  parent?: number
+  floor?: number
 }
 //从属空间类型
 interface SubordinateSpaceData extends T1 {
@@ -60,6 +62,7 @@ interface CommentData {
    */
   content: string
 }
+//物品或空间的详细数据
 export interface ItemData {
   /**
    * id
@@ -70,7 +73,7 @@ export interface ItemData {
    */
   photo: PhotoData[]
   /**
-   * 属性
+   * 属性,0为空间1为物品
    */
   attribute: number
   /**
@@ -129,4 +132,29 @@ export interface ItemData {
    * 历史记录
    */
   history: historyData[]
+}
+// 物品或空间在空间中表示的类型
+export interface SpaceData {
+  /**
+   * 名字
+   */
+  name: string
+  /**
+   * 属性,0为空间1为物品
+   */
+  attribute: number
+  //链接
+  url: string
+  // ID
+  id: number
+  //父空间
+  parent: number
+  //所属层数
+  floor: number
+  //隐私权
+  privary: boolean
+  //管理员
+  administrator: string[]
+  //内容物
+  content: string[]
 }

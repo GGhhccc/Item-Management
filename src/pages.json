@@ -12,6 +12,12 @@
 			}
 		},
 		{
+			"path": "pages/home/spaces/spaces",
+             "style": {
+                 "navigationStyle": "custom"
+             }
+		},
+		{
 			"path": "pages/details/details",
 			"style": {
 				"navigationStyle": "custom"
@@ -22,6 +28,9 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/square/square"
 		},
 		{
 			"path": "pages/new/dependence/dependence",
@@ -40,6 +49,12 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/edit/multiple/multiple",
+             "style": {
+                 "navigationStyle": "custom"
+             }
 		},
 		{
 			"path": "pages/user/user",
@@ -114,16 +129,16 @@
 				"selectedIconPath": "static/icons/tabBar/home-selected.png"
 			},
 			{
+				"pagePath": "pages/square/square",
+				"text": "广场",
+				"iconPath": "static/icons/tabBar/ground.png",
+				"selectedIconPath": "static/icons/tabBar/ground-selected.png"
+			},
+			{
 				"pagePath": "pages/message/message",
 				"text": "消息",
 				"iconPath": "static/icons/tabBar/message.png",
 				"selectedIconPath": "static/icons/tabBar/message-selected.png"
-			},
-			{
-				"pagePath": "pages/new/new",
-				"text": "新建",
-				"iconPath": "static/icons/tabBar/new.png",
-				"selectedIconPath": "static/icons/tabBar/new.png"
 			},
 			{
 				"pagePath": "pages/user/user",
