@@ -1,14 +1,25 @@
 <template>
   <view class="formMutiple">
-    <FormTag @click="checkboxClick(index)" :tag="item" v-for="(item, index) in tags" :key="index" />
+    <FormTag
+      @click="checkboxClick(index)"
+      :tag="item"
+      v-for="(item, index) in props.tags"
+      :key="index"
+    />
   </view>
 </template>
 
 <script setup lang="ts">
 import FormTag from '@/components/Form/FormTag/FormTag.vue'
-defineProps(['tags'])
-const emits = defineEmits(['checkboxClick'])
-//单击事件回调
+import type { Tag } from '@/types/form'
+const props = defineProps<{
+  //标签数组
+  tags: Tag[]
+}>()
+const emits = defineEmits<{
+  //点击事件回调
+  (e: 'checkboxClick', name: number): void
+}>()
 const checkboxClick = (name: number) => {
   emits('checkboxClick', name)
 }

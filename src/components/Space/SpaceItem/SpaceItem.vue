@@ -1,10 +1,11 @@
 <template>
-  <view @click="chooseItem" @longpress="showOperate" :style="bgColor" class="spaceItem">
-    <image
-      @click="toDetail(item.id, item.attribute, item.name, item.floor)"
-      class="spaceItem-img"
-      :src="item.url"
-    />
+  <view
+    @click="toSpace(item.id, item.attribute, item.name, item.floor)"
+    @longpress="showOperate"
+    :style="bgColor"
+    class="spaceItem"
+  >
+    <image class="spaceItem-img" :src="item.url" />
     <view class="spaceItem-attribute">
       <u-icon size="40rpx" color="#4d94ff" :name="item.attribute ? 'grid' : 'home'" />
     </view>
@@ -22,11 +23,11 @@
         <u-avatar-group size="40rpx" :urls="item.administrator"></u-avatar-group>
       </view>
       <view class="spaceItem__imformation-list">
-        <u-icon color="#5096fe" size="40rpx" name="list"></u-icon>
+        <u-icon @click="toDetail" color="#5096fe" size="40rpx" name="list"></u-icon>
       </view>
       <view class="spaceItem__imformation-time">
-        <u-icon size="40rpx" name="clock"></u-icon>
-        <u-text margin="0 0 0 10rpx" size="30rpx" color="#979797" text="2018-8-21" />
+        <u-icon size="25rpx" name="clock"></u-icon>
+        <u-text margin="0 0 0 10rpx" size="25rpx" color="#979797" text="2018-8-21" />
       </view>
     </view>
     <view class="spaceItem__content">
@@ -43,44 +44,67 @@
 
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
-const props = defineProps(['item', 'show', 'bgColor'])
-const emits = defineEmits(['click', 'longpress'])
+import type { SpaceData } from '@/types/form'
+const props = defineProps<{
+  //表单数据类型
+  item: SpaceData
+  //是否显示操作菜单
+  show?: boolean
+  //背景颜色
+  bgColor?: string
+}>()
+
+const emits = defineEmits<{
+  //点击事件
+  (e: 'click'): void
+  //长按事件
+  (e: 'longpress'): void
+}>()
+//表单数据
 const useForm = useFormStore()
 //进入下一层
-const toDetail = (id: number, attribute: number, name: string, floor: number) => {
-  if (!props.show) {
+const toSpace = (id: number, attribute: number, name: string, floor: number): void => {
+  if (!props.show && !attribute) {
+    //修改当前表单数据
     useForm.currentId = id
     useForm.currentFloor = floor
     useForm.currentName = name
     useForm.spaces[floor - 1] = name
+    //跳转
     uni.navigateTo({
-      url: `/pages/details/details?id=${id}&attribute=${attribute}&name=${name}`
+      url: `/pages/home/spaces/spaces`
+    })
+  } else if (!props.show) {
+    uni.navigateTo({
+      url: `/pages/details/details`
     })
   }
+  //触发点击事件
+  emits('click')
+}
+const toDetail = (): void => {
+  uni.navigateTo({
+    url: `/pages/details/details`
+  })
 }
 //长按回调
 const showOperate = () => {
   emits('longpress')
 }
-//点击回调
-const chooseItem = () => {
-  emits('click')
-}
 </script>
 
 <style lang="scss">
 .spaceItem {
-  position: relative;
+  box-shadow: 0 5px 5px #e3ebfe;
   box-sizing: border-box;
+  position: relative;
   width: 650rpx;
-  height: 200rpx;
   margin: 0 auto;
   margin-top: 30rpx;
   border: #eeeef0 solid 2px;
   border-radius: 30rpx;
+  height: 200rpx;
   padding: 25rpx;
-  box-shadow: $uni-box-shadow;
-
   &-img {
     width: 150rpx;
     height: 150rpx;
