@@ -133,14 +133,3 @@ export interface SearchItemsParams {
    */
   labelId: string[]
 }
-
-export interface GetAllItemsParams {
-  /**
-   * 当前页数
-   */
-  offset: number
-  /**
-   * 每页个数
-   */
-  limit?: number
-}

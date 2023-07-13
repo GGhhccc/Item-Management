@@ -1,5 +1,5 @@
 import service from '..'
-import type { GetAllItemsParams, SearchItemsParams } from '@/types/search'
+import type { GetAllItemsParams } from '@/utils/typings'
 
 export function getAllItems({ offset, limit = 10 }: GetAllItemsParams): Promise<any> {
   return service({

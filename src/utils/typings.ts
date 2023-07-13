@@ -114,3 +114,15 @@ export interface FullItemInfo {
    */
   notes: string
 }
+
+// 获取列表
+export interface GetAllItemsParams {
+  /**
+   * 当前页数
+   */
+  offset: number
+  /**
+   * 每页个数
+   */
+  limit?: number
+}
