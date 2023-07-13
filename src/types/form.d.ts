@@ -140,9 +140,9 @@ export interface SpaceData {
   /**
    * 属性,0为空间1为物品
    */
-  attribute: number
+  type: number
   //链接
-  url: string
+  cover: string
   // ID
   id: number
   //父空间

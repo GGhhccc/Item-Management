@@ -40,7 +40,7 @@
         :list="[{ name: '我的' }, { name: '共同管理' }]"
       />
     </view>
-    <view v-for="(item, index) in useForm.allItemData[props.floor]" :key="index">
+    <view v-for="(item, index) in spaceInfo.spaceData" :key="index">
       <SpaceItem
         :bgColor="bgColor(index)"
         v-if="!floor || item.parent === id"
@@ -126,15 +126,23 @@
 
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
+import { useSpaceStore } from '@/stores/space'
 import { ref, onMounted } from 'vue'
 import SpaceItem from '@/components/Space/SpaceItem/SpaceItem.vue'
 import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/SubordinateSpaceItem.vue'
+import { storeToRefs } from 'pinia'
+
+const space = useSpaceStore()
+const { spaceInfo } = storeToRefs(space)
+const { fetchAllRooms } = space
+
 onMounted(() => {
   //开启分享功能
   uni.showShareMenu({
     withShareTicket: true,
     menus: ['shareAppMessage', 'shareTimeline']
   })
+  fetchAllRooms()
 })
 const props = withDefaults(
   defineProps<{
