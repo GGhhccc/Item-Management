@@ -34,6 +34,7 @@ const tempShow = ref(props.show)
 const emits = defineEmits<{
   //更新是否显示布尔值
   (e: 'update:show', show: boolean): void
+  (e: 'click'): void
 }>()
 watch(
   () => tempShow.value,
@@ -43,9 +44,13 @@ watch(
 )
 //跳转页面
 const toPlus = (): void => {
-  uni.navigateTo({
-    url: `/pages/${props.url}`
-  })
+  if (props.url)
+    uni.navigateTo({
+      url: `/pages/${props.url}`
+    })
+  else {
+    emits('click')
+  }
 }
 </script>
 

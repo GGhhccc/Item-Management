@@ -8,30 +8,26 @@ export const useFormStore = defineStore('form', () => {
   const itemData = reactive<ItemData>({
     id: 8,
     photo: [{ url: 'https://cdn.seovx.com/d/?mom=302' }],
-    attribute: 0,
+    attribute: 1,
     name: 'decade品红腰带',
     code: 'data:image/png;base64,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',
     privary: true,
     tag: [
       {
         name: '电子产品',
-        id: 1,
-        checked: true
+        id: 1
       },
       {
         name: '生活用品',
-        id: 1,
-        checked: false
+        id: 1
       },
       {
         name: '回血道具',
-        id: 1,
-        checked: false
+        id: 1
       },
       {
         name: '神装',
-        id: 1,
-        checked: false
+        id: 1
       }
     ],
     amount: 114,
@@ -44,70 +40,52 @@ export const useFormStore = defineStore('form', () => {
       [
         {
           name: '汤臣一品',
-          checked: true,
           id: 1,
-          parent: -1,
-          floor: 1
+          parent: -1
         },
         {
           name: '碧桂园',
-          checked: false,
           id: 2,
-          parent: -1,
-          floor: 1
+          parent: -1
         },
         {
           name: '故宫',
-          checked: false,
           id: 3,
-          parent: -1,
-          floor: 1
+          parent: -1
         }
       ],
       [
         {
           name: '卧室',
-          checked: true,
           id: 4,
-          parent: 1,
-          floor: 2
+          parent: 1
         },
         {
           name: '厨房',
-          checked: false,
           id: 5,
-          parent: 2,
-          floor: 2
+          parent: 2
         },
         {
           name: '厕所',
-          checked: false,
           id: 6,
-          parent: 3,
-          floor: 2
+          parent: 3
         }
       ],
       [
         {
           name: '衣柜',
-          checked: true,
           id: 7,
-          parent: 4,
-          floor: 3
+          parent: 4
         },
         {
           name: '马桶',
-          checked: false,
           id: 8,
-          parent: 5,
-          floor: 3
+          parent: 5
         },
         {
           name: '床底',
-          checked: false,
           id: 9,
-          parent: 6,
-          floor: 3
+          parent: 6
         }
       ]
     ],
@@ -264,23 +242,19 @@ export const useFormStore = defineStore('form', () => {
     tag: [
       {
         name: '电子产品',
-        id: 1,
-        checked: true
+        id: 1
       },
       {
         name: '生活用品',
-        id: 1,
-        checked: false
+        id: 1
       },
       {
         name: '回血道具',
-        id: 1,
-        checked: false
+        id: 1
       },
       {
         name: '神装',
-        id: 1,
-        checked: false
+        id: 1
       }
     ],
     amount: 0,
@@ -378,23 +352,19 @@ export const useFormStore = defineStore('form', () => {
     tag: [
       {
         name: '电子产品',
-        id: 1,
-        checked: true
+        id: 1
       },
       {
         name: '生活用品',
-        id: 1,
-        checked: false
+        id: 1
       },
       {
         name: '回血道具',
-        id: 1,
-        checked: false
+        id: 1
       },
       {
         name: '神装',
-        id: 1,
-        checked: false
+        id: 1
       }
     ],
     amount: 0,
@@ -684,7 +654,20 @@ export const useFormStore = defineStore('form', () => {
   //当前名
   const currentName = ref('')
   //空间列表
-  const spaces = ref<string[]>(['厕所', '卧室'])
+  const spaces = ref<string[]>([
+    '厕所',
+    '卧室',
+    '厕所',
+    '卧室',
+    '厕所',
+    '卧室',
+    '厕所',
+    '卧室',
+    '厕所',
+    '卧室',
+    '厕所',
+    '卧室'
+  ])
   //多选ID列表
   const IDbox = ref<number[]>([])
   return {

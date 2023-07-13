@@ -82,10 +82,10 @@
     >
       确认删除?
     </u-modal>
-    <u-popup round="20rpx" mode="bottom" :show="false">
+    <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="showSpace">
       <view class="space__subordinateSpace">
         <view class="space__subordinateSpace__title">
-          <u-text lines="1" size="40rpx" :text="'从属空间'" />
+          <u-text bold size="40rpx" :text="'从属空间'" />
         </view>
         <view class="space__subordinateSpace__confirm">
           <u-text @click="showSpace = false" lines="1" size="20rpx" :text="'取消'" />
@@ -95,11 +95,30 @@
       </view>
       <view class="space__subordinateSpace__currentSpace">
         <view class="space__subordinateSpace__currentSpace__icon">
-          <u-icon name="play-right-fill" color="#3988ff"></u-icon>
+          <u-icon size="27rpx" name="play-right-fill" color="#3988ff"></u-icon>
         </view>
-        <text v-for="(item, index) in useForm.spaces.slice(0, 2)" :key="index">
+        <text
+          style="font-weight: 600"
+          v-for="(item, index) in useForm.spaces.slice(0, 10)"
+          :key="index"
+        >
           {{ item }}
+          <text v-if="index !== 9"> >&nbsp; </text>
         </text>
+      </view>
+      <view class="space__subordinateSpace__floor">
+        <SubordinateSpaceItem
+          :titlePadding="'10rpx 40rpx'"
+          :tagPadding="'0 70rpx'"
+          v-show="currentFloor >= index"
+          @radioClick="radioClick"
+          :parent="parentBox[index]"
+          :id="spacesBox[index]"
+          v-for="(item, index) in useForm.itemData.subordinateSpace"
+          :subordinateSpaces="item"
+          :key="index"
+          :floor="index + 1"
+        />
       </view>
     </u-popup>
   </view>
@@ -109,6 +128,7 @@
 import { useFormStore } from '@/stores/form'
 import { ref, onMounted } from 'vue'
 import SpaceItem from '@/components/Space/SpaceItem/SpaceItem.vue'
+import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/SubordinateSpaceItem.vue'
 onMounted(() => {
   //开启分享功能
   uni.showShareMenu({
@@ -138,12 +158,47 @@ const cancel = (): void => {
   }
 }
 const confirmMove = (): void => {
-  console.log(1)
+  showSpace.value = false
+}
+//选择从属空间的id
+const spacesBox = ref<number[]>([1, 4, 0])
+//当前每一层空间的父空间id
+const parentBox = ref<number[]>([0, 1, 4])
+//当前层数
+const currentFloor = ref<number>(2)
+//从属空间标签点击事件
+const radioClick = (id: number, floor: number): void => {
+  //点击已选择标签
+  if (spacesBox.value[floor - 1] === id) {
+    //修改当前楼层
+    currentFloor.value = floor - 1
+    //清空当前点击索引之后的已选择空间id缓存
+    for (let i = floor - 1; i < spacesBox.value.length; i++) {
+      if (!spacesBox.value[i]) break
+      spacesBox.value[i] = 0
+    }
+  }
+  //点击未选择标签
+  else {
+    //修改当前楼层
+    currentFloor.value = floor
+    //将当前id存入已选择id缓存中
+    spacesBox.value[floor - 1] = id
+    //清空当前点击索引之后的已选择空间id缓存
+    for (let i = floor; i < spacesBox.value.length; i++) {
+      if (!spacesBox.value[i]) break
+      spacesBox.value[i] = 0
+    }
+    parentBox.value[floor] = id
+  }
 }
 //跳转至编辑页
 const toEdit = (): void => {
+  //是否可以进行多选编辑操作
   let multiple = true
+  //选择数目
   let mount = 0
+  //第一个选择物品属性
   let firstAttribute = 0
   let index = 0
   for (const item of checkbox.value) {
@@ -369,6 +424,7 @@ const toAdd = (): void => {
   }
   &__subordinateSpace {
     padding: 30rpx;
+    padding-bottom: 0;
     display: flex;
     flex-wrap: wrap;
     &__title {
@@ -379,14 +435,17 @@ const toAdd = (): void => {
       display: flex;
     }
     &__currentSpace {
-      padding-left: 30rpx;
-      padding-right: 30rpx;
+      padding: 10rpx 30rpx;
       display: flex;
       flex-wrap: wrap;
       &__icon {
-        margin-top: 7rpx;
+        margin-top: 9rpx;
         margin-right: 10rpx;
       }
+    }
+    &__floor {
+      max-height: 190px;
+      overflow-y: auto;
     }
   }
 }
