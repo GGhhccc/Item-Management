@@ -5,6 +5,7 @@
       :tag="item"
       v-for="(item, index) in props.tags"
       :key="index"
+      :checked="tagBox[index]"
     />
   </view>
 </template>
@@ -15,6 +16,8 @@ import type { Tag } from '@/types/form'
 const props = defineProps<{
   //标签数组
   tags: Tag[]
+  //标签选取状态数组
+  tagBox: boolean[]
 }>()
 const emits = defineEmits<{
   //点击事件回调

@@ -6,7 +6,7 @@
       :borderColor="bgColor"
       :bgColor="bgColor"
       :text="tag.name"
-      :plain="!tag.checked"
+      :plain="!checked"
       @click="tagClick"
     />
   </view>
@@ -24,6 +24,8 @@ withDefaults(
     color?: string
     //形状
     shape?: string
+    //是否被选中
+    checked: boolean
   }>(),
   {
     tag: () => ({
@@ -35,7 +37,8 @@ withDefaults(
     }),
     bgColor: '',
     color: '',
-    shape: ''
+    shape: '',
+    checked: false
   }
 )
 const emits = defineEmits<{
@@ -53,6 +56,6 @@ const tagSize = (length: number): string => {
 
 <style lang="scss">
 .formTag {
-  margin: 0 10rpx 20rpx 0;
+  margin: 0 10rpx 10rpx 0;
 }
 </style>

@@ -18,9 +18,7 @@ interface T1 {
 }
 //标签类型
 export interface Tag extends T1 {
-  checked: boolean
   parent?: number
-  floor?: number
 }
 //从属空间类型
 interface SubordinateSpaceData extends T1 {
