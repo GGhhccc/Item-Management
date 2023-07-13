@@ -3,26 +3,26 @@
     class="search-list-item"
     @longpress="showOperate"
     @click="onClick"
-    :style="itemData.isChecked ? 'background-color: rgb(236, 244, 255);' : ''"
+    :style="searchListData.isChecked ? 'background-color: rgb(236, 244, 255);' : ''"
   >
     <view class="search-list-item__content">
       <view class="search-list-item__content__img-wrapper">
         <view class="search-list-item__content__img-wrapper__img">
-          <u-image :src="itemData.previewImg" width="65px" height="65px" radius="4px"></u-image>
+          <u-image :src="searchListData.cover" width="65px" height="65px" radius="4px"></u-image>
         </view>
         <view class="search-list-item__content__img-wrapper__property">
-          <u-icon size="36rpx" color="#4d94ff" :name="itemData.property ? 'grid' : 'home'" />
+          <u-icon size="36rpx" color="#4d94ff" :name="searchListData.type ? 'grid' : 'home'" />
         </view>
       </view>
 
       <view class="search-list-item__content__info-wrapper">
         <view class="search-list-item__content__info-wrapper__info">
           <view class="search-list-item__content__info-wrapper__info__text">
-            {{ itemData.name }}
+            {{ searchListData.name }}
           </view>
           <view class="search-list-item__content__info-wrapper__info__icon iconfont">&#xe605;</view>
           <view
-            v-if="itemData.privacy"
+            v-if="searchListData.privacy"
             class="search-list-item__content__info-wrapper__info__icon iconfont"
           >
             &#xe601;
@@ -32,15 +32,19 @@
         <!-- 多选 -->
         <view v-if="isChecking" class="search-list-item__content__info-wrapper__checkbox">
           <u-icon
-            v-if="isChecking && !itemData.isChecked"
+            v-if="isChecking && !searchListData.isChecked"
             name="checkmark-circle"
             color="#3988ff"
           ></u-icon>
-          <u-icon v-if="itemData.isChecked" name="checkmark-circle-fill" color="#3988ff"></u-icon>
+          <u-icon
+            v-if="searchListData.isChecked"
+            name="checkmark-circle-fill"
+            color="#3988ff"
+          ></u-icon>
         </view>
 
         <view class="search-list-item__content__info-wrapper__dependent-space">
-          <u-text :text="itemData.dependentSpace" color="#898A8D"></u-text>
+          <u-text :text="searchListData.path" color="#898A8D"></u-text>
         </view>
       </view>
     </view>
@@ -48,14 +52,46 @@
 </template>
 
 <script setup lang="ts">
-import type { ExtendItemList } from '@/types/search'
+import { reactive, watch } from 'vue'
+import type { ItemList, ItemPath, ExtendItemListPath } from '@/types/search'
 
 const props = defineProps<{
   // 当前物品
-  itemData: ExtendItemList
+  itemData: ItemList
   // 是否处于多选模式
   isChecking: boolean
 }>()
+
+// 处理 path
+const formatPath = (path: ItemPath[]) => {
+  const arr: string[] = []
+  for (let i = path.length - 1; i >= 0; i--) {
+    arr.push(path[i].name)
+  }
+  return arr.join('->')
+}
+
+const searchListData = reactive<ExtendItemListPath>({
+  id: props.itemData.id,
+  name: props.itemData.name,
+  type: props.itemData.type,
+  privacy: props.itemData.privacy,
+  cover: props.itemData.cover,
+  path: formatPath(props.itemData.path)
+})
+
+watch(props.itemData, (val) => {
+  ;({
+    id: searchListData.id,
+    name: searchListData.name,
+    type: searchListData.type,
+    privacy: searchListData.privacy,
+    cover: searchListData.cover,
+    isChecked: searchListData.isChecked
+  } = val)
+  const path = formatPath(val.path)
+  searchListData.path = path
+})
 
 const emits = defineEmits<{
   // 长按操作

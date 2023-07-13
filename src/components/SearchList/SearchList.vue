@@ -64,22 +64,21 @@ const isLoadingMore = ref(false)
 
 // 是否无法加载更多了
 const isNoMore = computed(
-  () =>
-    currentSearchList.value.currentPage === currentSearchList.value.total &&
-    currentSearchList.value.itemList.length
+  () => currentSearchList.value.offset === currentSearchList.value.itemList.length
 )
 
 // 请求列表
 async function loadSearchList() {
   manualDisable.value = false
   currentSearchList.value.itemList.length = 0
-  currentSearchList.value.currentPage = 0
+  currentSearchList.value.offset = 0
   isLoading.value = true
 
   try {
     await fetchNewSearchList()
   } catch {
     manualDisable.value = true
+    console.log('请求失败')
   } finally {
     isLoading.value = false
   }
@@ -140,8 +139,8 @@ const cancel = () => {
 }
 
 // 初始化搜索列表
-// loadSearchList()
-fetchNewSearchList()
+loadSearchList()
+// fetchNewSearchList()
 </script>
 
 <style lang="scss" scoped>

@@ -10,10 +10,10 @@
     </u-navbar>
 
     <view class="user__info">
-      <u-avatar :src="userInfo.avatar" size="84"></u-avatar>
+      <u-avatar :src="userInfoData.avatar" size="84"></u-avatar>
       <view class="user__info__main">
         <view class="user__info__main__name">
-          <u-text :text="userInfo.username" size="18" color="#353535" bold></u-text>
+          <u-text :text="userInfoData.name" size="18" color="#353535" bold></u-text>
           <u-icon
             name="edit-pen"
             size="22"
@@ -21,7 +21,7 @@
             custom-style="margin-top: 5rpx;"
           ></u-icon>
         </view>
-        <u-text :text="`ID: ${userInfo.id}`" color="#A0A7BA" size="13"></u-text>
+        <u-text :text="`ID: ${userInfoData.id}`" color="#A0A7BA" size="13"></u-text>
       </view>
     </view>
 
@@ -83,11 +83,35 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
+import { reactive, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import { onLoad } from '@dcloudio/uni-app'
+import type { UserInfo } from '@/types/user'
+
 const user = useUserStore()
+const { fetchUserInfo } = user
 const { userInfo } = storeToRefs(user)
 
+const userInfoData = reactive<UserInfo>({
+  id: userInfo.value.id,
+  name: userInfo.value.name,
+  avatar: userInfo.value.avatar,
+  qrCode: userInfo.value.qrCode
+})
+
+watch(userInfo, (val) => {
+  ;({
+    id: userInfoData.id,
+    name: userInfoData.name,
+    avatar: userInfoData.avatar,
+    qrCode: userInfoData.qrCode
+  } = val)
+})
+
+onLoad(() => {
+  fetchUserInfo()
+})
 // 点击跳转
 const goToSettings = (index: number) => {
   switch (index) {
