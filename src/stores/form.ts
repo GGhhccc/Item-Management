@@ -34,7 +34,7 @@ export const useFormStore = defineStore('form', () => {
     mount: 514,
     date: 1681989647439,
     url: 'https://uiadmin.net/uview-plus/components/input.html',
-    state: '半身不遂',
+    state: '五成新',
     associatedItem: [],
     subordinateSpace: [
       [
