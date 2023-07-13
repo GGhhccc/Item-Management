@@ -11,10 +11,10 @@
         <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
       </view>
     </view>
-    <view v-if="showEmpty()" class="space__hello">
+    <view v-if="!spaceData" class="space__hello">
       <u-text size="80rpx" text="HELLO!"></u-text>
     </view>
-    <view v-if="showEmpty()" class="space__empty">
+    <view v-if="!spaceData" class="space__empty">
       尚未添加物品,快去添加吧
       <image class="space__empty-chair" src="../../static/chair.png" />
       <image class="space__empty-plant" src="../../static/plant.png" />
@@ -40,10 +40,9 @@
         :list="[{ name: '我的' }, { name: '共同管理' }]"
       />
     </view>
-    <view v-for="(item, index) in spaceInfo.spaceData" :key="index">
+    <view v-for="(item, index) in spaceData" :key="index">
       <SpaceItem
         :bgColor="bgColor(index)"
-        v-if="!floor || item.parent === id"
         @click="chooseItem(index)"
         @longpress="showOperate = true"
         :item="item"
@@ -131,10 +130,22 @@ import { ref, onMounted } from 'vue'
 import SpaceItem from '@/components/Space/SpaceItem/SpaceItem.vue'
 import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/SubordinateSpaceItem.vue'
 import { storeToRefs } from 'pinia'
-
 const space = useSpaceStore()
+const { fetchAllRooms, fetchRoomItems } = space
 const { spaceInfo } = storeToRefs(space)
-const { fetchAllRooms } = space
+const spaceData = ref()
+
+if (!useFormStore().currentFloor) {
+  ;(async () => {
+    await fetchAllRooms()
+    spaceData.value = spaceInfo.value.spaceData
+  })()
+} else {
+  ;(async () => {
+    await fetchRoomItems(useFormStore().currentId)
+    spaceData.value = spaceInfo.value.spaceData
+  })()
+}
 
 onMounted(() => {
   //开启分享功能
@@ -142,7 +153,6 @@ onMounted(() => {
     withShareTicket: true,
     menus: ['shareAppMessage', 'shareTimeline']
   })
-  fetchAllRooms()
 })
 const props = withDefaults(
   defineProps<{
@@ -211,9 +221,9 @@ const toEdit = (): void => {
   let index = 0
   for (const item of checkbox.value) {
     if (item) {
-      if (!mount) firstAttribute = useForm.allItemData[props.floor][index].attribute
+      if (!mount) firstAttribute = useForm.allItemData[props.floor][index].type
       mount++
-      if (mount > 1 && (!firstAttribute || !useForm.allItemData[props.floor][index].attribute)) {
+      if (mount > 1 && (!firstAttribute || !useForm.allItemData[props.floor][index].type)) {
         uni.showToast({
           title: '只能对物品进行多选编辑操作',
           icon: 'none'
@@ -237,18 +247,6 @@ const toEdit = (): void => {
   }
 }
 const useForm = useFormStore()
-//当前id
-const id = useForm.currentId
-//是否显示无物提示
-const showEmpty = (): boolean => {
-  if (!props.floor) return false
-  let judge = true
-  if (useForm.allItemData[props.floor])
-    useForm.allItemData[props.floor].map((item: any) => {
-      if (item.parent === id) judge = false
-    })
-  return judge
-}
 //删除触发的回调
 const deleteItem = (): void => {
   showDelete.value = true
@@ -430,27 +428,33 @@ const toAdd = (): void => {
     width: 650rpx;
     margin: 0 auto;
   }
+
   &__subordinateSpace {
     padding: 30rpx;
     padding-bottom: 0;
     display: flex;
     flex-wrap: wrap;
+
     &__title {
       width: 550rpx;
     }
+
     &__confirm {
       width: 140rpx;
       display: flex;
     }
+
     &__currentSpace {
       padding: 10rpx 30rpx;
       display: flex;
       flex-wrap: wrap;
+
       &__icon {
         margin-top: 9rpx;
         margin-right: 10rpx;
       }
     }
+
     &__floor {
       max-height: 190px;
       overflow-y: auto;
