@@ -26,6 +26,7 @@
               :disabled="isDetail || isMultiple"
               v-model="radioValue"
               placement="row"
+              shape="square"
             >
               <u-radio :customStyle="{ marginRight: '20rpx' }" label="空间" name="空间" />
               <u-radio :customStyle="{ marginRight: '20rpx' }" label="物品" name="物品" />
@@ -87,7 +88,12 @@
           </u-col>
         </u-row>
         <FormShow v-model:show="showTag" :url="'new/tag/tag'" :name="'标签'" :isDetail="isDetail" />
-        <FormMultiple v-if="showTag" :tags="form.tag" @checkboxClick="checkboxClick" />
+        <FormMultiple
+          v-if="showTag"
+          :tagBox="tagBox"
+          :tags="form.tag"
+          @checkboxClick="checkboxClick"
+        />
         <FormInput
           v-if="!isMultiple"
           :type="'number'"
@@ -145,37 +151,35 @@
           :name="'关联物品'"
           :isDetail="isDetail"
         />
-        <FormMultiple v-if="showAssociate" :tags="form.tag" @checkboxClick="checkboxClick" />
+        <FormMultiple
+          v-if="showAssociate"
+          :tagBox="tagBox"
+          :tags="form.tag"
+          @checkboxClick="checkboxClick"
+        />
         <FormShow
           v-model:show="showSpace"
           :url="'new/tag/tag'"
           :name="'从属空间'"
           :isDetail="isDetail"
         />
-        <u-collapse v-if="(isDetail || isEdit || isMultiple) && showSpace" :border="false">
-          <u-collapse-item
-            v-for="(item, index) in form.subordinateSpace"
-            :title="`第${index + 1}层`"
-            name="index"
+        <view class="form__imformation__subordinateSpace" v-show="showSpace">
+          <SubordinateSpaceItem
+            :titlePadding="'10rpx 10rpx'"
+            :tagPadding="'0 20rpx'"
+            v-show="currentFloor >= index && (!isDetail || index !== currentFloor)"
+            @radioClick="radioClick"
+            :parent="parentBox[index]"
+            :id="spacesBox[index]"
+            v-for="(item, index) in useForm.itemData.subordinateSpace"
+            :subordinateSpaces="item"
             :key="index"
-          >
-            <view class="form__imformation__tag">
-              <FormTag
-                :tag="item2"
-                v-for="(item2, index2) in item"
-                :key="index2"
-                :bgColor="bgColor(item2.floor, item2.parent)"
-                :borderColor="bgColor(item2.floor, item2.parent)"
-                :color="textColor(item2.floor, item2.parent)"
-                @click="radioClick(index2, item2.floor, item2.parent)"
-                :shape="'circle'"
-              />
-            </view>
-          </u-collapse-item>
-        </u-collapse>
+            :floor="index + 1"
+          />
+        </view>
         <FormShow
+          @click="addAdministrator = true"
           v-model:show="showAdministrator"
-          :url="'new/tag/tag'"
           :name="'管理人'"
           :isDetail="isDetail"
         />
@@ -212,6 +216,40 @@
     <view v-if="!isDetail" class="form__submit">
       <u-button @click="submitForm" type="primary" text="确认" />
     </view>
+    <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="addAdministrator">
+      <view class="form__administrator">
+        <view class="form__administrator__title">
+          <u-text bold size="40rpx" :text="'管理人'" />
+          <u-icon color="#5196ff" name="edit-pen-fill"></u-icon>
+        </view>
+        <view class="form__administrator__operate">
+          <u-text @click="addAdministrator = false" lines="1" size="20rpx" :text="'取消'" />
+          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
+          <u-text @click="clear()" color="#82b4fe" lines="1" size="20rpx" :text="'清除'" />
+          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
+          <u-text @click="confirm()" color="#82b4fe" lines="1" size="20rpx" :text="'确认'" />
+        </view>
+      </view>
+      <view class="form__avatars">
+        <view v-for="(item, index) in form.administrator" :key="index" class="form__avatars__item">
+          <u-avatar @click="tick(index)" size="80rpx" :src="item.avatar"></u-avatar>
+          <u-text size="25rpx" lines="1" :bold="true" align="center" :text="item.name" />
+          <view v-show="tickBox[index] === true" class="form__avatars__item__tick">
+            <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
+          </view>
+        </view>
+      </view>
+      <view class="form__authority">
+        <u-radio-group v-model="authorityValue" placement="column" shape="square">
+          <u-radio :customStyle="{ marginRight: '20rpx' }" label="仅查看" name="仅查看" />
+          <u-radio
+            :customStyle="{ marginRight: '20rpx' }"
+            label="可查看并编辑"
+            name="可查看并编辑"
+          />
+        </u-radio-group>
+      </view>
+    </u-popup>
     <u-modal
       @cancel="cancelSave"
       @confirm="saveForm"
@@ -228,13 +266,15 @@
 import { ref, onMounted, reactive } from 'vue'
 import { useFormStore } from '@/stores/form'
 import { onShareAppMessage } from '@dcloudio/uni-app'
+// 引入组件
 import FormDate from '@/components/Form/FormDate/FormDate.vue'
 import FormShow from '@/components/Form/FormShow/FormShow.vue'
 import FormPhoto from '@/components/Form/FormPhoto/FormPhoto.vue'
 import FormInput from '@/components/Form/FormInput/FormInput.vue'
 import FormMultiple from '@/components/Form/FormMultiple/FormMultiple.vue'
 import FormHistory from '@/components/Form/FormHistory/FormHistory.vue'
-import FormTag from '@/components/Form/FormTag/FormTag.vue'
+import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/SubordinateSpaceItem.vue'
+// 表单数据类型
 import type { ItemData } from '@/types/form'
 // 分享时的图片及链接
 onShareAppMessage(() => {
@@ -296,58 +336,55 @@ const showSpace = ref(true)
 const showCode = ref(false)
 //显示标签
 const showTag = ref(true)
+//显示添加管理员
+const addAdministrator = ref(false)
 //多选事件
-const checkboxClick = (name: number): void => {
-  if (!props.isDetail) form.tag[name].checked = !form.tag[name].checked
+const checkboxClick = (index: number): void => {
+  if (!props.isDetail) tagBox.value[index] = !tagBox.value[index]
+}
+const clear = (): void => {
+  addAdministrator.value = false
+}
+const confirm = (): void => {
+  addAdministrator.value = false
+}
+const tick = (index: number): void => {
+  tickBox.value[index] = !tickBox.value[index]
 }
 //显示历史记录
 const showHistory = ref(false)
 //显示从属空间
 const showAssociate = ref(false)
-//文字颜色
-const textColor = (floor: number, parent: number): string | undefined => {
-  if (floor !== 1) {
-    for (let i = 0; i < form.subordinateSpace[floor - 2].length; i++) {
-      if (
-        form.subordinateSpace[floor - 2][i].id === parent &&
-        form.subordinateSpace[floor - 2][i].checked
-      )
-        return
+//选择从属空间的id
+const spacesBox = ref<number[]>([1, 4, 0])
+//当前每一层空间的父空间id
+const parentBox = ref<number[]>([0, 1, 4])
+//当前层数
+const currentFloor = ref<number>(2)
+//从属空间标签点击事件
+const radioClick = (id: number, floor: number): void => {
+  //点击已选择标签
+  if (spacesBox.value[floor - 1] === id) {
+    //修改当前楼层
+    currentFloor.value = floor - 1
+    //清空当前点击索引之后的已选择空间id缓存
+    for (let i = floor - 1; i < spacesBox.value.length; i++) {
+      if (!spacesBox.value[i]) break
+      spacesBox.value[i] = 0
     }
-    return '#d0d0d0'
   }
-}
-//背景颜色
-const bgColor = (floor: number, parent: number): string | undefined => {
-  if (floor !== 1) {
-    for (let i = 0; i < form.subordinateSpace[floor - 2].length; i++) {
-      if (
-        form.subordinateSpace[floor - 2][i].id === parent &&
-        form.subordinateSpace[floor - 2][i].checked
-      )
-        return
+  //点击未选择标签
+  else {
+    //修改当前楼层
+    currentFloor.value = floor
+    //将当前id存入已选择id缓存中
+    spacesBox.value[floor - 1] = id
+    //清空当前点击索引之后的已选择空间id缓存
+    for (let i = floor; i < spacesBox.value.length; i++) {
+      if (!spacesBox.value[i]) break
+      spacesBox.value[i] = 0
     }
-    return '#f3f3f5'
-  }
-}
-//单选事件
-const radioClick = (index: number, floor: number, parent: number): void => {
-  if (
-    !props.isDetail &&
-    !bgColor(floor, parent) &&
-    form.subordinateSpace[floor - 1][index].checked === false
-  ) {
-    for (let index = floor; index < form.subordinateSpace.length; index++) {
-      for (let index2 = 0; index2 < form.subordinateSpace[floor].length; index2++) {
-        form.subordinateSpace[floor].map((item: any) => {
-          item.checked = false
-        })
-      }
-    }
-    form.subordinateSpace[floor - 1].map((item: any) => {
-      item.checked = false
-    })
-    form.subordinateSpace[floor - 1][index].checked = true
+    parentBox.value[floor] = id
   }
 }
 //弹出消息提示
@@ -372,8 +409,12 @@ const attributeClick = (name: string): void => {
 const form = reactive<ItemData>({
   ...props.itemData
 })
+//选取标签数组
+const tagBox = ref<boolean[]>(new Array(form.tag.length).fill(false))
+const tickBox = ref<boolean[]>(new Array(form.administrator.length).fill(false))
 //物品属性
-const radioValue = !form.attribute ? ref('空间') : ref('物品')
+const radioValue = form.attribute ? ref('物品') : ref('空间')
+const authorityValue = ref('仅查看')
 //标题
 const title = form.name
 //取消暂存
@@ -440,6 +481,50 @@ const submitForm = (): void => {
     padding: 0rpx 0rpx 20rpx 30rpx;
   }
 
+  &__administrator {
+    padding: 30rpx;
+    padding-bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    &__title {
+      display: flex;
+      margin-right: 280rpx;
+    }
+    &__operate {
+      width: 250rpx;
+      display: flex;
+    }
+  }
+
+  &__authority {
+    padding-left: 40rpx;
+    padding-bottom: 40rpx;
+  }
+
+  &__avatars {
+    display: flex;
+    padding: 20rpx 40rpx;
+    padding-right: 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    &__item {
+      padding-right: 20rpx;
+      position: relative;
+      &__tick {
+        width: 28rpx;
+        height: 28rpx;
+        border-radius: 14rpx;
+        background-color: #ff6464;
+        position: absolute;
+        right: 15rpx;
+        bottom: 30rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
   &__imformation {
     border-radius: 30rpx;
     background-color: #fff;
@@ -452,6 +537,11 @@ const submitForm = (): void => {
       border-radius: 30rpx;
       background-color: #fcfcfe;
       text-align: center;
+    }
+
+    &__subordinateSpace {
+      max-height: 200px;
+      overflow-y: auto;
     }
 
     &__code {
