@@ -10,6 +10,10 @@ export interface SearchList {
    */
   limit: number
   /**
+   * 总页数
+   */
+  total: number
+  /**
    * 标签数组
    */
   tagsList: TagList[]

@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
 import { useSearchStore } from '@/stores/search'
+import { onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
 
@@ -64,7 +65,9 @@ const isLoadingMore = ref(false)
 
 // 是否无法加载更多了
 const isNoMore = computed(
-  () => currentSearchList.value.offset === currentSearchList.value.itemList.length
+  () =>
+    currentSearchList.value.offset === currentSearchList.value.total &&
+    currentSearchList.value.itemList.length
 )
 
 // 请求列表
@@ -84,13 +87,20 @@ async function loadSearchList() {
   }
 }
 
+// 触底加载更多
+onReachBottom(() => {
+  if (!isNoMore.value) {
+    loadMoreItem()
+  }
+})
+
 // 请求更多
 async function loadMoreItem() {
   isLoadingMore.value = true
   manualDisable.value = true
 
   try {
-    // await fetchNewPageItem()
+    await fetchNewSearchList()
     manualDisable.value = false
   } catch {
     manualDisable.value = true

@@ -8,7 +8,13 @@
     <view class="search-list-item__content">
       <view class="search-list-item__content__img-wrapper">
         <view class="search-list-item__content__img-wrapper__img">
-          <u-image :src="searchListData.cover" width="65px" height="65px" radius="4px"></u-image>
+          <u-image
+            :src="searchListData.cover"
+            loadingIcon="../../static/szlogo.png"
+            width="65px"
+            height="65px"
+            radius="4px"
+          ></u-image>
         </view>
         <view class="search-list-item__content__img-wrapper__property">
           <u-icon size="36rpx" color="#4d94ff" :name="searchListData.type ? 'grid' : 'home'" />

@@ -1,13 +1,13 @@
 <template>
   <view
-    @click="toSpace(item.id, item.attribute, item.name, item.floor)"
+    @click="toSpace(item.id, item.type, item.name, item.floor)"
     @longpress="showOperate"
     :style="bgColor"
     class="spaceItem"
   >
-    <image class="spaceItem-img" :src="item.url" />
-    <view class="spaceItem-attribute">
-      <u-icon size="40rpx" color="#4d94ff" :name="item.attribute ? 'grid' : 'home'" />
+    <image class="spaceItem-img" :src="item.cover || '../../../static/szlogo.png'" />
+    <view class="spaceItem-type">
+      <u-icon size="40rpx" color="#4d94ff" :name="item.type ? 'grid' : 'home'" />
     </view>
     <view v-if="item.privary" class="spaceItem-lock">
       <u-icon size="40rpx" color="#4d94ff" name="lock"></u-icon>
@@ -45,6 +45,9 @@
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
 import type { SpaceData } from '@/types/form'
+import { useSpaceStore } from '@/stores/space'
+import { storeToRefs } from 'pinia'
+
 const props = defineProps<{
   //表单数据类型
   item: SpaceData
@@ -62,19 +65,27 @@ const emits = defineEmits<{
 }>()
 //表单数据
 const useForm = useFormStore()
+
+const space = useSpaceStore()
+const { spaceInfo } = storeToRefs(space)
+const { fetchAllRooms, fetchRoomItems } = space
+
 //进入下一层
-const toSpace = (id: number, attribute: number, name: string, floor: number): void => {
-  if (!props.show && !attribute) {
+const toSpace = (id: number, type: number, name: string, floor: number): void => {
+  if (!props.show && (type === 0 || type === 1)) {
     //修改当前表单数据
-    useForm.currentId = id
-    useForm.currentFloor = floor
-    useForm.currentName = name
-    useForm.spaces[floor - 1] = name
+    // useForm.currentId = id
+    // useForm.currentFloor = floor
+    // useForm.currentName = name
+    // useForm.spaces[floor - 1] = name
+
+    fetchRoomItems(id)
     //跳转
     uni.navigateTo({
       url: `/pages/home/spaces/spaces`
     })
   } else if (!props.show) {
+    console.log('123123421431322342' + type)
     uni.navigateTo({
       url: `/pages/details/details`
     })
@@ -111,7 +122,7 @@ const showOperate = () => {
     border-radius: 20rpx;
   }
 
-  &-attribute {
+  &-type {
     position: absolute;
     left: 35rpx;
     top: 35rpx;

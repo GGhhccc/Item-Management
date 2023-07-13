@@ -24,10 +24,10 @@ const service = (options: UniApp.RequestOptions) => {
       .then((res: any) => {
         switch (res.data.code) {
           case 200:
-            uni.showToast({
-              title: '请求成功',
-              icon: 'success'
-            })
+            // uni.showToast({
+            //   title: '请求成功',
+            //   icon: 'success'
+            // })
             resolve(res.data.data)
             break
           case 100:

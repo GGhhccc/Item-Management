@@ -12,15 +12,7 @@ export const useUserStore = defineStore('user', () => {
   })
 
   async function fetchUserInfo() {
-    // getUserInfo().then((res) => {
-    //   userInfo.value = res
-    // })
     userInfo.value = await getUserInfo()
-    // const { id, avatar, name, qrCode } = await getUserInfo()
-    // userInfo.value.id = id
-    // userInfo.value.avatar = avatar
-    // userInfo.value.name = name
-    // userInfo.value.qrCode = qrCode
   }
 
   return {

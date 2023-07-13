@@ -22,7 +22,7 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '我不好'
@@ -40,61 +40,61 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
@@ -117,13 +117,13 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
@@ -146,13 +146,13 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
@@ -175,13 +175,13 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
@@ -204,13 +204,13 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
@@ -233,13 +233,13 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
@@ -262,13 +262,13 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
@@ -291,13 +291,13 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
@@ -320,13 +320,13 @@ export const useMessageStore = defineStore('message', () => {
               content: '你好啊'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '好好好好好好好好好好好好好好好好好好好好好好好好好好好好好好'
             },
             {
-              id: '1234',
+              id: '399',
               types: 0,
               time: '',
               content: '不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好不好'
