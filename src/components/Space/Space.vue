@@ -82,7 +82,7 @@
     >
       确认删除?
     </u-modal>
-    <u-popup round="20rpx" mode="bottom" :show="true">
+    <u-popup round="20rpx" mode="bottom" :show="false">
       <view class="space__subordinateSpace">
         <view class="space__subordinateSpace__title">
           <u-text lines="1" size="40rpx" :text="'从属空间'" />

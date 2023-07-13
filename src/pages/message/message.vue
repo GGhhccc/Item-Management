@@ -1,6 +1,12 @@
 <template>
   <view class="message">
-    <u-navbar title="消息" autoBack placeholder bgColor="#8CBAFF"></u-navbar>
+    <u-navbar
+      leftIcon=""
+      title="消息"
+      placeholder
+      bgColor="#8CBAFF"
+      titleStyle="font-weight:bold"
+    ></u-navbar>
 
     <MessageList />
   </view>

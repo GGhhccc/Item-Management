@@ -193,8 +193,6 @@ const resetShowControl = () => {
 }
 
 const selectItem = (index: number) => {
-  // navIndex.value = index
-  // showTitle.value = titleList.value[index]
   switch (index) {
     case 0:
       resetShowControl()

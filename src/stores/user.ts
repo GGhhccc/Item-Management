@@ -1,34 +1,30 @@
 import type { UserInfo } from '../types/user'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { getUserInfo } from '@/network/apis/user'
 
 export const useUserStore = defineStore('user', () => {
   const userInfo = ref<UserInfo>({
-    // address: '',
-    // brief: '还没留下个人简介~',
-    // createTime: '',
-    // email: '',
-    // avatar: '',
-    // id: '',
-    // integral: 0,
-    // phone: '',
-    // sex: 0,
-    // updateTime: '',
-    // username: ''
-    address: '',
-    brief: '还没留下个人简介~',
-    createTime: '',
-    email: '',
-    avatar: '/static/avatar.png',
-    id: '1234',
-    integral: 0,
-    phone: '',
-    sex: 0,
-    updateTime: '',
-    username: '用户名1234'
+    avatar: '',
+    id: '',
+    name: '',
+    qrCode: ''
   })
 
+  async function fetchUserInfo() {
+    // getUserInfo().then((res) => {
+    //   userInfo.value = res
+    // })
+    userInfo.value = await getUserInfo()
+    // const { id, avatar, name, qrCode } = await getUserInfo()
+    // userInfo.value.id = id
+    // userInfo.value.avatar = avatar
+    // userInfo.value.name = name
+    // userInfo.value.qrCode = qrCode
+  }
+
   return {
-    userInfo
+    userInfo,
+    fetchUserInfo
   }
 })

@@ -23,21 +23,9 @@ export interface Pages<T> {
 
 export interface FullUserInfo {
   /**
-   * 地址
-   */
-  address: string
-  /**
    * 个人简介
    */
   brief: string
-  /**
-   * 创建时间
-   */
-  createTime: string
-  /**
-   * 邮箱
-   */
-  email: string
   /**
    * 头像
    */
@@ -47,10 +35,6 @@ export interface FullUserInfo {
    */
   id: string
   /**
-   * 积分
-   */
-  integral: number
-  /**
    * 手机号
    */
   phone: string
@@ -59,24 +43,24 @@ export interface FullUserInfo {
    */
   sex: 0 | 1 | 2
   /**
-   * 更新时间
-   */
-  updateTime: string
-  /**
    * 用户名
    */
-  username: string
+  name: string
   /**
    * 状态，0 黑名单，1 正常
    */
   state: 0 | 1
+  /**
+   * 二维码
+   */
+  qrCode: string
 }
 
 export interface FullItemInfo {
   /**
    * 物品属性，0表示空间，1表示物品
    */
-  property: 0 | 1
+  type: 0 | 1
   /**
    * 物品 id
    */
