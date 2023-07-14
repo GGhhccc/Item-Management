@@ -173,7 +173,7 @@ import { storeToRefs } from 'pinia'
 import type { ShowControl } from '@/types/search'
 
 const searchStore = useSearchStore()
-const { currentTagList, currentScreenData, currentSearchList } = storeToRefs(searchStore)
+const { currentTagList, currentScreenData } = storeToRefs(searchStore)
 const { setTagsList, fetchScreenSearchList, fetchTagList } = searchStore
 const showPopup = ref(false)
 const priceForm = ref()

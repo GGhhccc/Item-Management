@@ -11,6 +11,7 @@ import type {
 } from '@/types/search'
 
 export const useSearchStore = defineStore('search', () => {
+  // 搜索页的主体列表
   const currentSearchList = ref<SearchList>({
     offset: 0,
     total: 0,
@@ -18,6 +19,7 @@ export const useSearchStore = defineStore('search', () => {
     itemList: []
   })
 
+  // 筛选页中的标签列表
   const currentTagList: TagList = reactive({
     offset: 0,
     total: 0,
@@ -25,6 +27,7 @@ export const useSearchStore = defineStore('search', () => {
     tagsList: []
   })
 
+  // 筛选页中的筛选条件
   const currentScreenData: ExtendCurrentScreen = reactive({
     offset: 0,
     total: 0,
@@ -40,6 +43,7 @@ export const useSearchStore = defineStore('search', () => {
     }
   })
 
+  // 输入框文字搜索
   const currentSearchInputData: ExtendCurrentSearchInput = reactive({
     offset: 0,
     total: 0,
@@ -49,7 +53,7 @@ export const useSearchStore = defineStore('search', () => {
     }
   })
 
-  // 给标签列表的每一项添加 checked 属性
+  // 给列表的每一项添加 checked 属性用于多选
   function setTagsList(tagList: TagItem[]) {
     tagList.forEach((value) => {
       value.checked = false
@@ -98,12 +102,11 @@ export const useSearchStore = defineStore('search', () => {
     } else {
       currentSearchList.value.itemList.push(...data.records)
     }
-    // 获取新页数
+    // 更新当前页数
     currentScreenData.offset = data.current
 
     // 为新列表重新添加 checked 属性
     setItemList(currentSearchList.value.itemList)
-    console.log(currentSearchList.value.itemList)
   }
 
   // 输入框搜索物品
@@ -124,7 +127,7 @@ export const useSearchStore = defineStore('search', () => {
     } else {
       currentSearchList.value.itemList.push(...data.records)
     }
-    // 获取新页数
+    // 更新当前页数
     currentSearchInputData.offset = data.current
 
     // 为新列表重新添加 checked 属性

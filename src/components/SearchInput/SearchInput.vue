@@ -38,10 +38,6 @@ const searchStore = useSearchStore()
 const { currentSearchInputData } = storeToRefs(searchStore)
 const { searchItemByInput } = searchStore
 
-const emits = defineEmits<{
-  (e: 'resetInput'): void
-}>()
-
 const inputBox = ref('')
 
 const submitSearch = () => {
