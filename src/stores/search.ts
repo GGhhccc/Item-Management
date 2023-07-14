@@ -1,46 +1,146 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
-import { getAllItems } from '@/network/apis/search'
-import type { SearchList, TagList } from '@/types/search'
+import { ref, reactive } from 'vue'
+import { getAllItems, getAllTags, searchByScreen, searchByInput } from '@/network/apis/search'
+import type {
+  SearchList,
+  TagList,
+  TagItem,
+  ExtendCurrentScreen,
+  ExtendCurrentSearchInput,
+  ItemList
+} from '@/types/search'
 
 export const useSearchStore = defineStore('search', () => {
-  const currentSearchList: SearchList = reactive({
+  const currentSearchList = ref<SearchList>({
     offset: 0,
     total: 0,
     limit: 10,
-    tagsList: [],
     itemList: []
   })
 
-  function setTagsList(tagList: TagList[]) {
+  const currentTagList: TagList = reactive({
+    offset: 0,
+    total: 0,
+    limit: 10,
+    tagsList: []
+  })
+
+  const currentScreenData: ExtendCurrentScreen = reactive({
+    offset: 0,
+    total: 0,
+    limit: 10,
+    screenData: {
+      // 1 空间 | 2 物品
+      type: -1,
+      lowPrice: -1,
+      highPrice: -1,
+      // 0 | 1
+      dateType: -1,
+      labelId: []
+    }
+  })
+
+  const currentSearchInputData: ExtendCurrentSearchInput = reactive({
+    offset: 0,
+    total: 0,
+    limit: 10,
+    inputData: {
+      name: ''
+    }
+  })
+
+  // 给标签列表的每一项添加 checked 属性
+  function setTagsList(tagList: TagItem[]) {
     tagList.forEach((value) => {
       value.checked = false
     })
   }
-
-  function setItemList(itemList: any[]) {
+  function setItemList(itemList: ItemList[]) {
     itemList.forEach((value) => {
       value.isChecked = false
     })
   }
 
+  // 获取搜索初始全部物品列表
   async function fetchNewSearchList() {
     const data = await getAllItems({
-      offset: currentSearchList.offset + 1
+      offset: currentSearchList.value.offset + 1
     })
-    currentSearchList.offset = data.current
-    currentSearchList.itemList.push(...data.records)
+    currentSearchList.value.offset = data.current
+    currentSearchList.value.itemList.push(...data.records)
   }
 
-  function fetchScreenSearchList() {
-    // 发送筛选要求，存入 store
+  // 获取筛选中的标签列表
+  async function fetchTagList() {
+    const data = await getAllTags({
+      offset: currentTagList.offset + 1
+    })
+    currentTagList.offset = data.current
+    currentTagList.tagsList.push(...data.records)
+  }
+
+  // 筛选后获取新的物品列表
+  async function fetchScreenSearchList() {
+    const data = await searchByScreen(
+      {
+        offset: currentScreenData.offset + 1
+      },
+      currentSearchInputData.inputData,
+      currentScreenData.screenData
+    )
+
+    // 获取总数更新 searchList
+    currentSearchList.value.total = data.total
+
+    // 筛选第一页则替换整个列表，否则追加
+    if (currentScreenData.offset === 0) {
+      currentSearchList.value.itemList = data.records
+    } else {
+      currentSearchList.value.itemList.push(...data.records)
+    }
+    // 获取新页数
+    currentScreenData.offset = data.current
+
+    // 为新列表重新添加 checked 属性
+    setItemList(currentSearchList.value.itemList)
+    console.log(currentSearchList.value.itemList)
+  }
+
+  // 输入框搜索物品
+  async function searchItemByInput() {
+    const data = await searchByInput(
+      {
+        offset: currentSearchInputData.offset + 1
+      },
+      currentSearchInputData.inputData
+    )
+
+    // 获取总数更新 searchList
+    currentSearchList.value.total = data.total
+
+    // 筛选第一页则替换整个列表，否则追加
+    if (currentSearchInputData.offset === 0) {
+      currentSearchList.value.itemList = data.records
+    } else {
+      currentSearchList.value.itemList.push(...data.records)
+    }
+    // 获取新页数
+    currentSearchInputData.offset = data.current
+
+    // 为新列表重新添加 checked 属性
+    setItemList(currentSearchList.value.itemList)
   }
 
   return {
     currentSearchList,
+    currentTagList,
+    currentScreenData,
+    currentSearchInputData,
     setTagsList,
     setItemList,
     fetchNewSearchList,
-    fetchScreenSearchList
+    fetchScreenSearchList,
+    fetchTagList,
+    searchItemByInput
   }
 })

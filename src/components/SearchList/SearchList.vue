@@ -1,13 +1,13 @@
 <template>
-  <u-skeleton rows="10" :loading="isLoading" title animate class="search-list">
+  <u-skeleton rows="20" :loading="isLoading" title animate class="search-list">
     <view v-if="!isLoading">
       <!-- 总列表 -->
       <template v-if="!isEmpty">
-        <view v-for="(item, index) in currentSearchList.itemList" :key="index">
+        <view v-for="item in currentSearchList.itemList" :key="item.id">
           <SearchListItem
             :item-data="item"
             :is-checking="checkboxOperate"
-            @onClick="chooseItem(index)"
+            @onClick="chooseItem(item)"
             @longpress="showOperate()"
           />
         </view>
@@ -50,8 +50,8 @@ import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
 
 const searchStore = useSearchStore()
-const { currentSearchList } = storeToRefs(searchStore)
-const { fetchNewSearchList } = searchStore
+const { currentSearchList, currentScreenData, currentSearchInputData } = storeToRefs(searchStore)
+const { fetchNewSearchList, fetchScreenSearchList, searchItemByInput } = searchStore
 
 // 是否正在加载
 const isLoading = ref(false)
@@ -66,7 +66,7 @@ const isLoadingMore = ref(false)
 // 是否无法加载更多了
 const isNoMore = computed(
   () =>
-    currentSearchList.value.offset === currentSearchList.value.total &&
+    currentSearchList.value.itemList.length === currentSearchList.value.total &&
     currentSearchList.value.itemList.length
 )
 
@@ -100,7 +100,13 @@ async function loadMoreItem() {
   manualDisable.value = true
 
   try {
-    await fetchNewSearchList()
+    if (currentScreenData.value.offset) {
+      await fetchScreenSearchList()
+    } else if (currentSearchInputData.value.offset) {
+      await searchItemByInput()
+    } else {
+      await fetchNewSearchList()
+    }
     manualDisable.value = false
   } catch {
     manualDisable.value = true
@@ -109,20 +115,23 @@ async function loadMoreItem() {
   }
 }
 
+// 多选操作
 const checkboxOperate = ref<boolean>(false)
+// 装多选数据的结果数组
 const checkbox = ref<boolean[]>([])
 
 const showOperate = () => {
   checkboxOperate.value = true
 }
 
-const chooseItem = (index: number) => {
+// 控制多选的属性
+const chooseItem = (item: any) => {
   if (checkboxOperate.value) {
-    currentSearchList.value.itemList[index].isChecked =
-      !currentSearchList.value.itemList[index].isChecked
+    item.isChecked = !item.isChecked
   }
 }
 
+// 初始化多选结果数组
 if (currentSearchList.value.itemList) {
   for (let i = 0; i < currentSearchList.value.itemList.length; i++) {
     checkbox.value[i] = false
@@ -143,6 +152,7 @@ const deleteItem = () => {
 
 const cancel = () => {
   checkboxOperate.value = false
+  // 取消时将所有属性的 isChecked 重置为 false
   for (let i = 0; i < currentSearchList.value.itemList.length; i++) {
     currentSearchList.value.itemList[i].isChecked = false
   }
@@ -150,7 +160,6 @@ const cancel = () => {
 
 // 初始化搜索列表
 loadSearchList()
-// fetchNewSearchList()
 </script>
 
 <style lang="scss" scoped>

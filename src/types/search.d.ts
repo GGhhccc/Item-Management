@@ -1,6 +1,23 @@
-import type { FullItemInfo } from '@/utils/typings'
-
 export interface SearchList {
+  /**
+   * 当前所在页
+   */
+  offset: number
+  /**
+   * 每页个数
+   */
+  limit: number
+  /**
+   * 总页数
+   */
+  total: number
+  /**
+   * 物品数组
+   */
+  itemList: ItemList[]
+}
+
+export interface TagList {
   /**
    * 当前所在页
    */
@@ -16,15 +33,10 @@ export interface SearchList {
   /**
    * 标签数组
    */
-  tagsList: TagList[]
-  /**
-   * 物品数组
-   */
-  // itemList: ExtendItemList[]
-  itemList: any[]
+  tagsList: TagItem[]
 }
 
-export interface TagList {
+export interface TagItem {
   /**
    * id
    */
@@ -32,7 +44,11 @@ export interface TagList {
   /**
    * 标签名
    */
-  tag: string
+  name: string
+  /**
+   * 颜色
+   */
+  color: string
   /**
    * 是否选中
    */
@@ -110,12 +126,16 @@ export interface ShowControl {
   showDate: boolean
 }
 
-// 搜索请求的参数
-export interface SearchItemsParams {
+// 筛选请求的参数
+type CurrentScreen = Omit<SearchList, 'itemList'>
+export interface ExtendCurrentScreen extends CurrentScreen {
   /**
-   * 名称
+   * 筛选的数据
    */
-  name: string
+  screenData: ScreenItemsParams
+}
+
+export interface ScreenItemsParams {
   /**
    * 类型
    */
@@ -135,5 +155,21 @@ export interface SearchItemsParams {
   /**
    * 标签数组
    */
-  labelId: string[]
+  labelId: number[]
+}
+
+// 输入框搜索请求的参数
+type CurrentSearchInput = Omit<SearchList, 'itemList'>
+export interface ExtendCurrentSearchInput extends CurrentSearchInput {
+  /**
+   * 输入框的数据
+   */
+  inputData: SearchInputParams
+}
+
+export interface SearchInputParams {
+  /**
+   * 物品名称
+   */
+  name: string
 }

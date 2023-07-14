@@ -1,10 +1,11 @@
 const service = (options: UniApp.RequestOptions) => {
   // baseUrl
-  const baseUrl = 'http://jn94rz.natappfree.cc/smart/management/api'
+  const baseUrl = 'http://vt4r7j.natappfree.cc/smart/management/api'
 
   // 请求拦截
   // const token = uni.getStorageSync('token')
   // if (token) options.header.token = token
+
   options.header = {
     token:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJleHAiOjE2OTAyODMwMzJ9.vLhbLsgjeGEsxs_xTPT46-I-ycoUnxKx246VwQ5U0Q4',

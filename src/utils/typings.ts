@@ -115,8 +115,8 @@ export interface FullItemInfo {
   notes: string
 }
 
-// 获取列表
-export interface GetAllItemsParams {
+// 获取列表的分页参数
+export interface PagingParams {
   /**
    * 当前页数
    */

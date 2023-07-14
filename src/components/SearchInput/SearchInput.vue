@@ -32,9 +32,11 @@ export default defineComponent({
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useSearchStore } from '@/stores/search'
+import { storeToRefs } from 'pinia'
 
 const searchStore = useSearchStore()
-const { fetchNewSearchList } = searchStore
+const { currentSearchInputData } = storeToRefs(searchStore)
+const { searchItemByInput } = searchStore
 
 const emits = defineEmits<{
   (e: 'resetInput'): void
@@ -44,15 +46,15 @@ const inputBox = ref('')
 
 const submitSearch = () => {
   // 发送请求获取新的数据
-  fetchNewSearchList()
+  currentSearchInputData.value.offset = 0
+  currentSearchInputData.value.inputData.name = inputBox.value
+  searchItemByInput()
 }
 
 watch(
   () => inputBox.value,
   () => {
-    if (inputBox.value === '') {
-      emits('resetInput')
-    }
+    currentSearchInputData.value.inputData.name = inputBox.value
   }
 )
 </script>
@@ -85,6 +87,7 @@ watch(
       color: #fff;
       background-color: #3988ff;
       transform: translateX(-50%);
+      z-index: 999;
     }
 
     &__mic {

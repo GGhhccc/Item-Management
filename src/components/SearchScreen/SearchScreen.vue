@@ -64,12 +64,12 @@
           <view class="search-screen__popup__tags__list">
             <view
               class="search-screen__popup__tags__list__item"
-              v-for="(item, index) in currentSearchList.tagsList"
+              v-for="(item, index) in currentTagList.tagsList"
               :key="index"
             >
               <SortButton
                 width="100%"
-                :title="item.tag"
+                :title="item.name"
                 :is-active="item.checked"
                 @on-click="selectTag(index)"
               />
@@ -77,31 +77,33 @@
           </view>
         </view>
 
-        <u-form v-if="showControl.showPrice" :rules="rules" :model="priceRange" ref="priceForm">
-          <u-form-item prop="lowPrice">
-            <u-input
-              v-model="priceRange.lowPrice"
-              placeholder="自定最低价"
-              custom-style="
-                width: 130px;
-                height: 30px;
-              "
-            ></u-input>
-          </u-form-item>
-          <u-form-item>
-            <u-line color="#cecece" length="16px" margin="18px 10px"></u-line>
-          </u-form-item>
-          <u-form-item prop="highPrice">
-            <u-input
-              v-model="priceRange.highPrice"
-              placeholder="自定最高价"
-              custom-style="
-                width: 130px;
-                height: 30px;
-              "
-            ></u-input>
-          </u-form-item>
-        </u-form>
+        <view v-show="showControl.showPrice">
+          <u-form :rules="rules" :model="priceRange" ref="priceForm">
+            <u-form-item prop="lowPrice">
+              <u-input
+                v-model="priceRange.lowPrice"
+                placeholder="自定最低价"
+                custom-style="
+                  width: 130px;
+                  height: 30px;
+                "
+              ></u-input>
+            </u-form-item>
+            <u-form-item>
+              <u-line color="#cecece" length="16px" margin="18px 10px"></u-line>
+            </u-form-item>
+            <u-form-item prop="highPrice">
+              <u-input
+                v-model="priceRange.highPrice"
+                placeholder="自定最高价"
+                custom-style="
+                  width: 130px;
+                  height: 30px;
+                "
+              ></u-input>
+            </u-form-item>
+          </u-form>
+        </view>
 
         <view class="search-screen__popup__date" v-if="showControl.showDate">
           <view>
@@ -171,8 +173,8 @@ import { storeToRefs } from 'pinia'
 import type { ShowControl } from '@/types/search'
 
 const searchStore = useSearchStore()
-const { currentSearchList } = storeToRefs(searchStore)
-const { setTagsList, fetchScreenSearchList } = searchStore
+const { currentTagList, currentScreenData, currentSearchList } = storeToRefs(searchStore)
+const { setTagsList, fetchScreenSearchList, fetchTagList } = searchStore
 const showPopup = ref(false)
 const priceForm = ref()
 const isSubmitting = ref(false)
@@ -230,7 +232,7 @@ const sortByProperties = (index: number) => {
 
 // 筛选标签
 const selectTag = (index: number) => {
-  currentSearchList.value.tagsList[index].checked = !currentSearchList.value.tagsList[index].checked
+  currentTagList.value.tagsList[index].checked = !currentTagList.value.tagsList[index].checked
 }
 
 // 筛选金额
@@ -271,15 +273,19 @@ const selectDate = (index: number) => {
 
 const closePopupEvent = () => {
   showPopup.value = false
-  currentSearchList.value.itemList = uni.getStorageSync('searchList')
 }
 
 const openPopup = () => {
   showPopup.value = !showPopup.value
+  fetchTagList()
+  // console.log(currentTagList.value.tagsList)
+  // console.log(currentSearchList.value.itemList)
 }
 
 const cancelScreen = () => {
+  isSubmitting.value = false
   closePopupEvent()
+  resetAllScreen()
 }
 
 const submitScreen = () => {
@@ -288,13 +294,15 @@ const submitScreen = () => {
     .then(async () => {
       try {
         isSubmitting.value = true
+        updateScreenData()
         await fetchScreenSearchList()
+        isSubmitting.value = false
         uni.showToast({
           title: '筛选成功',
-          icon: 'none'
+          icon: 'success'
         })
-        isSubmitting.value = false
         closePopupEvent()
+        resetAllScreen()
       } catch {}
     })
     .catch(() => {
@@ -305,12 +313,73 @@ const submitScreen = () => {
     })
 }
 
+// 重置筛选选项
+const resetAllScreen = () => {
+  isItemSelected.value = false
+  isSpaceSelected.value = false
+  priceRange.lowPrice = ''
+  priceRange.highPrice = ''
+  sortInTime.value = false
+  sortInReverseTime.value = false
+  currentTagList.value.tagsList.forEach((item) => {
+    item.checked = false
+  })
+  resetShowControl()
+  showControl.showProperties = true
+}
+
+// 更新筛选数据
+const updateScreenData = () => {
+  // 页数重置默认
+  currentScreenData.value.offset = 0
+
+  // 筛选属性
+  if (isSpaceSelected.value) {
+    // 选择空间
+    currentScreenData.value.screenData.type = 1
+  } else if (isItemSelected.value) {
+    // 选择物品
+    currentScreenData.value.screenData.type = 2
+  } else {
+    // 恢复默认
+    currentScreenData.value.screenData.type = -1
+  }
+
+  // 筛选标签
+  currentScreenData.value.screenData.labelId = currentTagList.value.tagsList
+    .filter((item) => item.checked)
+    .map((item) => item.id)
+
+  // 筛选金额
+  if (priceRange.lowPrice !== '') {
+    // 选择金额
+    currentScreenData.value.screenData.lowPrice = Number(priceRange.lowPrice)
+  } else if (priceRange.highPrice !== '') {
+    currentScreenData.value.screenData.highPrice = Number(priceRange.highPrice)
+  } else {
+    // 恢复默认
+    currentScreenData.value.screenData.lowPrice = -1
+  }
+
+  // 筛选时间
+  if (sortInTime.value) {
+    // 按时间排序
+    currentScreenData.value.screenData.dateType = 0
+  } else if (sortInReverseTime.value) {
+    // 按时间倒序排序
+    currentScreenData.value.screenData.dateType = 1
+  } else {
+    // 恢复默认
+    currentScreenData.value.screenData.dateType = -1
+  }
+}
+
 onShow(() => {
-  setTagsList(currentSearchList.value.tagsList)
+  setTagsList(currentTagList.value.tagsList)
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .search-screen {
   &__button {
     display: flex;
@@ -373,7 +442,9 @@ onShow(() => {
         display: flex;
         flex-wrap: wrap;
         width: 100%;
+        max-height: 320rpx;
         gap: 10px;
+        overflow-y: auto;
 
         &__item {
           width: 30%;

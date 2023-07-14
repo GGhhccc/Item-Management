@@ -17,7 +17,7 @@ import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
 
 const searchStore = useSearchStore()
-const { currentSearchList } = storeToRefs(searchStore)
+const { currentSearchList, currentTagList } = storeToRefs(searchStore)
 const { setTagsList, setItemList } = searchStore
 
 // 重置搜索状态
@@ -36,7 +36,7 @@ const getCapsule = () => {
 
 onShow(() => {
   getCapsule()
-  setTagsList(currentSearchList.value.tagsList)
+  setTagsList(currentTagList.value.tagsList)
   setItemList(currentSearchList.value.itemList)
 })
 </script>
