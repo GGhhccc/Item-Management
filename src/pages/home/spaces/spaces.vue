@@ -1,7 +1,12 @@
 <template>
   <view>
     <Space :floor="floor" />
-    <u-navbar titleWidth="250rpx" :title="name" :autoBack="true" />
+    <u-navbar
+      @leftClick="useFormStore().currentFloor--"
+      titleWidth="250rpx"
+      :title="name"
+      :autoBack="true"
+    />
   </view>
 </template>
 

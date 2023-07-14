@@ -1,6 +1,6 @@
 <template>
   <view
-    @click="toSpace(item.id, item.type, item.name, item.floor)"
+    @click="toSpace(item.id, item.type, item.name)"
     @longpress="showOperate"
     :style="bgColor"
     class="spaceItem"
@@ -45,8 +45,6 @@
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
 import type { SpaceData } from '@/types/form'
-import { useSpaceStore } from '@/stores/space'
-import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   //表单数据类型
@@ -66,26 +64,18 @@ const emits = defineEmits<{
 //表单数据
 const useForm = useFormStore()
 
-const space = useSpaceStore()
-const { spaceInfo } = storeToRefs(space)
-const { fetchAllRooms, fetchRoomItems } = space
-
 //进入下一层
-const toSpace = (id: number, type: number, name: string, floor: number): void => {
+const toSpace = (id: number, type: number, name: string): void => {
   if (!props.show && (type === 0 || type === 1)) {
     //修改当前表单数据
-    // useForm.currentId = id
-    // useForm.currentFloor = floor
-    // useForm.currentName = name
-    // useForm.spaces[floor - 1] = name
-
-    fetchRoomItems(id)
+    useForm.currentId = id
+    useForm.currentFloor++
+    useForm.currentName = name
     //跳转
     uni.navigateTo({
       url: `/pages/home/spaces/spaces`
     })
   } else if (!props.show) {
-    console.log('123123421431322342' + type)
     uni.navigateTo({
       url: `/pages/details/details`
     })

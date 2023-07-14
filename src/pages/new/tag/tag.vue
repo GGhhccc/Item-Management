@@ -20,33 +20,54 @@
       </view>
       <view class="tags__new-label"> 颜色 </view>
       <view class="tags__new-colors">
-        <view class="tags__new-colors-unit">
+        <view @click="color = 'black'" class="tags__new-colors-unit">
           <view class="tags__new-colors-unit-ball" />
           黑色
+          <view v-show="color === 'black'" class="tags__new-colors-unit-tick">
+            <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
+          </view>
         </view>
-        <view class="tags__new-colors-unit">
+        <view @click="color = 'orange'" class="tags__new-colors-unit">
           <view style="background-color: #ff9813" class="tags__new-colors-unit-ball" />
           橙色
+          <view v-show="color === 'orange'" class="tags__new-colors-unit-tick">
+            <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
+          </view>
         </view>
-        <view class="tags__new-colors-unit">
+        <view @click="color = 'blue'" class="tags__new-colors-unit">
           <view style="background-color: #3988ff" class="tags__new-colors-unit-ball" />
           蓝色
+          <view v-show="color === 'blue'" class="tags__new-colors-unit-tick">
+            <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
+          </view>
         </view>
-        <view class="tags__new-colors-unit">
+        <view @click="color = 'red'" class="tags__new-colors-unit">
           <view style="background-color: #ff6464" class="tags__new-colors-unit-ball" />
           红色
+          <view v-show="color === 'red'" class="tags__new-colors-unit-tick">
+            <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
+          </view>
         </view>
-        <view class="tags__new-colors-unit">
+        <view @click="color = 'purple'" class="tags__new-colors-unit">
           <view style="background-color: #8439ff" class="tags__new-colors-unit-ball" />
           紫色
+          <view v-show="color === 'purple'" class="tags__new-colors-unit-tick">
+            <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
+          </view>
         </view>
-        <view class="tags__new-colors-unit">
+        <view @click="color = 'yellow'" class="tags__new-colors-unit">
           <view style="background-color: #ffe600" class="tags__new-colors-unit-ball" />
           黄色
+          <view v-show="color === 'yellow'" class="tags__new-colors-unit-tick">
+            <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
+          </view>
         </view>
-        <view class="tags__new-colors-unit">
+        <view @click="color = 'green'" class="tags__new-colors-unit">
           <view style="background-color: #b3f09d" class="tags__new-colors-unit-ball" />
           绿色
+          <view v-show="color === 'green'" class="tags__new-colors-unit-tick">
+            <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
+          </view>
         </view>
       </view>
       <view class="tags__new-submit">
@@ -72,6 +93,7 @@ const showNew = ref(false)
 const submit = () => {
   showNew.value = false
 }
+const color = ref('black')
 </script>
 
 <style lang="scss">
@@ -83,6 +105,7 @@ const submit = () => {
   background-color: #f6f6f6;
 
   &-unit {
+    margin-top: 10px;
     box-sizing: border-box;
     position: relative;
     font-size: 30rpx;
@@ -139,6 +162,7 @@ const submit = () => {
 
   &__new {
     &-label {
+      margin-top: 20px;
       padding-left: 40rpx;
       color: #656565;
       font-size: 30rpx;
@@ -173,6 +197,19 @@ const submit = () => {
           height: 40rpx;
           border-radius: 20rpx;
           margin-right: 30rpx;
+        }
+
+        &-tick {
+          background-color: #b3f09d;
+          width: 35rpx;
+          height: 35rpx;
+          border-radius: 17.5rpx;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: relative;
+          left: 500rpx;
+          top: 5rpx;
         }
       }
     }
