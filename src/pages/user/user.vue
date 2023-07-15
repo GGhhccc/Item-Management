@@ -107,6 +107,7 @@ watch(userInfo, (val) => {
     avatar: userInfoData.avatar,
     qrCode: userInfoData.qrCode
   } = val)
+  console.log(userInfoData.avatar)
 })
 
 onLoad(() => {

@@ -1,6 +1,6 @@
 const service = (options: UniApp.RequestOptions) => {
   // baseUrl
-  const baseUrl = 'http://vt4r7j.natappfree.cc/smart/management/api'
+  const baseUrl = 'http://epqdgd.natappfree.cc/smart/management/api'
 
   // 请求拦截
   // const token = uni.getStorageSync('token')
@@ -69,9 +69,20 @@ const service = (options: UniApp.RequestOptions) => {
         }
       })
       .catch((err) => {
+        // uni.showToast({
+        //   title: '请求超时'
+        // })
         reject(err)
       })
   })
 }
+
+uni.addInterceptor('request', {
+  fail: () => {
+    uni.showToast({
+      title: '请求超时'
+    })
+  }
+})
 
 export default service

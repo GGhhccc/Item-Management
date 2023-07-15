@@ -17,6 +17,13 @@ export interface SearchList {
   itemList: ItemList[]
 }
 
+export interface CompleteSearchList extends SearchList {
+  /**
+   * 多选物品的 id 数组
+   */
+  checkedItemList: number[]
+}
+
 export interface TagList {
   /**
    * 当前所在页

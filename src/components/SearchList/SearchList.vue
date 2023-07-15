@@ -8,37 +8,19 @@
             :item-data="item"
             :is-checking="checkboxOperate"
             @onClick="chooseItem(item)"
-            @longpress="showOperate()"
+            @longpress="showOperate"
           />
         </view>
       </template>
       <!-- 多选状态的弹出框 -->
-      <view
-        v-if="checkboxOperate"
-        class="search-list__operate animate__animated"
-        :class="{ animate__fadeInUp: checkboxOperate, animate__bounceOutDown: !checkboxOperate }"
-      >
-        <view>
-          <u-icon @click="toEdit" size="60rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
-          <u-text size="30rpx" color="#88898c" align="center" text="编辑" />
-        </view>
-        <view>
-          <view class="iconfont" style="font-size: 60rpx; color: #3988ff" @click="move">
-            &#xe6c4;
-          </view>
-          <u-text size="30rpx" color="#88898c" align="center" text="移动" />
-        </view>
-        <view>
-          <u-icon @click="deleteItem" size="60rpx" name="trash" color="#898a8d"></u-icon>
-          <u-text size="30rpx" color="#88898c" align="center" text="删除" />
-        </view>
-        <view>
-          <u-icon @click="cancel" size="60rpx" name="close" color="#898a8d"></u-icon>
-          <u-text size="30rpx" color="#88898c" align="center" text="取消" />
-        </view>
-      </view>
+      <CheckboxOperation
+        :isLongpressing="checkboxOperate"
+        :checkedId="currentSearchList.checkedItemList"
+        @cancel="cancelChecking"
+        @delete="deleteItem"
+      />
       <!-- 空 -->
-      <Empty v-if="isEmpty" />
+      <SearchEmpty v-if="isEmpty" />
     </view>
   </u-skeleton>
 </template>
@@ -47,7 +29,8 @@
 import { useSearchStore } from '@/stores/search'
 import { onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import type { ItemList } from '@/types/search'
 
 const searchStore = useSearchStore()
 const { currentSearchList, currentScreenData, currentSearchInputData } = storeToRefs(searchStore)
@@ -59,6 +42,16 @@ const isLoading = ref(false)
 const manualDisable = ref(false)
 // 是否为空
 const isEmpty = ref(false)
+watch(
+  () => currentSearchList.value.itemList.length,
+  (val) => {
+    if (val === 0) {
+      isEmpty.value = true
+    } else {
+      isEmpty.value = false
+    }
+  }
+)
 
 // 是否正在加载更多通知
 const isLoadingMore = ref(false)
@@ -116,43 +109,30 @@ async function loadMoreItem() {
 }
 
 // 多选操作
-const checkboxOperate = ref<boolean>(false)
-// 装多选数据的结果数组
-const checkbox = ref<boolean[]>([])
+const checkboxOperate = ref(false)
 
 const showOperate = () => {
   checkboxOperate.value = true
 }
 
 // 控制多选的属性
-const chooseItem = (item: any) => {
+const chooseItem = (item: ItemList) => {
   if (checkboxOperate.value) {
     item.isChecked = !item.isChecked
   }
 }
 
-// 初始化多选结果数组
-if (currentSearchList.value.itemList) {
-  for (let i = 0; i < currentSearchList.value.itemList.length; i++) {
-    checkbox.value[i] = false
-  }
-}
-
-const toEdit = () => {
-  console.log('编辑')
-}
-
-const move = () => {
-  console.log('移动')
-}
-
+// 删除
 const deleteItem = () => {
-  console.log('删除')
+  currentSearchList.value.checkedItemList = currentSearchList.value.itemList
+    .filter((item) => item.isChecked)
+    .map((item) => item.id)
 }
 
-const cancel = () => {
+// 取消多选
+const cancelChecking = () => {
   checkboxOperate.value = false
-  // 取消时将所有属性的 isChecked 重置为 false
+  // 将所有属性的 isChecked 重置为 false
   for (let i = 0; i < currentSearchList.value.itemList.length; i++) {
     currentSearchList.value.itemList[i].isChecked = false
   }
@@ -162,23 +142,4 @@ const cancel = () => {
 loadSearchList()
 </script>
 
-<style lang="scss" scoped>
-.search-list {
-  &__operate {
-    display: flex;
-    justify-content: space-around;
-    position: fixed;
-    align-items: center;
-    bottom: 140rpx;
-    left: 42rpx;
-    width: 630rpx;
-    height: 150rpx;
-    padding: 0 20rpx 0 20rpx;
-    border-radius: 50rpx;
-    background-color: $uni-bg-color-grey;
-  }
-}
-.animate__animated {
-  --animate-duration: 500ms;
-}
-</style>
+<style lang="scss" scoped></style>

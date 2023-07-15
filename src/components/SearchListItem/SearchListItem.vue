@@ -30,9 +30,9 @@
         </view>
 
         <!-- 多选 -->
-        <view v-if="isChecking" class="search-list-item__content__info-wrapper__checkbox">
+        <view v-if="checkingStatus" class="search-list-item__content__info-wrapper__checkbox">
           <u-icon
-            v-if="isChecking && !searchItemData.isChecked"
+            v-if="checkingStatus && !searchItemData.isChecked"
             name="checkmark-circle"
             color="#3988ff"
           ></u-icon>
@@ -52,8 +52,9 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import type { ItemList, ItemPath, ExtendItemListPath } from '@/types/search'
+import type { Checkbox } from 'uni-app-types'
 
 const props = defineProps<{
   // 当前物品
@@ -61,6 +62,52 @@ const props = defineProps<{
   // 是否处于多选模式
   isChecking: boolean
 }>()
+
+const emits = defineEmits<{
+  // 长按
+  (e: 'longpress'): void
+  // 点击
+  (e: 'onClick'): void
+  // 新增多选
+  (e: 'addCheckboxVal', val: number): void
+  // 移除多选
+  (e: 'romoveCheckboxVal', val: number): void
+}>()
+
+const checkingStatus = ref(false)
+
+// 监听是否处于多选模式
+watch(
+  () => props.isChecking,
+  (val) => {
+    checkingStatus.value = val
+  }
+)
+
+watch(props.itemData, (val) => {
+  ;({
+    id: searchItemData.id,
+    name: searchItemData.name,
+    type: searchItemData.type,
+    privacy: searchItemData.privacy,
+    cover: searchItemData.cover
+  } = val)
+  const path = formatPath(val.path)
+  searchItemData.path = path
+})
+
+watch(
+  () => props.itemData.isChecked,
+  (val) => {
+    // 由于部分数据在筛选前已经加载过，所以上面的 watch 无法监听到变化，这部分数据需要重新监听多选属性
+    searchItemData.isChecked = val
+    if (val) {
+      emits('addCheckboxVal', props.itemData.id)
+    } else {
+      emits('romoveCheckboxVal', props.itemData.id)
+    }
+  }
+)
 
 // 处理 path
 const formatPath = (path: ItemPath[]) => {
@@ -82,32 +129,6 @@ const searchItemData = reactive<ExtendItemListPath>({
   isChecked: props.itemData.isChecked,
   path: formatPath(props.itemData.path)
 })
-
-watch(props.itemData, (val) => {
-  ;({
-    id: searchItemData.id,
-    name: searchItemData.name,
-    type: searchItemData.type,
-    privacy: searchItemData.privacy,
-    cover: searchItemData.cover
-  } = val)
-  const path = formatPath(val.path)
-  searchItemData.path = path
-})
-
-// 由于部分数据在筛选前已经加载过，所以上面的 watch 无法监听到变化，这部分数据需要重新监听多选属性
-watch(
-  () => props.itemData.isChecked,
-  () => {
-    searchItemData.isChecked = props.itemData.isChecked
-  }
-)
-
-const emits = defineEmits<{
-  // 长按操作
-  (e: 'longpress'): void
-  (e: 'onClick'): void
-}>()
 
 const showOperate = () => {
   emits('longpress')

@@ -1,8 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
-import { getAllItems, getAllTags, searchByScreen, searchByInput } from '@/network/apis/search'
+import {
+  getAllItems,
+  getAllTags,
+  searchByScreen,
+  searchByInput,
+  batchDelete
+} from '@/network/apis/search'
 import type {
-  SearchList,
+  CompleteSearchList,
   TagList,
   TagItem,
   ExtendCurrentScreen,
@@ -12,11 +18,12 @@ import type {
 
 export const useSearchStore = defineStore('search', () => {
   // 搜索页的主体列表
-  const currentSearchList = ref<SearchList>({
+  const currentSearchList = ref<CompleteSearchList>({
     offset: 0,
     total: 0,
     limit: 10,
-    itemList: []
+    itemList: [],
+    checkedItemList: []
   })
 
   // 筛选页中的标签列表
@@ -71,7 +78,13 @@ export const useSearchStore = defineStore('search', () => {
       offset: currentSearchList.value.offset + 1
     })
     currentSearchList.value.offset = data.current
+    // if (currentSearchList.value.offset === 0) {
+    //   currentSearchList.value.itemList = data.records
+    // } else {
+    //   currentSearchList.value.itemList.push(...data.records)
+    // }
     currentSearchList.value.itemList.push(...data.records)
+    setItemList(currentSearchList.value.itemList)
   }
 
   // 获取筛选中的标签列表
@@ -92,6 +105,9 @@ export const useSearchStore = defineStore('search', () => {
       currentSearchInputData.inputData,
       currentScreenData.screenData
     )
+
+    // 筛选后重置 currentSearchList 的 offset
+    currentSearchList.value.offset = 0
 
     // 获取总数更新 searchList
     currentSearchList.value.total = data.total
@@ -118,6 +134,9 @@ export const useSearchStore = defineStore('search', () => {
       currentSearchInputData.inputData
     )
 
+    // 筛选后重置 currentSearchList 的 offset
+    currentSearchList.value.offset = 0
+
     // 获取总数更新 searchList
     currentSearchList.value.total = data.total
 
@@ -134,6 +153,39 @@ export const useSearchStore = defineStore('search', () => {
     setItemList(currentSearchList.value.itemList)
   }
 
+  // 批量删除
+  async function batchDeteleSearch(checkedItemList: number[]) {
+    await batchDelete(0, checkedItemList)
+    // 重置列表
+    currentSearchList.value.checkedItemList = []
+
+    // 重新获取列表
+    // 不筛选直接执行多选删除
+    if (currentSearchList.value.offset) {
+      // currentSearchList.value.offset -= 1
+      currentSearchList.value.offset = 0
+      currentSearchList.value.itemList = []
+      await fetchNewSearchList()
+
+      // 筛选后执行多选删除
+    } else if (currentScreenData.offset) {
+      // currentScreenData.offset -= 1
+      currentScreenData.offset = 0
+      await fetchScreenSearchList()
+      console.log(currentSearchList.value.itemList)
+      console.log('nmsl')
+
+      // 输入框搜索后执行多选删除
+    } else if (currentSearchInputData.offset) {
+      // currentSearchInputData.offset -= 1
+      currentSearchInputData.offset = 0
+      await searchItemByInput()
+    }
+
+    // 为新列表重新添加 checked 属性
+    setItemList(currentSearchList.value.itemList)
+  }
+
   return {
     currentSearchList,
     currentTagList,
@@ -144,6 +196,7 @@ export const useSearchStore = defineStore('search', () => {
     fetchNewSearchList,
     fetchScreenSearchList,
     fetchTagList,
-    searchItemByInput
+    searchItemByInput,
+    batchDeteleSearch
   }
 })

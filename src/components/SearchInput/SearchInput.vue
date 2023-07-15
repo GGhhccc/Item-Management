@@ -40,11 +40,18 @@ const { searchItemByInput } = searchStore
 
 const inputBox = ref('')
 
-const submitSearch = () => {
+const submitSearch = async () => {
   // 发送请求获取新的数据
   currentSearchInputData.value.offset = 0
   currentSearchInputData.value.inputData.name = inputBox.value
-  searchItemByInput()
+  uni.showLoading({
+    title: '搜索中'
+  })
+  await searchItemByInput()
+  uni.showToast({
+    title: '搜索成功',
+    icon: 'success'
+  })
 }
 
 watch(

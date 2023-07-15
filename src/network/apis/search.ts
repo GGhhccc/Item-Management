@@ -64,3 +64,16 @@ export function searchByInput(
     }
   })
 }
+
+// 批量删除
+export function batchDelete(
+  // 0 在空间中删除 | 1 在回收站删除
+  type: number,
+  itemIds: number[]
+): Promise<any> {
+  return service({
+    url: `/items/delete/${type}`,
+    method: 'DELETE',
+    data: itemIds
+  })
+}
