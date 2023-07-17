@@ -44,7 +44,8 @@
         </view>
 
         <view class="search-list-item__content__info-wrapper__dependent-space">
-          <u-text :text="searchItemData.path" color="#898A8D"></u-text>
+          <u-text v-if="!isHistory" :text="searchItemData.path" color="#898A8D"></u-text>
+          <u-text v-if="isHistory" text="用户1234 添加了标签“书本”" color="#898A8D"></u-text>
         </view>
       </view>
     </view>
@@ -52,9 +53,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, inject } from 'vue'
 import type { ItemList, ItemPath, ExtendItemListPath } from '@/types/search'
-import type { Checkbox } from 'uni-app-types'
+
+// 是否为历史搜索页
+const isHistory = inject<boolean>('isHistory', false)
 
 const props = defineProps<{
   // 当前物品

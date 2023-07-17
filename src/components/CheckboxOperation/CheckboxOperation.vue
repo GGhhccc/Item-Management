@@ -5,35 +5,46 @@
     class="checkbox-opertation animate__animated"
     :class="{ animate__fadeInUp: checkboxOperate, animate__bounceOutDown: !checkboxOperate }"
   >
-    <view>
-      <u-icon @click="toEdit" size="60rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
+    <view v-if="isNeedEdit">
+      <u-icon size="60rpx" name="edit-pen-fill" color="#3988ff" @click="toEdit"></u-icon>
       <u-text size="30rpx" color="#88898c" align="center" text="编辑" />
     </view>
-    <view>
+    <view v-if="isNeedMove">
       <view class="iconfont" style="font-size: 60rpx; color: #3988ff" @click="move">
         &#xe6c4;
       </view>
       <u-text size="30rpx" color="#88898c" align="center" text="移动" />
     </view>
     <view>
-      <u-icon @click="deleteItem" size="60rpx" name="trash" color="#898a8d"></u-icon>
+      <u-icon size="50rpx" name="trash" color="#898a8d" @click="deleteItem"></u-icon>
       <u-text size="30rpx" color="#88898c" align="center" text="删除" />
     </view>
+    <view v-if="isDeleted">
+      <u-icon size="50rpx" name="reload" color="#898a8d" @click="recoveringItem"></u-icon>
+      <u-text size="30rpx" color="#88898c" align="center" text="恢复" />
+    </view>
     <view>
-      <u-icon @click="cancelBtn" size="60rpx" name="close" color="#898a8d"></u-icon>
+      <u-icon size="50rpx" name="close" color="#898a8d" @click="cancelBtn"></u-icon>
       <u-text size="30rpx" color="#88898c" align="center" text="取消" />
     </view>
   </view>
+  <u-modal :show="showModal"></u-modal>
 </template>
 
 <script setup lang="ts">
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref, watch, inject } from 'vue'
 
 const searchStore = useSearchStore()
 const { currentSearchList } = storeToRefs(searchStore)
-const { batchDeteleSearch } = searchStore
+
+// 是否显示编辑按钮
+const isNeedEdit = inject<boolean>('isNeedEdit', true)
+// 是否显示移动按钮
+const isNeedMove = inject<boolean>('isNeedMove', false)
+// 是否是删除页面
+const isDeleted = inject<boolean>('isDetele', false)
 
 const props = defineProps<{
   // 是否长按
@@ -45,7 +56,10 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'cancel'): void
   (e: 'delete'): void
+  (e: 'recover'): void
 }>()
+
+const showModal = ref(false)
 
 // 多选操作
 const checkboxOperate = ref(false)
@@ -56,10 +70,6 @@ watch(
   }
 )
 
-// 装多选数据的结果数组
-// const checkbox = ref(props.checkedId)
-// const { checkedId } = toRefs(props)
-
 const toEdit = () => {
   console.log('编辑')
 }
@@ -68,17 +78,33 @@ const move = () => {
   console.log('移动')
 }
 
-const deleteItem = async () => {
-  emits('delete')
+// 多选恢复已删除物品
+const recoveringItem = () => {
+  currentSearchList.value.checkedItemList = currentSearchList.value.itemList
+    .filter((item) => item.isChecked)
+    .map((item) => item.id)
+
+  uni.showLoading({
+    title: '恢复中',
+    mask: true
+  })
+
+  emits('recover')
+  cancelBtn()
+}
+
+// 多选删除
+const deleteItem = () => {
+  currentSearchList.value.checkedItemList = currentSearchList.value.itemList
+    .filter((item) => item.isChecked)
+    .map((item) => item.id)
+
   uni.showLoading({
     title: '删除中',
     mask: true
   })
-  await batchDeteleSearch(currentSearchList.value.checkedItemList)
-  uni.showToast({
-    title: '删除成功',
-    icon: 'success'
-  })
+
+  emits('delete')
   cancelBtn()
 }
 

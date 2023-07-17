@@ -2,7 +2,7 @@
   <u-skeleton rows="20" :loading="isLoading" title animate class="search-list">
     <view v-if="!isLoading">
       <!-- 总列表 -->
-      <template v-if="!isEmpty">
+      <template>
         <view v-for="item in currentSearchList.itemList" :key="item.id">
           <SearchListItem
             :item-data="item"
@@ -18,9 +18,8 @@
         :checkedId="currentSearchList.checkedItemList"
         @cancel="cancelChecking"
         @delete="deleteItem"
+        @recover="recoverItem"
       />
-      <!-- 空 -->
-      <SearchEmpty v-if="isEmpty" />
     </view>
   </u-skeleton>
 </template>
@@ -29,29 +28,28 @@
 import { useSearchStore } from '@/stores/search'
 import { onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, toRefs, inject } from 'vue'
 import type { ItemList } from '@/types/search'
 
 const searchStore = useSearchStore()
 const { currentSearchList, currentScreenData, currentSearchInputData } = storeToRefs(searchStore)
-const { fetchNewSearchList, fetchScreenSearchList, searchItemByInput } = searchStore
+const {
+  fetchNewSearchList,
+  fetchScreenSearchList,
+  searchItemByInput,
+  batchDeteleSearch,
+  restoreDeletedItem
+} = searchStore
 
-// 是否正在加载
-const isLoading = ref(false)
-// 手动控制禁用加载
-const manualDisable = ref(false)
-// 是否为空
-const isEmpty = ref(false)
-watch(
-  () => currentSearchList.value.itemList.length,
-  (val) => {
-    if (val === 0) {
-      isEmpty.value = true
-    } else {
-      isEmpty.value = false
-    }
-  }
-)
+// 是否是删除页面
+const isDeleted = inject<boolean>('isDetele', false)
+
+const props = defineProps<{
+  isLoading: boolean
+  manualDisable: boolean
+}>()
+
+const { isLoading, manualDisable } = toRefs(props)
 
 // 是否正在加载更多通知
 const isLoadingMore = ref(false)
@@ -62,23 +60,6 @@ const isNoMore = computed(
     currentSearchList.value.itemList.length === currentSearchList.value.total &&
     currentSearchList.value.itemList.length
 )
-
-// 请求列表
-async function loadSearchList() {
-  manualDisable.value = false
-  currentSearchList.value.itemList.length = 0
-  currentSearchList.value.offset = 0
-  isLoading.value = true
-
-  try {
-    await fetchNewSearchList()
-  } catch {
-    manualDisable.value = true
-    console.log('请求失败')
-  } finally {
-    isLoading.value = false
-  }
-}
 
 // 触底加载更多
 onReachBottom(() => {
@@ -94,11 +75,11 @@ async function loadMoreItem() {
 
   try {
     if (currentScreenData.value.offset) {
-      await fetchScreenSearchList()
+      isDeleted ? await fetchScreenSearchList(1) : await fetchScreenSearchList(0)
     } else if (currentSearchInputData.value.offset) {
-      await searchItemByInput()
+      isDeleted ? await searchItemByInput(1) : await searchItemByInput(0)
     } else {
-      await fetchNewSearchList()
+      isDeleted ? await fetchNewSearchList(1) : await fetchNewSearchList(0)
     }
     manualDisable.value = false
   } catch {
@@ -123,10 +104,21 @@ const chooseItem = (item: ItemList) => {
 }
 
 // 删除
-const deleteItem = () => {
-  currentSearchList.value.checkedItemList = currentSearchList.value.itemList
-    .filter((item) => item.isChecked)
-    .map((item) => item.id)
+const deleteItem = async () => {
+  await batchDeteleSearch(currentSearchList.value.checkedItemList)
+  uni.showToast({
+    title: '删除成功',
+    icon: 'success'
+  })
+}
+
+// 恢复
+const recoverItem = async () => {
+  await restoreDeletedItem(currentSearchList.value.checkedItemList)
+  uni.showToast({
+    title: '恢复成功',
+    icon: 'success'
+  })
 }
 
 // 取消多选
@@ -139,7 +131,7 @@ const cancelChecking = () => {
 }
 
 // 初始化搜索列表
-loadSearchList()
+// loadSearchList()
 </script>
 
 <style lang="scss" scoped></style>
