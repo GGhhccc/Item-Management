@@ -1,9 +1,6 @@
 <template>
   <view class="search-input">
     <view class="search-input__content">
-      <view class="search-input__content__mic">
-        <view class="iconfont" style="font-size: 18px">&#xe656;</view>
-      </view>
       <u-search
         placeholder="搜索空间物品"
         placeholderColor="#979797"
@@ -30,13 +27,15 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, inject } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
 
 const searchStore = useSearchStore()
 const { currentSearchInputData } = storeToRefs(searchStore)
 const { searchItemByInput } = searchStore
+
+const isDeleted = inject<boolean>('isDetele', false)
 
 const inputBox = ref('')
 
@@ -47,7 +46,7 @@ const submitSearch = async () => {
   uni.showLoading({
     title: '搜索中'
   })
-  await searchItemByInput()
+  isDeleted ? await searchItemByInput(1) : await searchItemByInput(0)
   uni.showToast({
     title: '搜索成功',
     icon: 'success'
@@ -65,16 +64,15 @@ watch(
 <style lang="scss" scoped>
 .search-input {
   display: flex;
-  justify-content: center;
-  width: 100vw;
+  width: 70vw;
+  padding: 0 10rpx 0 40rpx;
   margin: 6rpx 0 30rpx 0;
 
   &__content {
     position: relative;
     display: flex;
-    justify-content: center;
     align-items: center;
-    width: 86vw;
+    width: 70vw;
     height: 80rpx;
 
     &__confirm {
@@ -82,27 +80,15 @@ watch(
       justify-content: center;
       align-items: center;
       position: absolute;
-      right: -46rpx;
+      right: -30rpx;
       width: 100rpx;
-      height: 102.5%;
-      border-radius: 0 10px 10px 0;
+      height: 72%;
+      border-radius: 10px;
       font-size: 14px;
       color: #fff;
-      background-color: #3988ff;
+      background-color: #76acfc;
       transform: translateX(-50%);
       z-index: 999;
-    }
-
-    &__mic {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 92rpx;
-      height: 104%;
-      margin-right: 16rpx;
-      border-radius: 10px;
-      color: #3988ff;
-      background-color: #f8f9fd;
     }
   }
 }

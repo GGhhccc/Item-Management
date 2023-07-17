@@ -2,7 +2,7 @@
   <view class="search-screen">
     <view class="search-screen__button" @click="openPopup">
       <view class="iconfont search-screen__button__icon">&#xe609;</view>
-      <view>筛选</view>
+      <view class="iconfont search-screen__button__text">筛选</view>
     </view>
 
     <u-popup
@@ -295,7 +295,7 @@ const submitScreen = () => {
       try {
         isSubmitting.value = true
         updateScreenData()
-        await fetchScreenSearchList()
+        await fetchScreenSearchList(0)
         isSubmitting.value = false
         uni.showToast({
           title: '筛选成功',
@@ -385,17 +385,21 @@ onShow(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 80px;
-    height: 33px;
-    background-color: #f8f9fd;
+    width: 140rpx;
+    height: 80rpx;
     border-radius: 10px;
-    padding-right: 6px;
-    margin: 0 0 10rpx 6.4%;
-    font-size: 14px;
-    font-weight: bold;
+    margin: 6rpx 0 30rpx 0;
+    background-color: #f8f9fd;
 
     &__icon {
-      font-size: 24px;
+      font-weight: bold;
+      font-size: 44rpx;
+      color: $uni-theme-color;
+    }
+
+    &__text {
+      color: #898a8d;
+      font-size: 28rpx;
     }
   }
 
