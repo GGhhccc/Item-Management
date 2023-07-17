@@ -1,8 +1,8 @@
 import service from '..'
-import type { GetAllItemsParams } from '@/utils/typings'
+import type { PagingParams } from '@/utils/typings'
 
 // 查看空间列表
-export function getAllRooms({ offset, limit = 10 }: GetAllItemsParams): Promise<any> {
+export function getAllRooms({ offset, limit = 10 }: PagingParams): Promise<any> {
   return service({
     url: `/items/rooms?offset=${offset}&limit=${limit}`,
     method: 'GET'
@@ -13,7 +13,7 @@ export function getAllRooms({ offset, limit = 10 }: GetAllItemsParams): Promise<
 export function getRoomItems(
   // 要查询的空间 id
   itemId: number,
-  { offset, limit = 10 }: GetAllItemsParams
+  { offset, limit = 10 }: PagingParams
 ): Promise<any> {
   return service({
     url: `/items/${itemId}/items?offset=${offset}&limit=${limit}`,

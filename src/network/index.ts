@@ -1,6 +1,6 @@
 const service = (options: UniApp.RequestOptions) => {
   // baseUrl
-  const baseUrl = 'http://epqdgd.natappfree.cc/smart/management/api'
+  const baseUrl = 'http://ewks8m.natappfree.cc/smart/management/api'
 
   // 请求拦截
   // const token = uni.getStorageSync('token')
@@ -18,6 +18,7 @@ const service = (options: UniApp.RequestOptions) => {
       .request({
         url: baseUrl + options.url || '',
         method: options.method || 'GET',
+        // Object | String | ArrayBuffer
         data: options.data || {},
         timeout: options.timeout || 6000,
         header: options.header || {}
@@ -25,10 +26,6 @@ const service = (options: UniApp.RequestOptions) => {
       .then((res: any) => {
         switch (res.data.code) {
           case 200:
-            // uni.showToast({
-            //   title: '请求成功',
-            //   icon: 'success'
-            // })
             resolve(res.data.data)
             break
           case 100:
@@ -69,9 +66,6 @@ const service = (options: UniApp.RequestOptions) => {
         }
       })
       .catch((err) => {
-        // uni.showToast({
-        //   title: '请求超时'
-        // })
         reject(err)
       })
   })
