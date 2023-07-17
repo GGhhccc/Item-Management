@@ -1,14 +1,33 @@
 <template>
   <view class="empty">
-    <view class="empty__text">
-      <view>空空如也</view>
-      <view>快去添加物品吧 !</view>
-    </view>
-    <u-image src="/static/isEmpty.png" mode="aspectFit" width="200px" height="200px"></u-image>
+    <image class="empty__emptyItem" :src="emptyUrl"></image>
   </view>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const props = defineProps<{
+  type: 'space' | 'search' | 'delete' | 'history'
+}>()
+
+const emptyUrl = ref('../../static/empty.png')
+
+switch (props.type) {
+  case 'space':
+    emptyUrl.value = '../../static/empty.png'
+    break
+  case 'search':
+    emptyUrl.value = '../../static/searchEmpty.png'
+    break
+  case 'delete':
+    emptyUrl.value = '../../static/deleteEmpty.png'
+    break
+  case 'history':
+    emptyUrl.value = '../../static/historyEmpty.png'
+    break
+}
+</script>
 
 <style lang="scss">
 .empty {
@@ -16,16 +35,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 50px;
-  color: #3988ff;
+  padding-top: 32%;
 
-  &__text {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
+  &__emptyItem {
+    width: 350rpx;
+    height: 440rpx;
   }
 }
 </style>
