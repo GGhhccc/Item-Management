@@ -7,6 +7,7 @@ import {
   searchByInput,
   batchDelete
 } from '@/network/apis/search'
+import { roloadDeletedItems } from '@/network/apis/deleted'
 import type {
   CompleteSearchList,
   TagList,
@@ -72,17 +73,42 @@ export const useSearchStore = defineStore('search', () => {
     })
   }
 
+  // 重新获取搜索页的主体列表
+  async function resetSearchList(deleted: number) {
+    // 不筛选直接执行多选删除
+    if (currentSearchList.value.offset) {
+      // currentSearchList.value.offset -= 1
+      currentSearchList.value.offset = 0
+      currentSearchList.value.itemList = []
+      await fetchNewSearchList(deleted)
+
+      // 筛选后执行多选删除
+    } else if (currentScreenData.offset) {
+      // currentScreenData.offset -= 1
+      currentScreenData.offset = 0
+      await fetchScreenSearchList(deleted)
+
+      // 输入框搜索后执行多选删除
+    } else if (currentSearchInputData.offset) {
+      // currentSearchInputData.offset -= 1
+      currentSearchInputData.offset = 0
+      await searchItemByInput(deleted)
+    }
+
+    // 为新列表重新添加 checked 属性
+    setItemList(currentSearchList.value.itemList)
+  }
+
   // 获取搜索初始全部物品列表
-  async function fetchNewSearchList() {
-    const data = await getAllItems({
-      offset: currentSearchList.value.offset + 1
-    })
+  async function fetchNewSearchList(deleted: number) {
+    const data = await getAllItems(
+      {
+        offset: currentSearchList.value.offset + 1
+      },
+      deleted
+    )
+    currentSearchList.value.total = data.total
     currentSearchList.value.offset = data.current
-    // if (currentSearchList.value.offset === 0) {
-    //   currentSearchList.value.itemList = data.records
-    // } else {
-    //   currentSearchList.value.itemList.push(...data.records)
-    // }
     currentSearchList.value.itemList.push(...data.records)
     setItemList(currentSearchList.value.itemList)
   }
@@ -97,13 +123,14 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   // 筛选后获取新的物品列表
-  async function fetchScreenSearchList() {
+  async function fetchScreenSearchList(deleted: number) {
     const data = await searchByScreen(
       {
         offset: currentScreenData.offset + 1
       },
       currentSearchInputData.inputData,
-      currentScreenData.screenData
+      currentScreenData.screenData,
+      deleted
     )
 
     // 筛选后重置 currentSearchList 的 offset
@@ -126,12 +153,13 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   // 输入框搜索物品
-  async function searchItemByInput() {
+  async function searchItemByInput(deleted: number) {
     const data = await searchByInput(
       {
         offset: currentSearchInputData.offset + 1
       },
-      currentSearchInputData.inputData
+      currentSearchInputData.inputData,
+      deleted
     )
 
     // 筛选后重置 currentSearchList 的 offset
@@ -158,32 +186,28 @@ export const useSearchStore = defineStore('search', () => {
     await batchDelete(0, checkedItemList)
     // 重置列表
     currentSearchList.value.checkedItemList = []
-
     // 重新获取列表
-    // 不筛选直接执行多选删除
-    if (currentSearchList.value.offset) {
-      // currentSearchList.value.offset -= 1
-      currentSearchList.value.offset = 0
-      currentSearchList.value.itemList = []
-      await fetchNewSearchList()
+    resetSearchList(0)
+  }
 
-      // 筛选后执行多选删除
-    } else if (currentScreenData.offset) {
-      // currentScreenData.offset -= 1
-      currentScreenData.offset = 0
-      await fetchScreenSearchList()
-      console.log(currentSearchList.value.itemList)
-      console.log('nmsl')
-
-      // 输入框搜索后执行多选删除
-    } else if (currentSearchInputData.offset) {
-      // currentSearchInputData.offset -= 1
-      currentSearchInputData.offset = 0
-      await searchItemByInput()
-    }
-
-    // 为新列表重新添加 checked 属性
+  // 获取已删除物品
+  async function fetchDeletedItem() {
+    const data = await getAllItems(
+      {
+        offset: currentSearchList.value.offset + 1
+      },
+      1
+    )
+    currentSearchList.value.offset = data.current
+    currentSearchList.value.itemList = []
+    currentSearchList.value.itemList.push(...data.records)
     setItemList(currentSearchList.value.itemList)
+  }
+
+  // 恢复已删除物品
+  async function restoreDeletedItem(itemIds: number[]) {
+    await roloadDeletedItems(itemIds)
+    resetSearchList(1)
   }
 
   return {
@@ -197,6 +221,8 @@ export const useSearchStore = defineStore('search', () => {
     fetchScreenSearchList,
     fetchTagList,
     searchItemByInput,
-    batchDeteleSearch
+    batchDeteleSearch,
+    fetchDeletedItem,
+    restoreDeletedItem
   }
 })

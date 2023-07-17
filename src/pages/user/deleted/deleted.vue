@@ -2,27 +2,65 @@
   <view class="deleted" :style="{ paddingTop: navBarHeight + 'px' }">
     <u-navbar title="最近删除" autoBack titleStyle="font-weight:bold"></u-navbar>
 
-    <SearchInput :search-list-data="currentSearchList.itemList" @reset-input="resetInput" />
+    <view style="display: flex">
+      <SearchInput />
+      <SearchScreen />
+    </view>
 
-    <SearchScreen />
+    <SearchList v-if="!isEmpty" :isLoading="isLoading" :manualDisable="manualDisable" />
 
-    <SearchList />
+    <!-- 空 -->
+    <Empty v-if="isEmpty" />
   </view>
 </template>
 
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { ref, provide, watch } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
 
 const searchStore = useSearchStore()
 const { currentSearchList } = storeToRefs(searchStore)
-const { setTagsList, setItemList } = searchStore
+const { fetchDeletedItem } = searchStore
 
-// 重置搜索状态
-const resetInput = () => {
-  // isSearch.value = false
+provide('isNeedEdit', false)
+provide('isDetele', true)
+
+// 是否正在加载
+const isLoading = ref(false)
+
+// 手动控制禁用加载
+const manualDisable = ref(false)
+
+// 是否为空
+const isEmpty = ref(true)
+watch(
+  () => currentSearchList.value.itemList.length,
+  (val) => {
+    if (val === 0) {
+      isEmpty.value = true
+    } else {
+      isEmpty.value = false
+    }
+  }
+)
+
+// 请求列表
+async function loadDeletedList() {
+  manualDisable.value = false
+  currentSearchList.value.itemList.length = 0
+  currentSearchList.value.offset = 0
+  isLoading.value = true
+
+  try {
+    await fetchDeletedItem()
+  } catch {
+    manualDisable.value = true
+    console.log('请求失败')
+  } finally {
+    isLoading.value = false
+  }
 }
 
 // navbar 高度
@@ -36,8 +74,7 @@ const getCapsule = () => {
 
 onShow(() => {
   getCapsule()
-  setTagsList(currentSearchList.value.tagsList)
-  setItemList(currentSearchList.value.itemList)
+  loadDeletedList()
 })
 </script>
 
