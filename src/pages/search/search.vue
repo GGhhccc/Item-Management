@@ -14,7 +14,7 @@
     <SearchList v-if="!isEmpty" :isLoading="isLoading" :manualDisable="manualDisable" />
 
     <!-- 空 -->
-    <empty v-if="isEmpty" />
+    <Empty v-if="isEmpty" type="search" />
   </view>
 </template>
 

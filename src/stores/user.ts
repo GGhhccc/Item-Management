@@ -1,7 +1,7 @@
 import type { UserInfo } from '../types/user'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getUserInfo } from '@/network/apis/user'
+import { getUserInfo, changeUserAvatar, changeUserName } from '@/network/apis/user'
 
 export const useUserStore = defineStore('user', () => {
   const userInfo = ref<UserInfo>({
@@ -15,8 +15,18 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = await getUserInfo()
   }
 
+  async function changeAvatar(files: string) {
+    userInfo.value = await changeUserAvatar(files)
+  }
+
+  async function changeName(name: string) {
+    userInfo.value = await changeUserName(name)
+  }
+
   return {
     userInfo,
-    fetchUserInfo
+    fetchUserInfo,
+    changeAvatar,
+    changeName
   }
 })

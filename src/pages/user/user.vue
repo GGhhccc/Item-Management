@@ -11,15 +11,29 @@
 
     <view class="user__info">
       <!-- <u-avatar :src="userInfoData.avatar" size="84"></u-avatar> -->
-      <image class="user__info__avatar" :src="userInfoData.avatar" lazy-load />
+      <image
+        class="user__info__avatar"
+        :src="userInfoData.avatar || '../../static/avatar.png'"
+        lazy-load
+        @click="chooseAvatar"
+      />
       <view class="user__info__main">
         <view class="user__info__main__name">
-          <u-text :text="userInfoData.name" size="18" color="#353535" bold></u-text>
+          <!-- <u-text :text="userInfoData.name" size="18" color="#353535" bold></u-text> -->
+          <u-input
+            v-model="userInfoData.name"
+            :border="isChangingName ? 'surround' : 'none'"
+            :disabled="!isChangingName"
+            fontSize="40rpx"
+            custom-style="padding: 0; font-weight: 600;"
+            @blur="endChangeName"
+          ></u-input>
           <u-icon
             name="edit-pen"
             size="22"
             color="#8389BE"
             custom-style="margin-top: 5rpx;"
+            @click="changeUserName"
           ></u-icon>
         </view>
         <u-text :text="`ID: ${userInfoData.id}`" color="#A0A7BA" size="13"></u-text>
@@ -84,14 +98,14 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { onLoad } from '@dcloudio/uni-app'
 import type { UserInfo } from '@/types/user'
 
 const user = useUserStore()
-const { fetchUserInfo } = user
+const { fetchUserInfo, changeAvatar, changeName } = user
 const { userInfo } = storeToRefs(user)
 
 const userInfoData = reactive<UserInfo>({
@@ -108,12 +122,44 @@ watch(userInfo, (val) => {
     avatar: userInfoData.avatar,
     qrCode: userInfoData.qrCode
   } = val)
-  console.log(userInfoData.avatar)
 })
 
 onLoad(() => {
   fetchUserInfo()
 })
+
+// 切换头像
+const chooseAvatar = () => {
+  uni.chooseMedia({
+    count: 1,
+    mediaType: ['image'],
+    success: async (res) => {
+      await changeAvatar(res.tempFiles[0].tempFilePath)
+
+      uni.showToast({
+        title: '头像修改成功',
+        icon: 'success'
+      })
+    }
+  })
+}
+
+// 修改用户名
+const isChangingName = ref(false)
+const changeUserName = () => {
+  isChangingName.value = true
+}
+
+// 结束修改用户名
+const endChangeName = async () => {
+  isChangingName.value = false
+  await changeName(userInfoData.name)
+  uni.showToast({
+    title: '用户名修改成功',
+    icon: 'success'
+  })
+}
+
 // 点击跳转
 const goToSettings = (index: number) => {
   switch (index) {
@@ -184,6 +230,7 @@ const goToSettings = (index: number) => {
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 50%;
       height: 60%;
       margin: 20rpx 0 0 40rpx;
 
@@ -222,5 +269,15 @@ const goToSettings = (index: number) => {
   position: absolute;
   bottom: -44rpx;
   width: 100%;
+}
+:deep(.u-input) {
+  background: transparent !important;
+}
+:deep(.u-input__content) {
+  background: transparent !important;
+}
+:deep(.u-input__content__field-wrapper__field) {
+  height: 80rpx !important;
+  background: transparent !important;
 }
 </style>
