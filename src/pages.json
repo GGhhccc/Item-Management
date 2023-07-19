@@ -6,6 +6,18 @@
 	},
 	"pages": [
 		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/login/loginInput",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/home/home",
 			"style": {
 				"navigationStyle": "custom"

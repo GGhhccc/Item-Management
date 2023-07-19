@@ -1,16 +1,16 @@
 const service = (options: UniApp.RequestOptions) => {
   // baseUrl
-  const baseUrl = 'http://ewks8m.natappfree.cc/smart/management/api'
+  const baseUrl = 'http://pfwapb.natappfree.cc/smart/management/api'
 
-  // 请求拦截
-  // const token = uni.getStorageSync('token')
-  // if (token) options.header.token = token
-
+  // 配置请求头
   options.header = {
-    token:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJleHAiOjE2OTAyODMwMzJ9.vLhbLsgjeGEsxs_xTPT46-I-ycoUnxKx246VwQ5U0Q4',
-    uuid: '399'
+    token: '',
+    uuid: ''
   }
+  const token = uni.getStorageSync('token')
+  if (token) options.header.token = token
+  const uuid = uni.getStorageSync('uuid')
+  if (uuid) options.header.uuid = uuid
 
   // 发起请求
   return new Promise((resolve, reject) => {
@@ -18,19 +18,23 @@ const service = (options: UniApp.RequestOptions) => {
       .request({
         url: baseUrl + options.url || '',
         method: options.method || 'GET',
-        // Object | String | ArrayBuffer
+        // data: 可传 Object | String | ArrayBuffer
         data: options.data || {},
-        timeout: options.timeout || 6000,
-        header: options.header || {}
+        header: options.header || {},
+        timeout: options.timeout || 6000
       })
       .then((res: any) => {
         switch (res.data.code) {
           case 200:
+            // 从响应头中获取 token
+            if (res.header.token) {
+              uni.setStorageSync('token', res.header.token)
+            }
             resolve(res.data.data)
             break
           case 100:
             uni.showToast({
-              title: '错误',
+              title: res.data.msg,
               icon: 'error'
             })
             break
@@ -39,6 +43,14 @@ const service = (options: UniApp.RequestOptions) => {
               title: '您还未登录',
               icon: 'error'
             })
+            // 重定向到登录页
+            setTimeout(() => {
+              uni.redirectTo({
+                url: '/pages/login/login'
+              })
+            }, 1500)
+            uni.removeStorageSync('token')
+            uni.removeStorageSync('uuid')
             break
           case 400:
             uni.showToast({
@@ -71,6 +83,7 @@ const service = (options: UniApp.RequestOptions) => {
   })
 }
 
+// 加入拦截器
 uni.addInterceptor('request', {
   fail: () => {
     uni.showToast({
