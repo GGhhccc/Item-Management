@@ -8,7 +8,7 @@
 import { ref } from 'vue'
 
 const props = defineProps<{
-  type: 'space' | 'search' | 'delete' | 'history'
+  type: 'space' | 'search' | 'deleted' | 'history'
 }>()
 
 const emptyUrl = ref('../../static/empty.png')
@@ -20,8 +20,8 @@ switch (props.type) {
   case 'search':
     emptyUrl.value = '../../static/searchEmpty.png'
     break
-  case 'delete':
-    emptyUrl.value = '../../static/deleteEmpty.png'
+  case 'deleted':
+    emptyUrl.value = '../../static/deletedEmpty.png'
     break
   case 'history':
     emptyUrl.value = '../../static/historyEmpty.png'
