@@ -10,7 +10,8 @@
     </u-navbar>
 
     <view class="user__info">
-      <u-avatar :src="userInfoData.avatar" size="84"></u-avatar>
+      <!-- <u-avatar :src="userInfoData.avatar" size="84"></u-avatar> -->
+      <image class="user__info__avatar" :src="userInfoData.avatar" lazy-load />
       <view class="user__info__main">
         <view class="user__info__main__name">
           <u-text :text="userInfoData.name" size="18" color="#353535" bold></u-text>
@@ -172,6 +173,12 @@ const goToSettings = (index: number) => {
     width: 80%;
     height: 200rpx;
     margin-top: 38rpx;
+
+    &__avatar {
+      width: 170rpx;
+      height: 170rpx;
+      border-radius: 50%;
+    }
 
     &__main {
       display: flex;
