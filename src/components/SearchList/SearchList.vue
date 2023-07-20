@@ -49,7 +49,8 @@ const props = defineProps<{
   manualDisable: boolean
 }>()
 
-const { isLoading, manualDisable } = toRefs(props)
+const { isLoading } = toRefs(props)
+const manualDisable = ref(props.manualDisable)
 
 // 是否正在加载更多通知
 const isLoadingMore = ref(false)
@@ -96,10 +97,16 @@ const showOperate = () => {
   checkboxOperate.value = true
 }
 
-// 控制多选的属性
+// 点击
 const chooseItem = (item: ItemList) => {
+  // 控制多选的属性
   if (checkboxOperate.value) {
     item.isChecked = !item.isChecked
+  } else {
+    // 跳转到详情页
+    // uni.navigateTo({
+    //   url: `/pages/deleted/deleted`
+    // })
   }
 }
 

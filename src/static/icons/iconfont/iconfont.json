@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "5961307",
+      "name": "货物堆",
+      "font_class": "huowudui",
+      "unicode": "ec54",
+      "unicode_decimal": 60500
+    },
+    {
+      "icon_id": "14236498",
+      "name": "纸箱_封闭_carton_close",
+      "font_class": "zhixiang_fengbi_carton_close",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "14915067",
+      "name": "物品管理",
+      "font_class": "wupinguanli-05",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
       "icon_id": "1057168",
       "name": "移动",
       "font_class": "yidong",

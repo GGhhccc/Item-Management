@@ -11,7 +11,15 @@
           <u-image :src="searchItemData.cover" width="65px" height="65px" radius="4px"></u-image>
         </view>
         <view class="search-list-item__content__img-wrapper__property">
-          <u-icon size="36rpx" color="#4d94ff" :name="searchItemData.type ? 'grid' : 'home'" />
+          <view class="search-list-item__content__img-wrapper__property__icon iconfont">
+            {{
+              !searchItemData.type
+                ? '&#xf13c;'
+                : searchItemData.type === 1
+                ? '&#xec54;'
+                : '&#xe634;'
+            }}
+          </view>
         </view>
       </view>
 
@@ -170,6 +178,12 @@ const onClick = () => {
         top: 8rpx;
         background-color: #fff;
         border-radius: 10rpx;
+
+        &__icon {
+          width: 36rpx;
+          height: 36rpx;
+          color: #4d94ff;
+        }
       }
     }
 

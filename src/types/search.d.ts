@@ -69,7 +69,7 @@ export interface ItemList {
    */
   id: number
   /**
-   * 类型，0表示空间，1表示物品
+   * 类型，0表示空间，1表示空间，2表示物品
    */
   type: number
   /**

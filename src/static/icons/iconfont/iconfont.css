@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4009254 */
-  src: url('iconfont.woff2?t=1684406163879') format('woff2'),
-       url('iconfont.woff?t=1684406163879') format('woff'),
-       url('iconfont.ttf?t=1684406163879') format('truetype');
+  src: url('iconfont.woff2?t=1689835561103') format('woff2'),
+       url('iconfont.woff?t=1689835561103') format('woff'),
+       url('iconfont.ttf?t=1689835561103') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,18 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-huowudui:before {
+  content: "\ec54";
+}
+
+.icon-zhixiang_fengbi_carton_close:before {
+  content: "\e627";
+}
+
+.icon-wupinguanli-05:before {
+  content: "\e634";
 }
 
 .icon-yidong:before {
