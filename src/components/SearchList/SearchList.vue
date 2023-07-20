@@ -28,7 +28,7 @@
 import { useSearchStore } from '@/stores/search'
 import { onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { ref, computed, toRefs, inject } from 'vue'
+import { ref, computed, toRefs, inject, watch } from 'vue'
 import type { ItemList } from '@/types/search'
 
 const searchStore = useSearchStore()
@@ -47,10 +47,18 @@ const isDeleted = inject<boolean>('isDetele', false)
 const props = defineProps<{
   isLoading: boolean
   manualDisable: boolean
+  cancelMultiple: boolean
 }>()
 
 const { isLoading } = toRefs(props)
 const manualDisable = ref(props.manualDisable)
+
+watch(
+  () => props.cancelMultiple,
+  () => {
+    checkboxOperate.value = false
+  }
+)
 
 // 是否正在加载更多通知
 const isLoadingMore = ref(false)

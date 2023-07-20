@@ -13,12 +13,12 @@
   </view>
 </template>
 
-<!-- <script lang="ts">
+<script lang="ts">
 import { defineComponent } from 'vue'
 export default defineComponent({
-	options: { styleIsolation: 'shared' }
+  options: { styleIsolation: 'shared' }
 })
-</script> -->
+</script>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'

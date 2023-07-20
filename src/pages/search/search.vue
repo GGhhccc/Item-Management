@@ -3,7 +3,7 @@
     <u-navbar title="搜索" autoBack titleStyle="font-weight:bold"></u-navbar>
 
     <view style="display: flex">
-      <SearchInput />
+      <SearchInput @onFocus="onFocus" />
       <SearchScreen />
     </view>
 
@@ -11,7 +11,12 @@
       <view class="search__total__text">共{{ currentSearchList.total }}件物品</view>
     </view>
 
-    <SearchList v-if="!isEmpty" :isLoading="isLoading" :manualDisable="manualDisable" />
+    <SearchList
+      v-if="!isEmpty"
+      :isLoading="isLoading"
+      :manualDisable="manualDisable"
+      :cancelMultiple="cancelMultiple"
+    />
 
     <!-- 空 -->
     <Empty v-if="isEmpty" type="search" />
@@ -44,6 +49,12 @@ watch(
     }
   }
 )
+
+// 搜索框获取焦点之后取消多选状态
+const cancelMultiple = ref(false)
+const onFocus = () => {
+  cancelMultiple.value = !cancelMultiple.value
+}
 
 // 请求列表
 async function loadSearchList() {

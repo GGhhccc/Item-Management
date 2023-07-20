@@ -11,6 +11,7 @@
         shape="square"
         height="80rpx"
         bgColor="#F8F9FD"
+        @focus="onFocus"
       ></u-search>
       <view class="search-input__content__confirm" @click="submitSearch">
         <span>确认</span>
@@ -28,9 +29,17 @@ const searchStore = useSearchStore()
 const { currentSearchInputData } = storeToRefs(searchStore)
 const { searchItemByInput } = searchStore
 
+const emits = defineEmits<{
+  (e: 'onFocus'): void
+}>()
+
 const isDeleted = inject<boolean>('isDetele', false)
 
 const inputBox = ref('')
+
+const onFocus = () => {
+  emits('onFocus')
+}
 
 const submitSearch = async () => {
   // 发送请求获取新的数据

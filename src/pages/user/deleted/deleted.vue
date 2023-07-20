@@ -3,11 +3,16 @@
     <u-navbar title="最近删除" autoBack titleStyle="font-weight:bold"></u-navbar>
 
     <view style="display: flex">
-      <SearchInput />
+      <SearchInput @onFocus="onFocus" />
       <SearchScreen />
     </view>
 
-    <SearchList v-if="!isEmpty" :isLoading="isLoading" :manualDisable="manualDisable" />
+    <SearchList
+      v-if="!isEmpty"
+      :isLoading="isLoading"
+      :manualDisable="manualDisable"
+      :cancelMultiple="cancelMultiple"
+    />
 
     <!-- 空 -->
     <Empty v-if="isEmpty" type="deleted" width="470" height="500" />
@@ -26,6 +31,12 @@ const { fetchDeletedItem } = searchStore
 
 provide('isNeedEdit', false)
 provide('isDetele', true)
+
+// 搜索框获取焦点之后取消多选状态
+const cancelMultiple = ref(false)
+const onFocus = () => {
+  cancelMultiple.value = !cancelMultiple.value
+}
 
 // 是否正在加载
 const isLoading = ref(false)

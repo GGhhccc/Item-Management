@@ -50,13 +50,6 @@
   </view>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-export default defineComponent({
-  options: { styleIsolation: 'shared' }
-})
-</script>
-
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { loginByPassword } from '@/network/apis/auth'
