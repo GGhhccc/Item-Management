@@ -89,13 +89,6 @@
   </view>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-export default defineComponent({
-  options: { styleIsolation: 'shared' }
-})
-</script>
-
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
 import { useUserStore } from '@/stores/user'

@@ -19,13 +19,6 @@
   </view>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-export default defineComponent({
-  options: { styleIsolation: 'shared' }
-})
-</script>
-
 <script setup lang="ts">
 import { ref, watch, inject } from 'vue'
 import { useSearchStore } from '@/stores/search'

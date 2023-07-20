@@ -1,3 +1,10 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  options: { styleIsolation: 'shared' }
+})
+</script>
+
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 onLaunch(() => {
@@ -21,6 +28,7 @@ uni.loadFontFace({
   }
 })
 </script>
+
 <style lang="scss">
 @import 'uview-plus/index.scss';
 body {
