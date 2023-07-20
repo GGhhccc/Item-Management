@@ -1,0 +1,11 @@
+{
+    "id": "hackout-draw-lock",
+    "name": "手势解锁图形密码",
+    "version": "1.0.1",
+    "description": "UniApp 手势解锁 依托Canvas",
+    "keywords": [
+        "手势解锁",
+        "图形密码",
+        "Lock"
+    ]
+}
