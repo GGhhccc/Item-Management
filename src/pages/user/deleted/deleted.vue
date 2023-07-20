@@ -10,7 +10,7 @@
     <SearchList v-if="!isEmpty" :isLoading="isLoading" :manualDisable="manualDisable" />
 
     <!-- 空 -->
-    <Empty v-if="isEmpty" type="deleted" />
+    <Empty v-if="isEmpty" type="deleted" width="470" height="500" />
   </view>
 </template>
 

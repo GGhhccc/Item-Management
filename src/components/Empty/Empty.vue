@@ -1,15 +1,23 @@
 <template>
   <view class="empty">
-    <image class="empty__emptyItem" :src="emptyUrl"></image>
+    <image :src="emptyUrl" :style="{ width: width + 'rpx', height: height + 'rpx' }"></image>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const props = defineProps<{
-  type: 'space' | 'search' | 'deleted' | 'history'
-}>()
+const props = withDefaults(
+  defineProps<{
+    type: 'space' | 'search' | 'deleted' | 'history'
+    width?: number
+    height?: number
+  }>(),
+  {
+    width: 350,
+    height: 440
+  }
+)
 
 const emptyUrl = ref('../../static/empty.png')
 
@@ -36,10 +44,5 @@ switch (props.type) {
   justify-content: center;
   align-items: center;
   padding-top: 32%;
-
-  &__emptyItem {
-    width: 350rpx;
-    height: 440rpx;
-  }
 }
 </style>
