@@ -24,7 +24,9 @@
             :border="isChangingName ? 'surround' : 'none'"
             :disabled="!isChangingName"
             fontSize="40rpx"
-            custom-style="padding: 0; font-weight: 600;"
+            custom-style="padding: 0; font-weight: 600; margin-left: 46rpx;"
+            maxlength="7"
+            :showWordLimit="true"
             @blur="endChangeName"
           ></u-input>
           <u-icon
@@ -269,6 +271,7 @@ const goToSettings = (index: number) => {
   background: transparent !important;
 }
 :deep(.u-input__content__field-wrapper__field) {
+  width: 300rpx !important;
   height: 80rpx !important;
   background: transparent !important;
 }
