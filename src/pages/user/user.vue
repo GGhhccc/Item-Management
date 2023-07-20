@@ -19,7 +19,6 @@
       />
       <view class="user__info__main">
         <view class="user__info__main__name">
-          <!-- <u-text :text="userInfoData.name" size="18" color="#353535" bold></u-text> -->
           <u-input
             v-model="userInfoData.name"
             :border="isChangingName ? 'surround' : 'none'"
@@ -232,7 +231,7 @@ const goToSettings = (index: number) => {
       align-items: center;
       width: 50%;
       height: 60%;
-      margin: 20rpx 0 0 40rpx;
+      margin-left: 40rpx;
 
       &__name {
         display: flex;

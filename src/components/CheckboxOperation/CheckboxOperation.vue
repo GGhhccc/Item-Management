@@ -16,11 +16,11 @@
       <u-text size="30rpx" color="#88898c" align="center" text="移动" />
     </view>
     <view>
-      <u-icon size="50rpx" name="trash" color="#898a8d" @click="deleteItem"></u-icon>
+      <u-icon size="50rpx" name="trash" color="#898a8d" @click="chooseToDelete"></u-icon>
       <u-text size="30rpx" color="#88898c" align="center" text="删除" />
     </view>
     <view v-if="isDeleted">
-      <u-icon size="50rpx" name="reload" color="#898a8d" @click="recoveringItem"></u-icon>
+      <u-icon size="50rpx" name="reload" color="#898a8d" @click="chooseToRestore"></u-icon>
       <u-text size="30rpx" color="#88898c" align="center" text="恢复" />
     </view>
     <view>
@@ -28,7 +28,24 @@
       <u-text size="30rpx" color="#88898c" align="center" text="取消" />
     </view>
   </view>
-  <u-modal :show="showModal"></u-modal>
+  <!-- 多选删除确认框 -->
+  <u-modal
+    :show="showDeleteModal"
+    title="确认删除？"
+    showCancelButton
+    width="500rpx"
+    @cancel="showDeleteModal = false"
+    @confirm="deleteItem"
+  ></u-modal>
+  <!-- 多选恢复确认框 -->
+  <u-modal
+    :show="showRestoreModal"
+    title="确认恢复？"
+    showCancelButton
+    width="500rpx"
+    @cancel="showRestoreModal = false"
+    @confirm="recoveringItem"
+  ></u-modal>
 </template>
 
 <script setup lang="ts">
@@ -59,7 +76,8 @@ const emits = defineEmits<{
   (e: 'recover'): void
 }>()
 
-const showModal = ref(false)
+const showDeleteModal = ref(false)
+const showRestoreModal = ref(false)
 
 // 多选操作
 const checkboxOperate = ref(false)
@@ -78,6 +96,18 @@ const move = () => {
   console.log('移动')
 }
 
+// 多选恢复确认
+const chooseToRestore = () => {
+  if (currentSearchList.value.itemList.filter((item) => item.isChecked).length) {
+    showRestoreModal.value = true
+  } else {
+    uni.showToast({
+      title: '未选择物品',
+      icon: 'error'
+    })
+  }
+}
+
 // 多选恢复已删除物品
 const recoveringItem = () => {
   currentSearchList.value.checkedItemList = currentSearchList.value.itemList
@@ -93,7 +123,19 @@ const recoveringItem = () => {
   cancelBtn()
 }
 
-// 多选删除
+// 多选删除确认
+const chooseToDelete = () => {
+  if (currentSearchList.value.itemList.filter((item) => item.isChecked).length) {
+    showDeleteModal.value = true
+  } else {
+    uni.showToast({
+      title: '未选择物品',
+      icon: 'error'
+    })
+  }
+}
+
+// 多选删除逻辑
 const deleteItem = () => {
   currentSearchList.value.checkedItemList = currentSearchList.value.itemList
     .filter((item) => item.isChecked)
@@ -108,6 +150,7 @@ const deleteItem = () => {
   cancelBtn()
 }
 
+// 取消
 const cancelBtn = () => {
   checkboxOperate.value = false
   currentSearchList.value.checkedItemList = []
