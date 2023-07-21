@@ -42,10 +42,6 @@ const onFocus = () => {
   cancelMultiple.value = !cancelMultiple.value
 }
 
-const onClick = () => {
-  console.log('什么都不干')
-}
-
 // 是否正在加载
 const isLoading = ref(false)
 

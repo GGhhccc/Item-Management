@@ -35,6 +35,7 @@ const emits = defineEmits<{
 }>()
 
 const isDeleted = inject<boolean>('isDetele', false)
+const isHistory = inject<boolean>('isHistory', false)
 
 const inputBox = ref('')
 
@@ -43,13 +44,13 @@ const onFocus = () => {
 }
 
 const submitSearch = async () => {
-  // 发送请求获取新的数据
-  currentSearchInputData.value.offset = 0
-  currentSearchInputData.value.inputData.name = inputBox.value
   uni.showLoading({
     title: '搜索中'
   })
-  if (currentSearchInputData.value.offset) {
+  // 发送请求获取新的数据
+  if (!isHistory) {
+    currentSearchInputData.value.offset = 0
+    currentSearchInputData.value.inputData.name = inputBox.value
     isDeleted ? await searchItemByInput(1) : await searchItemByInput(0)
 
     // 历史修改页的搜索

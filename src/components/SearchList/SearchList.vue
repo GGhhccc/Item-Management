@@ -11,6 +11,14 @@
             @longpress="showOperate"
           />
         </view>
+        <!-- 加载更多 -->
+        <u-loadmore
+          :status="loadMoreStatus"
+          line
+          loadingText="努力加载中，先喝杯茶"
+          nomoreText="实在没有了"
+          marginBottom="50rpx"
+        />
       </template>
       <!-- 多选状态的弹出框 -->
       <CheckboxOperation
@@ -55,6 +63,7 @@ const props = defineProps<{
 const { isLoading } = toRefs(props)
 const manualDisable = ref(props.manualDisable)
 
+// 取消多选状态
 watch(
   () => props.cancelMultiple,
   () => {
@@ -66,16 +75,21 @@ watch(
 const isLoadingMore = ref(false)
 
 // 是否无法加载更多了
+const loadMoreStatus = ref('')
 const isNoMore = computed(
   () =>
-    currentSearchList.value.itemList.length === currentSearchList.value.total &&
-    currentSearchList.value.itemList.length
+    currentSearchList.value.itemList.length < currentSearchList.value.limit ||
+    (currentSearchList.value.itemList.length &&
+      currentSearchList.value.itemList.length === currentSearchList.value.total)
 )
 
 // 触底加载更多
-onReachBottom(() => {
+onReachBottom(async () => {
   if (!isNoMore.value) {
-    loadMoreItem()
+    loadMoreStatus.value = 'loading'
+    await loadMoreItem()
+  } else {
+    loadMoreStatus.value = 'nomore'
   }
 })
 
