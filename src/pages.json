@@ -42,7 +42,10 @@
 			}
 		},
 		{
-			"path": "pages/square/square"
+			"path": "pages/square/square",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/new/dependence/dependence",

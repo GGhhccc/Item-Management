@@ -1,5 +1,5 @@
 <template>
-  <u-skeleton rows="20" :loading="isLoading" title animate class="search-list">
+  <u-skeleton rows="18" :loading="isLoading" title animate class="search-list">
     <view v-if="!isLoading">
       <!-- 总列表 -->
       <template>
@@ -38,11 +38,13 @@ const {
   fetchScreenSearchList,
   searchItemByInput,
   batchDeteleSearch,
-  restoreDeletedItem
+  restoreDeletedItem,
+  fetchHistoryItem
 } = searchStore
 
 // 是否是删除页面
 const isDeleted = inject<boolean>('isDetele', false)
+const isHistory = inject<boolean>('isHistory', false)
 
 const props = defineProps<{
   isLoading: boolean
@@ -88,7 +90,11 @@ async function loadMoreItem() {
     } else if (currentSearchInputData.value.offset) {
       isDeleted ? await searchItemByInput(1) : await searchItemByInput(0)
     } else {
-      isDeleted ? await fetchNewSearchList(1) : await fetchNewSearchList(0)
+      isHistory
+        ? fetchHistoryItem()
+        : isDeleted
+        ? await fetchNewSearchList(1)
+        : await fetchNewSearchList(0)
     }
     manualDisable.value = false
   } catch {

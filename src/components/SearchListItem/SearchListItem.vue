@@ -51,9 +51,21 @@
           ></u-icon>
         </view>
 
-        <view class="search-list-item__content__info-wrapper__dependent-space">
+        <view class="search-list-item__content__info-wrapper__detail">
+          <!-- 物品路径 -->
           <u-text v-if="!isHistory" :text="searchItemData.path" color="#898A8D"></u-text>
-          <u-text v-if="isHistory" text="用户1234 添加了标签“书本”" color="#898A8D"></u-text>
+          <!-- 在历史记录页则显示历史修改信息 -->
+          <view v-if="isHistory" class="search-list-item__content__info-wrapper__detail__history">
+            <u-icon name="clock" size="27rpx" custom-style="padding-top: 7rpx;"></u-icon>
+            <u-text
+              size="27rpx"
+              :text="`&nbsp;&nbsp;${searchItemData.log?.username} &nbsp;${searchItemData.log?.content}`"
+              color="#565656"
+            ></u-text>
+          </view>
+          <view v-if="isHistory" class="search-list-item__content__info-wrapper__detail__date">
+            {{ searchItemData.log?.date }}
+          </view>
         </view>
       </view>
     </view>
@@ -101,10 +113,14 @@ watch(props.itemData, (val) => {
     name: searchItemData.name,
     type: searchItemData.type,
     privacy: searchItemData.privacy,
-    cover: searchItemData.cover
+    cover: searchItemData.cover,
+    log: searchItemData.log
   } = val)
-  const path = formatPath(val.path)
-  searchItemData.path = path
+  // 如果返回了物品路径则格式化
+  if (val.path) {
+    searchItemData.path = formatPath(val.path)
+  }
+  console.log(searchItemData)
 })
 
 watch(
@@ -120,7 +136,7 @@ watch(
   }
 )
 
-// 处理 path
+// 格式化 path
 const formatPath = (path: ItemPath[]) => {
   const arr: string[] = []
   // 倒序遍历
@@ -138,7 +154,8 @@ const searchItemData = reactive<ExtendItemListPath>({
   privacy: props.itemData.privacy,
   cover: props.itemData.cover,
   isChecked: props.itemData.isChecked,
-  path: formatPath(props.itemData.path)
+  log: props.itemData.log,
+  path: props.itemData.path ? formatPath(props.itemData.path) : ''
 })
 
 const showOperate = () => {
@@ -233,9 +250,25 @@ const onClick = () => {
         color: $uni-theme-color;
       }
 
-      &__dependent-space {
+      &__detail {
         position: absolute;
         bottom: 0;
+
+        &__history {
+          display: flex;
+          align-items: flex-start;
+          height: 40rpx;
+          margin-bottom: 35rpx;
+        }
+
+        &__date {
+          position: absolute;
+          top: 70rpx;
+          left: 250rpx;
+          width: 300rpx;
+          font-size: 22rpx;
+          color: #979797;
+        }
       }
     }
   }

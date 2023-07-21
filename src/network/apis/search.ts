@@ -3,6 +3,7 @@ import type { PagingParams } from '@/utils/typings'
 import type { ScreenItemsParams, SearchInputParams } from '@/types/search.d.ts'
 
 // 获取所有物品
+// 搜索的所有接口都要加个 deleted 参数，表面是否在已删除列表中找
 export function getAllItems({ offset, limit = 10 }: PagingParams, deleted: number): Promise<any> {
   return service({
     url: `/items/search?offset=${offset}&limit=${limit}`,

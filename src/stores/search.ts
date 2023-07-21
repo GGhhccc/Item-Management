@@ -7,7 +7,7 @@ import {
   searchByInput,
   batchDelete
 } from '@/network/apis/search'
-import { roloadDeletedItems } from '@/network/apis/deleted'
+import { roloadDeletedItems, getAllHistory } from '@/network/apis/user'
 import type {
   CompleteSearchList,
   TagList,
@@ -73,7 +73,7 @@ export const useSearchStore = defineStore('search', () => {
     })
   }
 
-  // 重新获取搜索页的主体列表
+  // 更新数据后重新获取搜索页的主体列表
   async function resetSearchList(deleted: number) {
     // 不筛选直接执行多选删除
     if (currentSearchList.value.offset) {
@@ -210,11 +210,27 @@ export const useSearchStore = defineStore('search', () => {
     resetSearchList(1)
   }
 
+  // 获取历史记录时的搜索名
+  const historySearchName = ref('')
+  // 获取/查询历史记录（historySearchName 有值则搜索对应名字）
+  async function fetchHistoryItem() {
+    const data = await getAllHistory(
+      {
+        offset: currentSearchList.value.offset + 1
+      },
+      historySearchName.value
+    )
+    currentSearchList.value.offset = data.current
+    currentSearchList.value.itemList.push(...data.records)
+    setItemList(currentSearchList.value.itemList)
+  }
+
   return {
     currentSearchList,
     currentTagList,
     currentScreenData,
     currentSearchInputData,
+    historySearchName,
     setTagsList,
     setItemList,
     fetchNewSearchList,
@@ -223,6 +239,7 @@ export const useSearchStore = defineStore('search', () => {
     searchItemByInput,
     batchDeteleSearch,
     fetchDeletedItem,
-    restoreDeletedItem
+    restoreDeletedItem,
+    fetchHistoryItem
   }
 })

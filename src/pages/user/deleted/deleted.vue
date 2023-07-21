@@ -3,7 +3,7 @@
     <u-navbar title="最近删除" autoBack titleStyle="font-weight:bold"></u-navbar>
 
     <view style="display: flex">
-      <SearchInput @onFocus="onFocus" />
+      <SearchInput @onFocus="onFocus" @searchEmpty="searchEmpty" />
       <SearchScreen />
     </view>
 
@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app'
-import { ref, provide, watch } from 'vue'
+import { ref, provide } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
 
@@ -45,17 +45,12 @@ const isLoading = ref(false)
 const manualDisable = ref(false)
 
 // 是否为空
-const isEmpty = ref(true)
-watch(
-  () => currentSearchList.value.itemList.length,
-  (val) => {
-    if (val === 0) {
-      isEmpty.value = true
-    } else {
-      isEmpty.value = false
-    }
-  }
-)
+const isEmpty = ref(false)
+
+// 判断搜索后是否为空
+const searchEmpty = (val: boolean) => {
+  val ? (isEmpty.value = true) : (isEmpty.value = false)
+}
 
 // 请求列表
 async function loadDeletedList() {
@@ -71,6 +66,7 @@ async function loadDeletedList() {
     console.log('请求失败')
   } finally {
     isLoading.value = false
+    currentSearchList.value.itemList.length ? (isEmpty.value = false) : (isEmpty.value = true)
   }
 }
 
@@ -89,4 +85,8 @@ onShow(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.deleted {
+  overflow-x: hidden;
+}
+</style>

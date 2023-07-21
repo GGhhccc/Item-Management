@@ -26,11 +26,12 @@ import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
 
 const searchStore = useSearchStore()
-const { currentSearchInputData } = storeToRefs(searchStore)
-const { searchItemByInput } = searchStore
+const { currentSearchList, currentSearchInputData, historySearchName } = storeToRefs(searchStore)
+const { searchItemByInput, fetchHistoryItem } = searchStore
 
 const emits = defineEmits<{
   (e: 'onFocus'): void
+  (e: 'searchEmpty', searchEmpty: boolean): void
 }>()
 
 const isDeleted = inject<boolean>('isDetele', false)
@@ -48,11 +49,28 @@ const submitSearch = async () => {
   uni.showLoading({
     title: '搜索中'
   })
-  isDeleted ? await searchItemByInput(1) : await searchItemByInput(0)
+  if (currentSearchInputData.value.offset) {
+    isDeleted ? await searchItemByInput(1) : await searchItemByInput(0)
+
+    // 历史修改页的搜索
+  } else {
+    // 重置列表状态
+    currentSearchList.value.offset = 0
+    currentSearchList.value.itemList = []
+    // 修改 store 中历史记录的搜索参数
+    historySearchName.value = inputBox.value
+    await fetchHistoryItem()
+  }
   uni.showToast({
     title: '搜索成功',
     icon: 'success'
   })
+  // 搜索完后返回是否为空
+  if (!currentSearchList.value.itemList.length) {
+    emits('searchEmpty', true)
+  } else {
+    emits('searchEmpty', false)
+  }
 }
 
 watch(

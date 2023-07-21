@@ -3,7 +3,7 @@
     <u-navbar title="搜索" autoBack titleStyle="font-weight:bold"></u-navbar>
 
     <view style="display: flex">
-      <SearchInput @onFocus="onFocus" />
+      <SearchInput @onFocus="onFocus" @searchEmpty="searchEmpty" />
       <SearchScreen />
     </view>
 
@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
 
@@ -39,16 +39,11 @@ const isLoading = ref(false)
 const manualDisable = ref(false)
 // 是否为空
 const isEmpty = ref(false)
-watch(
-  () => currentSearchList.value.itemList.length,
-  (val) => {
-    if (val === 0) {
-      isEmpty.value = true
-    } else {
-      isEmpty.value = false
-    }
-  }
-)
+
+// 判断搜索后是否为空
+const searchEmpty = (val: boolean) => {
+  val ? (isEmpty.value = true) : (isEmpty.value = false)
+}
 
 // 搜索框获取焦点之后取消多选状态
 const cancelMultiple = ref(false)
@@ -70,6 +65,7 @@ async function loadSearchList() {
     console.log('请求失败')
   } finally {
     isLoading.value = false
+    currentSearchList.value.itemList.length ? (isEmpty.value = false) : (isEmpty.value = true)
   }
 }
 

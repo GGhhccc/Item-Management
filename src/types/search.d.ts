@@ -24,6 +24,7 @@ export interface CompleteSearchList extends SearchList {
   checkedItemList: number[]
 }
 
+// 筛选中的标签列表
 export interface TagList {
   /**
    * 当前所在页
@@ -43,6 +44,7 @@ export interface TagList {
   tagsList: TagItem[]
 }
 
+// 标签每一项
 export interface TagItem {
   /**
    * id
@@ -85,15 +87,20 @@ export interface ItemList {
    */
   cover: string
   /**
-   * 路径
+   * 请求到的路径数组
    */
-  path: ItemPath[]
+  path?: ItemPath[]
+  /**
+   * 历史记录信息
+   */
+  log?: HistoryLog
   /**
    * 是否选中
    */
   isChecked?: boolean
 }
 
+// 每个路径对象
 export interface ItemPath {
   /**
    * 路径 id
@@ -105,13 +112,33 @@ export interface ItemPath {
   name: string
 }
 
-// 展现在界面的物品数组
+// 展现在界面的物品数组（path 格式化成 string）
 type ItemListPath = Omit<ItemList, 'path'>
 export interface ExtendItemListPath extends ItemListPath {
   /**
    * 物品路径
    */
   path: string
+}
+
+// 历史记录 log 的类型
+export interface HistoryLog {
+  /**
+   * logId
+   */
+  id: number
+  /**
+   * 修改者用户名
+   */
+  username: string
+  /**
+   * 修改内容
+   */
+  content: string
+  /**
+   * 修改日期
+   */
+  date: string
 }
 
 export interface ShowControl {
@@ -142,6 +169,7 @@ export interface ExtendCurrentScreen extends CurrentScreen {
   screenData: ScreenItemsParams
 }
 
+// 筛选的参数
 export interface ScreenItemsParams {
   /**
    * 类型
