@@ -12,6 +12,7 @@ export function getUserInfo(): Promise<any> {
 export function changeUserAvatar(filePath: string): Promise<any> {
   return uploadFileService({
     url: '/users/avatar',
+    name: 'avatar',
     filePath
   })
 }

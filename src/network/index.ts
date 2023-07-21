@@ -109,7 +109,7 @@ export const uploadFileService = (options: UniApp.UploadFileOption) => {
   return new Promise((resolve, reject) => {
     uni
       .uploadFile({
-        name: options.name || 'avatar',
+        name: options.name || '',
         url: __BASE_URL__ + options.url || '',
         filePath: options.filePath || '',
         formData: options.formData || {},
