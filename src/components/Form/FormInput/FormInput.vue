@@ -14,6 +14,7 @@
           :readonly="isDetail"
           :type="type"
           v-model="tempInput"
+          @blur="changeInput"
         />
         <u-link v-if="isDetail && !display" text="点击复制" :href="tempInput"></u-link>
       </u-col>
@@ -25,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { defineProps, defineEmits, ref } from 'vue'
 const props = withDefaults(
   defineProps<{
     //是否显示输入框
@@ -65,12 +66,9 @@ const emits = defineEmits<{
   //更新输入内容
   (e: 'update:input', input: string | number): void
 }>()
-watch(
-  () => tempInput.value,
-  () => {
-    emits('update:input', tempInput.value)
-  }
-)
+const changeInput = (): void => {
+  emits('update:input', tempInput.value)
+}
 </script>
 
 <style scoped lang="scss">

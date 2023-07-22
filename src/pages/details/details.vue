@@ -1,6 +1,6 @@
 <template>
   <view>
-    <Form :itemData="useFormStore().itemData" :isDetail="true" />
+    <Form :isDetail="true" />
     <view class="delete">
       <u-icon @click="showDelete = true" size="70rpx" name="trash" color="#565b6d"></u-icon>
     </view>
@@ -23,13 +23,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useFormStore } from '@/stores/form'
+const useForm = useFormStore()
+const { modifyDeleteItemData, itemData } = useForm
 const showDelete = ref(false)
 const deleteItem = () => {
+  modifyDeleteItemData([itemData.id])
   showDelete.value = false
 }
 const toEdit = () => {
   uni.navigateTo({
-    url: `/pages/edit/edit?id=${useFormStore().itemData.id}`
+    url: `/pages/edit/edit`
   })
 }
 </script>

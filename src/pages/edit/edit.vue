@@ -1,11 +1,9 @@
 <template>
   <view>
-    <Form :isEdit="true" :itemData="useFormStore().itemData" />
+    <Form />
   </view>
 </template>
 
-<script setup lang="ts">
-import { useFormStore } from '@/stores/form'
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss"></style>

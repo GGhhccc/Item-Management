@@ -41,7 +41,7 @@ const props = defineProps<{
   //日期时间戳
   date: number
   //是否为详情页
-  isDetail: boolean
+  isDetail?: boolean
 }>()
 const emits = defineEmits<{
   //更新日期值
@@ -56,9 +56,9 @@ const year = ref(time.getFullYear())
 //月
 const month = ref(time.getMonth() + 1)
 //日
-const day = ref(time.getDay())
+const day = ref(time.getDate())
 //默认日期(当前日期)
-const defaultDate = ref([new Date().getFullYear() - year.value, month.value - 1, day.value - 1])
+const defaultDate = ref([new Date().getFullYear() - year.value + 9, month.value - 1, day.value - 1])
 //修改日期时触发的回调
 const changeDate = (e: any) => {
   if (e.value[0] % 4 === 0 && e.value[0] % 100 !== 0 && e.value[1] === 2)
@@ -85,16 +85,16 @@ const changeDate = (e: any) => {
 //日期选择数组
 const dateList = ref([
   [
-    year.value,
-    year.value - 2,
-    year.value - 2,
-    year.value - 3,
-    year.value - 4,
-    year.value - 5,
-    year.value - 6,
-    year.value - 7,
+    year.value - 9,
     year.value - 8,
-    year.value - 9
+    year.value - 7,
+    year.value - 6,
+    year.value - 5,
+    year.value - 4,
+    year.value - 3,
+    year.value - 2,
+    year.value - 1,
+    year.value
   ],
   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
   [

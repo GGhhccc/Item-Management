@@ -1,21 +1,22 @@
 <template>
-  <view class="formMutiple">
+  <view class="formMultiple">
     <FormTag
       @click="checkboxClick(index)"
       :tag="item"
       v-for="(item, index) in props.tags"
       :key="index"
       :checked="tagBox[index]"
+      :shape="'square'"
     />
   </view>
 </template>
 
 <script setup lang="ts">
 import FormTag from '@/components/Form/FormTag/FormTag.vue'
-import type { Tag } from '@/types/form'
+import type { LabelData } from '@/types/form'
 const props = defineProps<{
   //标签数组
-  tags: Tag[]
+  tags: LabelData[]
   //标签选取状态数组
   tagBox: boolean[]
 }>()
@@ -28,8 +29,8 @@ const checkboxClick = (name: number) => {
 }
 </script>
 
-<style lang="scss">
-.formMutiple {
+<style lang="scss" scoped>
+.formMultiple {
   display: flex;
   justify-content: flex-start;
   flex-flow: row wrap;
