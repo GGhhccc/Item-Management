@@ -122,7 +122,7 @@ export const useSearchStore = defineStore('search', () => {
     currentTagList.tagsList.push(...data.records)
   }
 
-  // 筛选后获取新的物品列表
+  // 筛选物品
   async function fetchScreenSearchList(deleted: number) {
     const data = await searchByScreen(
       {

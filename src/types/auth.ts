@@ -15,11 +15,3 @@ export interface LoginResponse {
   token: string
   id: string
 }
-
-// 表单校验类型
-export interface FormItemRule {
-  // rule 太复杂懒得写
-  rule: any
-  value: any
-  callback: (error?: string | Error) => void
-}

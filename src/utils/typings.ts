@@ -8,10 +8,6 @@ export interface Pages<T> {
    */
   pages: number
   /**
-   * 列表数组
-   */
-  records: T[]
-  /**
    * 每页显示数量
    */
   size: number
@@ -19,6 +15,10 @@ export interface Pages<T> {
    * 总共数量
    */
   total: number
+  /**
+   * 列表数组
+   */
+  records: T[]
 }
 
 export interface FullUserInfo {

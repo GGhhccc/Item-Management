@@ -1,3 +1,5 @@
+import { Pages } from '@/utils/typings'
+// 用于请求的基本搜索列表
 export interface SearchList {
   /**
    * 当前所在页
@@ -17,6 +19,7 @@ export interface SearchList {
   itemList: ItemList[]
 }
 
+// 用于请求的完整搜索列表
 export interface CompleteSearchList extends SearchList {
   /**
    * 多选物品的 id 数组
@@ -24,7 +27,8 @@ export interface CompleteSearchList extends SearchList {
   checkedItemList: number[]
 }
 
-// 筛选中的标签列表
+// 标签参数：
+// 用于请求的标签列表
 export interface TagList {
   /**
    * 当前所在页
@@ -64,7 +68,11 @@ export interface TagItem {
   checked?: boolean
 }
 
-// 传入的物品数组
+// 响应的标签列表
+export type ResponseTagList = Pages<TagItem>
+
+// 进行物品操作请求的参数：
+// 响应的基本物品信息数组
 export interface ItemList {
   /**
    * 物品 id
@@ -112,15 +120,6 @@ export interface ItemPath {
   name: string
 }
 
-// 展现在界面的物品数组（path 格式化成 string）
-type ItemListPath = Omit<ItemList, 'path'>
-export interface ExtendItemListPath extends ItemListPath {
-  /**
-   * 物品路径
-   */
-  path: string
-}
-
 // 历史记录 log 的类型
 export interface HistoryLog {
   /**
@@ -141,6 +140,22 @@ export interface HistoryLog {
   date: string
 }
 
+// 响应的搜索数组及最近删除列表
+export type ResponseItemList = Pages<Omit<ItemList, 'log'>>
+
+// 响应的历史记录列表
+export type ResponseHistoryList = Pages<Omit<ItemList, 'path'>>
+
+// 展现在界面的物品数组（path 格式化成 string）
+type ItemListPath = Omit<ItemList, 'path'>
+export interface ExtendItemListPath extends ItemListPath {
+  /**
+   * 物品路径
+   */
+  path: string
+}
+
+// 筛选弹窗的展示控制
 export interface ShowControl {
   /**
    * 是否展开属性列表
@@ -202,6 +217,7 @@ export interface ExtendCurrentSearchInput extends CurrentSearchInput {
   inputData: SearchInputParams
 }
 
+// 输入框内容的参数
 export interface SearchInputParams {
   /**
    * 物品名称

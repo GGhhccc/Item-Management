@@ -6,6 +6,7 @@
         <u-input
           v-model="loginForm.account"
           placeholder="填写你的手机号码"
+          maxlength="11"
           clearable
           customStyle="
             padding: 0 30rpx 0 30rpx;
@@ -66,7 +67,7 @@ const loginForm = reactive({
 
 // 表单校验规则
 // validator 参数应该用组件库定义好的类型，但 uview-plus 没有使用 ts 定义
-const validatePhone = (rule: any, value: any, callback: any) => {
+const validatePhone = (rule: any, value: any, callback: (error?: string | Error) => void) => {
   // 去除空格
   const phone = value.replace(/\s/g, '')
   const regs = /^1[3456789]\d{9}$/

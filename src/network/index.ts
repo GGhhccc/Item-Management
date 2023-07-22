@@ -16,7 +16,7 @@ const requestInterceptor = (options: UniApp.RequestOptions | UniApp.UploadFileOp
 }
 
 // uni.request 请求封装
-const service = (options: UniApp.RequestOptions) => {
+const service = <T>(options: UniApp.RequestOptions): Promise<T> => {
   // 请求拦截
   requestInterceptor(options)
 
@@ -101,7 +101,7 @@ uni.addInterceptor('request', {
 })
 
 // uni.uploadFile 请求封装
-export const uploadFileService = (options: UniApp.UploadFileOption) => {
+export const uploadFileService = <T>(options: UniApp.UploadFileOption): Promise<T> => {
   // 请求拦截
   requestInterceptor(options)
 

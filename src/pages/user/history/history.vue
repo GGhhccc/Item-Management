@@ -14,9 +14,6 @@
       :cancelMultiple="cancelMultiple"
     />
 
-    <!-- <u-button @click="start1">隐私</u-button>
-    <PasswordPopup v-if="!isEmpty" :popup="popup" @close="close" /> -->
-
     <!-- 空 -->
     <Empty v-if="isEmpty" type="history" width="470" height="500" />
   </view>
@@ -32,7 +29,6 @@ const searchStore = useSearchStore()
 const { currentSearchList } = storeToRefs(searchStore)
 const { fetchHistoryItem } = searchStore
 
-provide('isNeedEdit', false)
 // 表示当前为历史记录页
 provide('isHistory', true)
 
