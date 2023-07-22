@@ -12,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 const popup = ref(false)
 
@@ -47,6 +48,18 @@ const confirmNumber = (password: number) => {
     })
   }
 }
+
+// onShow(() => {
+//   uni.showToast({
+//     title: '该功能尚未开放',
+//     icon: 'error'
+//   })
+//   setTimeout(() => {
+//     uni.switchTab({
+//       url: '/pages/home/home'
+//     })
+//   }, 1500)
+// })
 </script>
 
 <style lang="scss">

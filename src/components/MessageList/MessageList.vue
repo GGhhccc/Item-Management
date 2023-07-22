@@ -10,7 +10,7 @@
         </template>
 
         <!-- 消息为空 -->
-        <view class="message-list__empty" v-if="isEmpty">
+        <!-- <view class="message-list__empty" v-if="isEmpty">
           <view class="message-list__empty__text">暂无消息</view>
           <u-image
             src="/static/isEmpty.png"
@@ -18,7 +18,8 @@
             width="200px"
             height="200px"
           ></u-image>
-        </view>
+        </view> -->
+        <Empty v-if="isEmpty" />
       </view>
     </u-skeleton>
   </template>
@@ -45,9 +46,10 @@ const isLoadingMore = ref(false)
 
 // 点击消息进入聊天界面
 const chooseMessage = (index: number) => {
-  uni.navigateTo({
-    url: `/pages/message/chatbox/chatbox?index=${index}`
-  })
+  // uni.navigateTo({
+  //   url: `/pages/message/chatbox/chatbox?index=${index}`
+  // })
+  console.log('系统通知')
 }
 </script>
 

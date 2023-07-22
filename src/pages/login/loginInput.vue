@@ -106,7 +106,6 @@ const rules = {
 const loginSubmit = () => {
   loginFormRef.value.validate().then(async () => {
     try {
-      console.log(loginForm)
       const { id } = await loginByPassword(loginForm)
       uni.showToast({
         title: '登录成功',

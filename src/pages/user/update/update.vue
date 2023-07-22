@@ -4,7 +4,7 @@
 
     <view class="update__info">
       <u-image
-        src="/static/logo.png"
+        src="/static/szlogo.png"
         radius="26"
         width="114"
         height="114"

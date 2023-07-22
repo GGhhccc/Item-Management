@@ -51,7 +51,7 @@
         </view>
       </view>
     </scroll-view>
-    <view class="chatbox__input-wrapper" id="inputWrapper">
+    <!-- <view class="chatbox__input-wrapper" id="inputWrapper">
       <view class="chatbox__input-wrapper__prefixIcon">
         <u-icon name="camera-fill" size="60rpx" color="#fff"></u-icon>
       </view>
@@ -69,7 +69,7 @@
       <view class="chatbox__input-wrapper__suffixIcon" @click="sendMsg">
         <u-icon name="checkmark" size="50rpx" color="#fff"></u-icon>
       </view>
-    </view>
+    </view> -->
   </view>
 </template>
 
@@ -111,13 +111,13 @@ const scrollScreenHeight = ref(0)
 // scroll-view 的滚动距离
 const scrollToView = ref('')
 // 发送信息
-const sendMsg = () => {
-  nextTick(() => {
-    scrollToView.value =
-      'msg' +
-      currentMessageList.value.messageList[currentIndex.value].message.chatLogList[length - 1].id
-  })
-}
+// const sendMsg = () => {
+//   nextTick(() => {
+//     scrollToView.value =
+//       'msg' +
+//       currentMessageList.value.messageList[currentIndex.value].message.chatLogList[length - 1].id
+//   })
+// }
 </script>
 
 <style lang="scss" scoped>

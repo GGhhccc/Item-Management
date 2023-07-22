@@ -111,9 +111,7 @@ export default {
     /**
      * 输入框值改变
      */
-    inputVal(e) {
-      console.log(e)
-      // this.inputValues = e.detail.value;
+    inputVal() {
       this.$emit('inputVerificationChange', this.inputValues)
     },
     // 设置验证码的值
@@ -135,7 +133,6 @@ export default {
     },
     focus() {
       !this.blurShow ? (this.blurShowLocal = true) : ''
-      console.log('focus')
     }
   }
 }
