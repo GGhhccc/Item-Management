@@ -1,6 +1,6 @@
 <template>
   <view>
-    <Space :floor="floor" />
+    <Space />
     <u-navbar
       @leftClick="useFormStore().currentFloor--"
       titleWidth="250rpx"
@@ -13,5 +13,4 @@
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
 const name = useFormStore().currentName
-const floor = useFormStore().currentFloor
 </script>
