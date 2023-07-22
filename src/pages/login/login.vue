@@ -1,6 +1,6 @@
 <template>
   <view class="login">
-    <image src="../../static/loginBg2.png" class="login__bg"></image>
+    <image src="../../static/loginBg3.png" class="login__bg"></image>
     <view class="login__welcome">
       <view class="login__welcome__text-content">
         <view class="login__welcome__text-content__title1">i收纳</view>
@@ -9,8 +9,8 @@
       <u-button
         class="login__welcome__btn"
         text="登录"
-        type="primary"
-        customStyle="width: 70vw; height: 100rpx; margin-top: 60rpx; border-radius: 8px;"
+        color="#3988FF"
+        customStyle="width: 80vw; height: 100rpx; margin-top: 60rpx; border-radius: 8px;"
         @click="jumpToInput"
       ></u-button>
     </view>
@@ -41,12 +41,12 @@ const jumpToInput = () => {
   &__bg {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    height: 85vh;
   }
 
   &__welcome {
     position: absolute;
-    bottom: 0;
+    bottom: 100rpx;
     width: 100vw;
     height: 450rpx;
     border-radius: 35px 35px 0 0;
@@ -56,13 +56,14 @@ const jumpToInput = () => {
     &__text-content {
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: baseline;
       width: 100%;
       height: 80rpx;
+      font-size: 38rpx;
       margin-top: 60rpx;
 
       &__title1 {
-        font-size: 38rpx;
+        font-size: 44rpx;
         font-weight: bold;
         margin-right: 20rpx;
       }
