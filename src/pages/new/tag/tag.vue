@@ -1,14 +1,17 @@
 <template>
   <view class="tags">
     <u-navbar bgColor="#f6f6f6" title="管理标签" :autoBack="true" />
-    <view v-show="!showNew" v-for="(item, index) in tabList" :key="index" class="tags-unit">
-      {{ item.name }}
-      <view class="tags-unit__icon">
-        <view class="tags-unit__icon-color" />
-        <view class="tags-unit__icon-close">
-          <u-icon @click="deleteTag(index)" size="30rpx" color="#fff" name="close"></u-icon>
-        </view>
-      </view>
+    <view v-show="!showNew">
+      <Tag
+        @deleteTag="deleteTag(item.id)"
+        @changeColor="changeColor(item.id, item.color)"
+        v-for="(item, index) in useTagStore().tagInfo.tagData"
+        :key="index"
+        :tag="item"
+        @focus="focus"
+        @blur="blur"
+      >
+      </Tag>
     </view>
     <view v-show="!showNew" @click="showNew = true" class="tags-plus">
       <u-icon size="70rpx" color="#fff" name="plus" />
@@ -20,80 +23,145 @@
       </view>
       <view class="tags__new-label"> 颜色 </view>
       <view class="tags__new-colors">
-        <view @click="color = 'black'" class="tags__new-colors-unit">
+        <view @click="color = '#000'" class="tags__new-colors-unit">
           <view class="tags__new-colors-unit-ball" />
           黑色
-          <view v-show="color === 'black'" class="tags__new-colors-unit-tick">
+          <view v-show="color === '#000'" class="tags__new-colors-unit-tick">
             <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
           </view>
         </view>
-        <view @click="color = 'orange'" class="tags__new-colors-unit">
+        <view @click="color = '#ff9813'" class="tags__new-colors-unit">
           <view style="background-color: #ff9813" class="tags__new-colors-unit-ball" />
           橙色
-          <view v-show="color === 'orange'" class="tags__new-colors-unit-tick">
+          <view v-show="color === '#ff9813'" class="tags__new-colors-unit-tick">
             <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
           </view>
         </view>
-        <view @click="color = 'blue'" class="tags__new-colors-unit">
+        <view @click="color = '#3988ff'" class="tags__new-colors-unit">
           <view style="background-color: #3988ff" class="tags__new-colors-unit-ball" />
           蓝色
-          <view v-show="color === 'blue'" class="tags__new-colors-unit-tick">
+          <view v-show="color === '#3988ff'" class="tags__new-colors-unit-tick">
             <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
           </view>
         </view>
-        <view @click="color = 'red'" class="tags__new-colors-unit">
+        <view @click="color = '#ff6464'" class="tags__new-colors-unit">
           <view style="background-color: #ff6464" class="tags__new-colors-unit-ball" />
           红色
-          <view v-show="color === 'red'" class="tags__new-colors-unit-tick">
+          <view v-show="color === '#ff6464'" class="tags__new-colors-unit-tick">
             <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
           </view>
         </view>
-        <view @click="color = 'purple'" class="tags__new-colors-unit">
+        <view @click="color = '#8439ff'" class="tags__new-colors-unit">
           <view style="background-color: #8439ff" class="tags__new-colors-unit-ball" />
           紫色
-          <view v-show="color === 'purple'" class="tags__new-colors-unit-tick">
+          <view v-show="color === '#8439ff'" class="tags__new-colors-unit-tick">
             <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
           </view>
         </view>
-        <view @click="color = 'yellow'" class="tags__new-colors-unit">
+        <view @click="color = '#ffe600'" class="tags__new-colors-unit">
           <view style="background-color: #ffe600" class="tags__new-colors-unit-ball" />
           黄色
-          <view v-show="color === 'yellow'" class="tags__new-colors-unit-tick">
+          <view v-show="color === '#ffe600'" class="tags__new-colors-unit-tick">
             <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
           </view>
         </view>
-        <view @click="color = 'green'" class="tags__new-colors-unit">
+        <view @click="color = '#b3f09d'" class="tags__new-colors-unit">
           <view style="background-color: #b3f09d" class="tags__new-colors-unit-ball" />
           绿色
-          <view v-show="color === 'green'" class="tags__new-colors-unit-tick">
+          <view v-show="color === '#b3f09d'" class="tags__new-colors-unit-tick">
             <u-icon size="25rpx" name="checkmark" color="#fff"></u-icon>
           </view>
         </view>
       </view>
       <view class="tags__new-submit">
+        <u-button @click="showNew = false" text="返回"></u-button>
+        <u-col span="2"></u-col>
         <u-button @click="submit" type="primary" text="确认"></u-button>
       </view>
     </view>
+    <u-modal
+      @cancel="showDelete = false"
+      @confirm="confirmDelete()"
+      :showCancelButton="true"
+      :show="showDelete"
+      width="600rpx"
+    >
+      确认删除?
+    </u-modal>
+    <u-modal
+      @cancel="showChangeName = false"
+      @confirm="confirmChangeName"
+      :showCancelButton="true"
+      :show="showChangeName"
+      width="600rpx"
+    >
+      确认修改标签名?
+    </u-modal>
+    <u-modal
+      @cancel="showChangeColor = false"
+      @confirm="confirmChangeColor"
+      :showCancelButton="true"
+      :show="showChangeColor"
+      width="600rpx"
+    >
+      确认修改颜色?
+    </u-modal>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-const tabList = [
-  { name: '书籍刊物', color: 'blue' },
-  { name: '衣物', color: 'red' },
-  { name: '电子产品', color: 'orange' },
-  { name: '漫画', color: 'black' }
-]
-const deleteTag = (index: number) => {
-  console.log(index)
+import { useTagStore } from '@/stores/tag'
+const useTag = useTagStore()
+const { fetchAllTags, fetchAddTag, fetchDeleteTag, fetchChangeTag } = useTag
+fetchAllTags()
+const showDelete = ref(false)
+let currentId = 0
+const deleteTag = (id: number) => {
+  currentId = id
+  showDelete.value = true
+}
+const showChangeColor = ref(false)
+const changeColor = (id: number, color: string) => {
+  currentId = id
+  currentColor = color
+  showChangeColor.value = true
+}
+
+const confirmChangeColor = async () => {
+  await fetchChangeTag(currentId, currentName, currentColor)
+  showChangeColor.value = false
+}
+
+const confirmDelete = async () => {
+  console.log(currentId)
+  await fetchDeleteTag(currentId)
+  showDelete.value = false
 }
 const name = ref('')
 const showNew = ref(false)
-const submit = () => {
+const submit = async () => {
+  await fetchAddTag(name.value, color.value)
   showNew.value = false
 }
-const color = ref('black')
+const color = ref('#000')
+let currentName = ''
+let currentColor = ''
+const focus = (id: number, name: string): void => {
+  currentName = name
+  currentId = id
+}
+const showChangeName = ref(false)
+const blur = (name: string): void => {
+  if (currentName !== name) {
+    currentName = name
+    showChangeName.value = true
+  }
+}
+const confirmChangeName = async () => {
+  await fetchChangeTag(currentId, currentName, currentColor)
+  showChangeName.value = false
+}
 </script>
 
 <style lang="scss">
@@ -103,49 +171,6 @@ const color = ref('black')
   height: calc(100vh - 150rpx);
   overflow: auto;
   background-color: #f6f6f6;
-
-  &-unit {
-    margin-top: 10px;
-    box-sizing: border-box;
-    position: relative;
-    font-size: 30rpx;
-    font-weight: 750;
-    padding: 30rpx;
-    color: #353535;
-    margin-bottom: 10rpx;
-    background-color: #fff;
-    border-radius: 20rpx;
-    height: 100rpx;
-    width: 750rpx;
-
-    &__icon {
-      display: flex;
-      justify-content: space-around;
-      position: absolute;
-      right: 0;
-      top: 0;
-      align-items: center;
-      height: 100rpx;
-      width: 180rpx;
-
-      &-color {
-        width: 50rpx;
-        height: 50rpx;
-        background-color: #3988ff;
-        border-radius: 25rpx;
-      }
-
-      &-close {
-        width: 50rpx;
-        height: 50rpx;
-        border-radius: 25rpx;
-        background-color: #979797;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    }
-  }
 
   &-plus {
     position: fixed;
@@ -216,9 +241,10 @@ const color = ref('black')
 
     &-submit {
       position: fixed;
+      display: flex;
       bottom: 50rpx;
-      left: 300rpx;
-      width: 200rpx;
+      transform: translateX(50%);
+      width: 400rpx;
     }
   }
 }
