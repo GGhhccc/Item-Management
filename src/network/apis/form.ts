@@ -2,7 +2,7 @@ import service from '..'
 import type { ItemForm, RoomForm, LogData, MultipleModify } from '@/types/form.d.ts'
 import type { DetailItemData, DetailRoomData } from '@/types/space.d.ts'
 import type { Pages } from '@/utils/typings'
-import type { GetAllItemsParams } from '@/utils/typings'
+import type { PagingParams } from '@/utils/typings'
 import { uploadFileService } from '..'
 
 // 添加房间
@@ -166,7 +166,7 @@ export function updateItem(
 // 获取物品日志
 export function getItemLogs(
   id: number,
-  { offset, limit = 100 }: GetAllItemsParams
+  { offset, limit = 100 }: PagingParams
 ): Promise<Pages<LogData>> {
   return service<Pages<LogData>>({
     url: `/items/${id}/logs?offset=${offset}&limit=${limit}`,

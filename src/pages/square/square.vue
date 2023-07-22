@@ -49,17 +49,17 @@ const confirmNumber = (password: number) => {
   }
 }
 
-// onShow(() => {
-//   uni.showToast({
-//     title: '该功能尚未开放',
-//     icon: 'error'
-//   })
-//   setTimeout(() => {
-//     uni.switchTab({
-//       url: '/pages/home/home'
-//     })
-//   }, 1500)
-// })
+onShow(() => {
+  uni.showToast({
+    title: '该功能尚未开放',
+    icon: 'error'
+  })
+  setTimeout(() => {
+    uni.switchTab({
+      url: '/pages/home/home'
+    })
+  }, 1500)
+})
 </script>
 
 <style lang="scss">

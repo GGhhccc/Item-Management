@@ -1,8 +1,8 @@
 import service from '..'
-import type { GetAllItemsParams } from '@/utils/typings'
+import type { PagingParams } from '@/utils/typings'
 
 // 查看空间列表
-export function getAllTags({ offset, limit = 100 }: GetAllItemsParams): Promise<any> {
+export function getAllTags({ offset, limit = 100 }: PagingParams): Promise<any> {
   return service({
     url: `/labels?offset=${offset}&limit=${limit}`,
     method: 'GET'
