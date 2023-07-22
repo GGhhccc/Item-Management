@@ -1,38 +1,48 @@
 <template>
   <view
-    @click="toSpace(item.id, item.type, item.name)"
+    @click.stop="toSpace(item.id, item.type, item.name)"
     @longpress="showOperate"
     :style="bgColor"
     class="spaceItem"
   >
     <image class="spaceItem-img" :src="item.cover || '../../../static/szlogo.png'" />
     <view class="spaceItem-type">
-      <u-icon size="40rpx" color="#4d94ff" :name="item.type ? 'grid' : 'home'" />
+      <u-icon size="40rpx" color="#4d94ff" :name="item.type === 2 ? 'grid' : 'home'" />
     </view>
-    <view v-if="item.privary" class="spaceItem-lock">
+    <view v-if="item.privacy" class="spaceItem-lock">
       <u-icon size="40rpx" color="#4d94ff" name="lock"></u-icon>
     </view>
-    <view class="spaceItem__imformation">
-      <view class="spaceItem__imformation-name">
+    <view class="spaceItem__information">
+      <view class="spaceItem__information-name">
         {{ item.name }}
       </view>
-      <view class="spaceItem__imformation-administrator">
+      <!-- <view class="spaceItem__information-administrator">
         <u-icon size="40rpx" color="#4c92fb" name="account"></u-icon>
-      </view>
-      <view class="spaceItem__imformation-avatar">
+      </view> -->
+      <!-- <view class="spaceItem__information-avatar">
         <u-avatar-group size="40rpx" :urls="item.administrator"></u-avatar-group>
+      </view> -->
+      <view class="spaceItem__information-list">
+        <u-icon
+          @click.stop="toDetail(item.id, item.name, item.type)"
+          color="#5096fe"
+          size="40rpx"
+          name="list"
+        ></u-icon>
       </view>
-      <view class="spaceItem__imformation-list">
-        <u-icon @click="toDetail" color="#5096fe" size="40rpx" name="list"></u-icon>
-      </view>
-      <view class="spaceItem__imformation-time">
-        <u-icon size="25rpx" name="clock"></u-icon>
-        <u-text margin="0 0 0 10rpx" size="25rpx" color="#979797" text="2018-8-21" />
+      <view class="spaceItem__information-time">
+        <u-icon size="25rpx" :name="item.type ? 'clock' : 'map'"></u-icon>
+        <u-text
+          margin="0 0 0 10rpx"
+          size="25rpx"
+          color="#979797"
+          :text="item.type ? item.date : item.address"
+        />
       </view>
     </view>
     <view class="spaceItem__content">
       <u-avatar
-        v-for="(item2, index2) in item.content"
+        v-for="(item2, index2) in item.itemCover"
         :key="index2"
         :src="item2"
         customStyle="margin-right:20rpx"
@@ -44,11 +54,17 @@
 
 <script setup lang="ts">
 import { useFormStore } from '@/stores/form'
-import type { SpaceData } from '@/types/form'
+import { useSpaceStore } from '@/stores/space'
+import type { BriefItem } from '@/types/space'
+//表单数据
+const useForm = useFormStore()
+const { fetchRoomDetail, fetchItemDetail } = useForm
+const useSpace = useSpaceStore()
+const { spaces } = useSpace
 
 const props = defineProps<{
   //表单数据类型
-  item: SpaceData
+  item: BriefItem
   //是否显示操作菜单
   show?: boolean
   //背景颜色
@@ -61,21 +77,25 @@ const emits = defineEmits<{
   //长按事件
   (e: 'longpress'): void
 }>()
-//表单数据
-const useForm = useFormStore()
 
 //进入下一层
 const toSpace = (id: number, type: number, name: string): void => {
   if (!props.show && (type === 0 || type === 1)) {
     //修改当前表单数据
     useForm.currentId = id
-    useForm.currentFloor++
     useForm.currentName = name
+    spaces[useForm.currentFloor - 1] = {
+      fatherId: useForm.currentFloor === 1 ? 0 : spaces[useForm.currentFloor - 2].id,
+      id: id,
+      name: name,
+      layer: useForm.currentFloor
+    }
     //跳转
     uni.navigateTo({
       url: `/pages/home/spaces/spaces`
     })
   } else if (!props.show) {
+    fetchRoomDetail(id)
     uni.navigateTo({
       url: `/pages/details/details`
     })
@@ -83,18 +103,24 @@ const toSpace = (id: number, type: number, name: string): void => {
   //触发点击事件
   emits('click')
 }
-const toDetail = (): void => {
+//去到详情页
+const toDetail = (id: number, name: string, type: number): void => {
+  useForm.currentId = id
+  useForm.currentName = name
+  if (type) fetchItemDetail(id)
+  else fetchRoomDetail(id)
   uni.navigateTo({
     url: `/pages/details/details`
   })
 }
+
 //长按回调
 const showOperate = () => {
   emits('longpress')
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .spaceItem {
   box-shadow: 0 5px 5px #e3ebfe;
   box-sizing: border-box;
@@ -106,6 +132,7 @@ const showOperate = () => {
   border-radius: 30rpx;
   height: 200rpx;
   padding: 25rpx;
+
   &-img {
     width: 150rpx;
     height: 150rpx;
@@ -128,7 +155,7 @@ const showOperate = () => {
     border-radius: 10rpx;
   }
 
-  &__imformation {
+  &__information {
     position: absolute;
     right: 25rpx;
     top: 25rpx;
@@ -149,16 +176,16 @@ const showOperate = () => {
       margin-right: 10rpx;
     }
 
-    &-administrator {
-      display: inline-block;
-      background-color: #d8d7db;
-      border-radius: 10rpx;
-      margin-right: 10rpx;
-    }
+    // &-administrator {
+    //   display: inline-block;
+    //   background-color: #d8d7db;
+    //   border-radius: 10rpx;
+    //   margin-right: 10rpx;
+    // }
 
-    &-avatar {
-      display: inline-block;
-    }
+    // &-avatar {
+    //   display: inline-block;
+    // }
 
     &-list {
       display: flex;

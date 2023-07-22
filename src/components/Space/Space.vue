@@ -11,25 +11,25 @@
         <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
       </view>
     </view>
-    <view v-if="!spaceData" class="space__hello">
+    <view v-if="!spaceData[0]" class="space__hello">
       <u-text size="80rpx" text="HELLO!"></u-text>
     </view>
-    <view v-if="!spaceData" class="space__empty">
+    <view v-if="!spaceData[0]" class="space__empty">
       尚未添加物品,快去添加吧
       <image class="space__empty-chair" src="../../static/chair.png" />
       <image class="space__empty-plant" src="../../static/plant.png" />
     </view>
-    <view v-if="floor" class="space__spaces">
+    <view v-if="useForm.currentFloor !== 1" class="space__spaces">
       <view class="space__spaces__wrapper">
         <view
-          v-for="(item, index) in useForm.spaces.slice(0, floor)"
+          v-for="(item, index) in spaces.slice(0, useForm.currentFloor - 1)"
           :key="index"
           class="space__spaces__wrapper-unit"
         >
           <view class="space__spaces__wrapper-unit-circle" />
           <view class="space__spaces__wrapper-unit-line" />
           <view class="space__spaces__wrapper-unit-name">
-            {{ item }}
+            {{ item.name }}
           </view>
         </view>
       </view>
@@ -54,17 +54,12 @@
         <u-icon @click="toEdit" size="50rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
         <u-text size="25rpx" color="#88898c" align="center" text="编辑" :bold="true" />
       </view>
-      <view>
-        <u-icon
-          @click="showSpace = true"
-          size="50rpx"
-          name="rewind-right-fill"
-          color="#3988ff"
-        ></u-icon>
+      <view v-if="useForm.currentFloor !== 1">
+        <u-icon @click="openSpace" size="50rpx" name="rewind-right-fill" color="#3988ff"></u-icon>
         <u-text size="25rpx" color="#88898c" align="center" text="移动" :bold="true" />
       </view>
       <view>
-        <u-icon @click="deleteItem" size="50rpx" name="trash" color="#898a8d"></u-icon>
+        <u-icon @click="showDelete = true" size="50rpx" name="trash" color="#898a8d"></u-icon>
         <u-text size="25rpx" color="#88898c" align="center" text="删除" :bold="true" />
       </view>
       <view>
@@ -74,7 +69,7 @@
     </view>
     <u-modal
       @cancel="showDelete = false"
-      @confirm="comfirmDelete"
+      @confirm="confirmDelete"
       :showCancelButton="true"
       :show="showDelete"
       width="600rpx"
@@ -98,54 +93,66 @@
         </view>
         <text
           style="font-weight: 600"
-          v-for="(item, index) in useForm.spaces.slice(0, 10)"
+          v-for="(item, index) in spacesBox.slice(0, pathFloor)"
           :key="index"
         >
-          {{ item }}
-          <text v-if="index !== 9"> >&nbsp; </text>
+          {{ item.name }}
+          <text v-if="index < pathFloor - 1"> >&nbsp; </text>
         </text>
       </view>
-      <view class="space__subordinateSpace__floor">
+      <view v-if="!loading" class="space__subordinateSpace__floor">
         <SubordinateSpaceItem
+          v-for="(item, subIndex) in useSpaceStore().pathInfo"
+          :ids="ids"
           :titlePadding="'10rpx 40rpx'"
           :tagPadding="'0 70rpx'"
-          v-show="currentFloor >= index"
+          v-show="pathFloor >= subIndex"
           @radioClick="radioClick"
-          :parent="parentBox[index]"
-          :id="spacesBox[index]"
-          v-for="(item, index) in useForm.itemData.subordinateSpace"
+          :parent="subIndex ? spacesBox[subIndex - 1].id : 0"
+          :id="spacesBox[subIndex].id"
           :subordinateSpaces="item"
-          :key="index"
-          :floor="index + 1"
+          :key="subIndex"
+          :floor="subIndex + 1"
+          :currentFloor="useForm.currentFloor"
         />
       </view>
     </u-popup>
+    <u-modal
+      @cancel="showDelete = false"
+      @confirm="confirmDelete"
+      :showCancelButton="true"
+      :show="showDelete"
+      width="600rpx"
+    >
+      确认删除?
+    </u-modal>
   </view>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import type { PathData } from '@/types/space.d.ts'
+import type { BriefItem } from '@/types/space.d.ts'
 import { useFormStore } from '@/stores/form'
 import { useSpaceStore } from '@/stores/space'
-import { ref, onMounted } from 'vue'
 import SpaceItem from '@/components/Space/SpaceItem/SpaceItem.vue'
 import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/SubordinateSpaceItem.vue'
-import { storeToRefs } from 'pinia'
-const space = useSpaceStore()
-const { fetchAllRooms, fetchRoomItems } = space
-const { spaceInfo } = storeToRefs(space)
-const spaceData = ref()
+const useSpace = useSpaceStore()
+const { fetchAllRooms, fetchRoomItems, spaces, move, fetchAllPath } = useSpace
+const { spaceInfo } = storeToRefs(useSpace)
+const useForm = useFormStore()
+const { fetchRoomDetail, fetchItemDetail, modifyDeleteItemData, currentId } = useForm
 
-if (!useFormStore().currentFloor) {
-  ;(async () => {
-    await fetchAllRooms()
-    spaceData.value = spaceInfo.value.spaceData
-  })()
-} else {
-  ;(async () => {
-    await fetchRoomItems(useFormStore().currentId)
-    spaceData.value = spaceInfo.value.spaceData
-  })()
-}
+//空间数据
+const spaceData = ref<BriefItem[]>([])
+
+//选择的从属空间
+const spacesBox = ref<PathData[]>([])
+//路径加载
+const loading = ref(true)
+
+useForm.currentFloor++
 
 onMounted(() => {
   //开启分享功能
@@ -153,108 +160,57 @@ onMounted(() => {
     withShareTicket: true,
     menus: ['shareAppMessage', 'shareTimeline']
   })
+  //获取路径并初始化路径
+  ;(async () => {
+    if (useSpace.pathInfo[0].length === 0) await fetchAllPath()
+    for (let i = 0; i < useSpace.pathInfo.length; i++) {
+      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+    }
+    for (let i = 0; i < useForm.currentFloor - 1; i++) {
+      pathFloor.value++
+      spacesBox.value[i] = {
+        fatherId: i ? spacesBox.value[i - 1].id : 0,
+        id: spaces[i].id,
+        name: spaces[i].name,
+        layer: i
+      }
+    }
+    //路径获取完毕后再渲染页面
+    loading.value = false
+  })()
 })
-const props = withDefaults(
-  defineProps<{
-    //层数
-    floor?: number
-  }>(),
-  {
-    floor: 0
-  }
-)
-const showSpace = ref(false)
+
+//多选时的id数组
+let ids = ref<number[]>([])
+//选择的空间数组
+const checkbox = ref<boolean[]>([])
+//当前层数
+const pathFloor = ref<number>(0)
+//空间初始化
+if (useForm.currentFloor === 1) {
+  ;(async () => {
+    await fetchAllRooms()
+    spaceData.value = spaceInfo.value.spaceData
+    //初始化是否选择的数组
+    if (spaceData.value[useForm.currentFloor - 1])
+      for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+        checkbox.value[i] = false
+      }
+  })()
+} else {
+  ;(async () => {
+    await fetchRoomItems(currentId)
+    spaceData.value = spaceInfo.value.spaceData
+    //初始化是否选择的数组
+    if (spaceData.value[useForm.currentFloor])
+      for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+        checkbox.value[i] = false
+      }
+  })()
+}
+
 //是否显示操作菜单
 const showOperate = ref(false)
-//是否显示删除弹窗
-const showDelete = ref(false)
-//关闭操作菜单的回调
-const cancel = (): void => {
-  showOperate.value = false
-  for (let i = 0; i < checkbox.value.length; i++) {
-    checkbox.value[i] = false
-  }
-}
-const confirmMove = (): void => {
-  showSpace.value = false
-}
-//选择从属空间的id
-const spacesBox = ref<number[]>([1, 4, 0])
-//当前每一层空间的父空间id
-const parentBox = ref<number[]>([0, 1, 4])
-//当前层数
-const currentFloor = ref<number>(2)
-//从属空间标签点击事件
-const radioClick = (id: number, floor: number): void => {
-  //点击已选择标签
-  if (spacesBox.value[floor - 1] === id) {
-    //修改当前楼层
-    currentFloor.value = floor - 1
-    //清空当前点击索引之后的已选择空间id缓存
-    for (let i = floor - 1; i < spacesBox.value.length; i++) {
-      if (!spacesBox.value[i]) break
-      spacesBox.value[i] = 0
-    }
-  }
-  //点击未选择标签
-  else {
-    //修改当前楼层
-    currentFloor.value = floor
-    //将当前id存入已选择id缓存中
-    spacesBox.value[floor - 1] = id
-    //清空当前点击索引之后的已选择空间id缓存
-    for (let i = floor; i < spacesBox.value.length; i++) {
-      if (!spacesBox.value[i]) break
-      spacesBox.value[i] = 0
-    }
-    parentBox.value[floor] = id
-  }
-}
-//跳转至编辑页
-const toEdit = (): void => {
-  //是否可以进行多选编辑操作
-  let multiple = true
-  //选择数目
-  let mount = 0
-  //第一个选择物品属性
-  let firstAttribute = 0
-  let index = 0
-  for (const item of checkbox.value) {
-    if (item) {
-      if (!mount) firstAttribute = useForm.allItemData[props.floor][index].type
-      mount++
-      if (mount > 1 && (!firstAttribute || !useForm.allItemData[props.floor][index].type)) {
-        uni.showToast({
-          title: '只能对物品进行多选编辑操作',
-          icon: 'none'
-        })
-        multiple = false
-        return
-      }
-      useForm.IDbox = []
-      useForm.IDbox.push(useForm.allItemData[props.floor][index].id)
-    }
-    index++
-  }
-  if (multiple && mount > 1)
-    uni.navigateTo({
-      url: '/pages/edit/multiple/multiple'
-    })
-  else if (mount === 1) {
-    uni.navigateTo({
-      url: '/pages/edit/edit'
-    })
-  }
-}
-const useForm = useFormStore()
-//删除触发的回调
-const deleteItem = (): void => {
-  showDelete.value = true
-}
-//确认删除
-const comfirmDelete = (): void => {
-  showDelete.value = false
-}
 //选择物品或空间触发的回调
 const chooseItem = (index: number): void => {
   if (showOperate.value) checkbox.value[index] = !checkbox.value[index]
@@ -263,13 +219,112 @@ const chooseItem = (index: number): void => {
 const bgColor = (index: number): string | undefined => {
   if (checkbox.value[index]) return 'background-color: #c8dbfe;'
 }
-//是否选择的数组
-const checkbox = ref<boolean[]>([])
-//初始化是否选择的数组
-if (useForm.allItemData[props.floor])
-  for (let i = 0; i < useForm.allItemData[props.floor].length; i++) {
+
+//跳转至编辑页
+const toEdit = (): void => {
+  let count = 0
+  let firstId = 0
+  let firstName = ''
+  for (let i = 0; i < checkbox.value.length; i++) {
+    if (checkbox.value[i]) count++
+    if (checkbox.value[i] && count === 1) {
+      firstName = spaceData.value[i].name
+      firstId = spaceData.value[i].id
+    }
+  }
+  if (count > 1) {
+    useForm.ids = []
+    for (let i = 0; i < checkbox.value.length; i++) {
+      if (checkbox.value[i]) {
+        useForm.ids.push(spaceData.value[i].id)
+      }
+    }
+    uni.navigateTo({
+      url: '/pages/edit/multiple/multiple'
+    })
+  } else if (count === 1) {
+    useForm.currentId = firstId
+    useForm.currentName = firstName
+    if (useForm.currentFloor === 1) fetchRoomDetail(firstId)
+    else fetchItemDetail(firstId)
+    uni.navigateTo({
+      url: '/pages/edit/edit'
+    })
+  }
+}
+
+//显示从属空间
+const showSpace = ref(false)
+//多选移动打开时的回调
+const openSpace = () => {
+  showSpace.value = true
+  ids.value = []
+  for (let i = 0; i < checkbox.value.length; i++) {
+    if (checkbox.value[i]) {
+      ids.value.push(spaceData.value[i].id)
+    }
+  }
+}
+//从属空间标签点击事件
+const radioClick = (index: number, floor: number): void => {
+  //点击已选择标签
+  if (spacesBox.value[floor - 1].id === useSpaceStore().pathInfo[floor - 1][index].id) {
+    //修改当前楼层
+    pathFloor.value = floor - 1
+    //清空当前点击索引之后的已选择空间id缓存
+    for (let i = floor - 1; i < spacesBox.value.length; i++) {
+      if (!spacesBox.value[i]) break
+      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+    }
+  }
+  //点击未选择标签
+  else {
+    //修改当前楼层
+    pathFloor.value = floor
+    //将当前id存入已选择id缓存中
+    spacesBox.value[floor - 1] = useSpaceStore().pathInfo[floor - 1][index]
+    //清空当前点击索引之后的已选择空间id缓存
+    for (let i = floor; i < spacesBox.value.length; i++) {
+      if (!spacesBox.value[i]) break
+      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+    }
+  }
+}
+
+//是否显示删除弹窗
+const showDelete = ref(false)
+//确认移动
+const confirmMove = (): void => {
+  showSpace.value = false
+  const path = []
+  for (let i = 0; i < pathFloor.value; i++) {
+    path.push({
+      id: spacesBox.value[i].id,
+      name: spacesBox.value[i].name
+    })
+  }
+  move(useForm.currentId, ids.value, path)
+}
+//确认删除
+const confirmDelete = (): void => {
+  showDelete.value = false
+  let ids = []
+  for (let i = 0; i < checkbox.value.length; i++) {
+    if (checkbox.value[i]) {
+      ids.push(spaceData.value[i].id)
+    }
+  }
+  modifyDeleteItemData(ids)
+}
+
+//关闭操作菜单的回调
+const cancel = (): void => {
+  showOperate.value = false
+  for (let i = 0; i < checkbox.value.length; i++) {
     checkbox.value[i] = false
   }
+}
+
 //扫码
 const scanCode = (): void => {
   uni.scanCode({
@@ -278,12 +333,14 @@ const scanCode = (): void => {
     }
   })
 }
+
 //跳转搜索页
 const toSearch = (): void => {
   uni.navigateTo({
     url: '/pages/search/search'
   })
 }
+
 //跳转添加页
 const toAdd = (): void => {
   uni.navigateTo({
@@ -334,12 +391,14 @@ const toAdd = (): void => {
     box-sizing: border-box;
     display: flex;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 750rpx;
-    height: 200rpx;
-    padding: 0 50rpx 0 50rpx;
+    bottom: 50rpx;
+    border-radius: 20rpx;
+    left: 75rpx;
+    width: 600rpx;
+    height: 170rpx;
+    padding: 30rpx 50rpx 0 50rpx;
     justify-content: space-around;
+    background-color: #f8f8f8;
   }
 
   &__empty {
