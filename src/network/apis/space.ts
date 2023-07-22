@@ -1,9 +1,10 @@
 import service from '..'
-import type { PagingParams } from '@/utils/typings'
+import type { GetAllItemsParams, Pages } from '@/utils/typings'
+import type { T1, BriefItem, DetailItemData, DetailRoomData, PathData } from '@/types/space.d.ts'
 
 // 查看空间列表
-export function getAllRooms({ offset, limit = 10 }: PagingParams): Promise<any> {
-  return service({
+export function getAllRooms({ offset, limit = 100 }: GetAllItemsParams): Promise<Pages<BriefItem>> {
+  return service<Pages<BriefItem>>({
     url: `/items/rooms?offset=${offset}&limit=${limit}`,
     method: 'GET'
   })
@@ -13,61 +14,46 @@ export function getAllRooms({ offset, limit = 10 }: PagingParams): Promise<any> 
 export function getRoomItems(
   // 要查询的空间 id
   itemId: number,
-  { offset, limit = 10 }: PagingParams
-): Promise<any> {
-  return service({
+  { offset, limit = 10 }: GetAllItemsParams
+): Promise<Pages<BriefItem>> {
+  return service<Pages<BriefItem>>({
     url: `/items/${itemId}/items?offset=${offset}&limit=${limit}`,
     method: 'GET'
   })
 }
 
-// 查看物品详情
-export function getItemDetail(
-  // 要查询的物品 id
-  itemId: number
-): Promise<any> {
-  return service({
-    url: `/items/${itemId}`,
+// 查看空间详情
+export function getRoomDetail(id: number): Promise<DetailRoomData> {
+  return service<DetailRoomData>({
+    url: `/items/rooms/${id}`,
     method: 'GET'
   })
 }
 
-// 添加房间
-export function addRoom({ roomImages, commentImages }: any) {
-  return service({
-    url: '/items/rooms',
-    method: 'POST',
-    data: {
-      roomImages,
-      commentImages
-    }
+// 查看物品详情
+export function getItemDetail(id: number): Promise<DetailItemData> {
+  return service<DetailItemData>({
+    url: `/items/${id}`,
+    method: 'GET'
   })
 }
 
-// 添加物品
-export function addItem(
-  // 所要添加到的那个空间的 id
-  itemId: number,
-  { roomImages, commentImages }: any
-) {
-  return service({
-    url: `/items/${itemId}/items`,
-    method: 'POST',
-    data: {
-      roomImages,
-      commentImages
-    }
+// 获取所有路径
+export function getAllPath(): Promise<PathData[][]> {
+  return service<PathData[][]>({
+    url: `/items/path`,
+    method: 'GET'
   })
 }
 
-// 更新房间
-export function updateRoom(itemId: number, { roomImages, commentImages }: any) {
-  return service({
-    url: `/items/${itemId}/items`,
+// 移动物品
+export function moveItem(fatherId: number, ids: number[], path: T1[]): Promise<null> {
+  return service<null>({
+    url: `/items/${fatherId}/move`,
     method: 'PUT',
     data: {
-      roomImages,
-      commentImages
+      ids,
+      path
     }
   })
 }
