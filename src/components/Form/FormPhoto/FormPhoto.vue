@@ -29,20 +29,20 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from 'vue'
-import type { PhotoData } from '@/types/form'
+import type { imgData } from '@/types/form'
 const props = defineProps<{
   //大小
   size: string
   //是否为详情页
-  isDetail: boolean
+  isDetail?: boolean
   //图片列表
-  photoList: PhotoData[]
+  photoList: imgData[]
 }>()
 //图片列表内容
 const tempPhoto = ref(props.photoList)
 const emits = defineEmits<{
   //更新图片列表
-  (e: 'update:photoList', photoList: PhotoData[]): void
+  (e: 'update:photoList', photoList: imgData[]): void
 }>()
 const index = ref()
 watch(
@@ -58,6 +58,7 @@ const photoAfterRead = (event: any): void => {
       url: event.file[index].url
     })
   }
+  console.log(props.photoList)
 }
 //删除图片的回调
 const deletePhoto = (index: number): void => {
