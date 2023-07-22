@@ -126,3 +126,18 @@ export interface PagingParams {
    */
   limit?: number
 }
+
+export interface Tag {
+  /**
+   * ID
+   */
+  id: number
+  /**
+   * 名字
+   */
+  name: string
+  /**
+   * 颜色
+   */
+  color: string
+}
