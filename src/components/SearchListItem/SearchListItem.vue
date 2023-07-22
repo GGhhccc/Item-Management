@@ -53,7 +53,12 @@
 
         <view class="search-list-item__content__info-wrapper__detail">
           <!-- 物品路径 -->
-          <u-text v-if="!isHistory" :text="searchItemData.path" color="#898A8D"></u-text>
+          <u-text
+            v-if="!isHistory"
+            :text="searchItemData.path"
+            color="#898A8D"
+            custom-style="max-height: 40px"
+          ></u-text>
           <!-- 在历史记录页则显示历史修改信息 -->
           <view v-if="isHistory" class="search-list-item__content__info-wrapper__detail__history">
             <u-icon name="clock" size="27rpx" custom-style="padding-top: 7rpx;"></u-icon>
@@ -97,7 +102,8 @@ const emits = defineEmits<{
   (e: 'romoveCheckboxVal', val: number): void
 }>()
 
-const checkingStatus = ref(false)
+// 是否处于多选模式
+const checkingStatus = ref(props.isChecking)
 
 // 监听是否处于多选模式
 watch(
@@ -120,7 +126,6 @@ watch(props.itemData, (val) => {
   if (val.path) {
     searchItemData.path = formatPath(val.path)
   }
-  console.log(searchItemData)
 })
 
 watch(

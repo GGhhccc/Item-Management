@@ -210,15 +210,13 @@ export const useSearchStore = defineStore('search', () => {
     resetSearchList(1)
   }
 
-  // 获取历史记录时的搜索名
-  const historySearchName = ref('')
-  // 获取/查询历史记录（historySearchName 有值则搜索对应名字）
-  async function fetchHistoryItem() {
+  // 获取/查询历史记录（name 有值则搜索对应名字，搜索全部 name 为空）
+  async function fetchHistoryItem(name: string) {
     const data = await getAllHistory(
       {
         offset: currentSearchList.value.offset + 1
       },
-      historySearchName.value
+      name
     )
     currentSearchList.value.offset = data.current
     currentSearchList.value.itemList.push(...data.records)
@@ -230,7 +228,6 @@ export const useSearchStore = defineStore('search', () => {
     currentTagList,
     currentScreenData,
     currentSearchInputData,
-    historySearchName,
     setTagsList,
     setItemList,
     fetchNewSearchList,

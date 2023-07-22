@@ -105,7 +105,7 @@ async function loadMoreItem() {
       isDeleted ? await searchItemByInput(1) : await searchItemByInput(0)
     } else {
       isHistory
-        ? fetchHistoryItem()
+        ? fetchHistoryItem('')
         : isDeleted
         ? await fetchNewSearchList(1)
         : await fetchNewSearchList(0)
@@ -127,14 +127,14 @@ const showOperate = () => {
 
 // 点击
 const chooseItem = (item: ItemList) => {
-  // 控制多选的属性
+  // 多选状态下点击选中
   if (checkboxOperate.value) {
     item.isChecked = !item.isChecked
   } else {
-    // 跳转到详情页
-    // uni.navigateTo({
-    //   url: `/pages/deleted/deleted`
-    // })
+    // 非多选状态下跳转到详情页
+    uni.navigateTo({
+      url: `/pages/details/details`
+    })
   }
 }
 
@@ -164,9 +164,6 @@ const cancelChecking = () => {
     currentSearchList.value.itemList[i].isChecked = false
   }
 }
-
-// 初始化搜索列表
-// loadSearchList()
 </script>
 
 <style lang="scss" scoped></style>

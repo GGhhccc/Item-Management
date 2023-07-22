@@ -60,7 +60,7 @@ async function loadHistoryList() {
   isLoading.value = true
 
   try {
-    await fetchHistoryItem()
+    await fetchHistoryItem('')
   } catch {
     manualDisable.value = true
     console.log('请求失败')

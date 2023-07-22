@@ -26,7 +26,7 @@ import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
 
 const searchStore = useSearchStore()
-const { currentSearchList, currentSearchInputData, historySearchName } = storeToRefs(searchStore)
+const { currentSearchList, currentSearchInputData } = storeToRefs(searchStore)
 const { searchItemByInput, fetchHistoryItem } = searchStore
 
 const emits = defineEmits<{
@@ -58,9 +58,7 @@ const submitSearch = async () => {
     // 重置列表状态
     currentSearchList.value.offset = 0
     currentSearchList.value.itemList = []
-    // 修改 store 中历史记录的搜索参数
-    historySearchName.value = inputBox.value
-    await fetchHistoryItem()
+    await fetchHistoryItem(inputBox.value)
   }
   uni.showToast({
     title: '搜索成功',
