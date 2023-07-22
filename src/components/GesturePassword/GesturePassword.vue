@@ -77,7 +77,7 @@ export default {
       this.selectedCoordinate = []
       this.draw()
     },
-    touchEnd(e) {
+    touchEnd() {
       if (this.isActive) {
         this.isActive = false
         this.draw() // 这里应该把数据传出去
