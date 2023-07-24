@@ -14,7 +14,7 @@ export function getAllRooms({ offset, limit = 100 }: PagingParams): Promise<Page
 export function getRoomItems(
   // 要查询的空间 id
   itemId: number,
-  { offset, limit = 10 }: PagingParams
+  { offset, limit = 100 }: PagingParams
 ): Promise<Pages<BriefItem>> {
   return service<Pages<BriefItem>>({
     url: `/items/${itemId}/items?offset=${offset}&limit=${limit}`,
@@ -23,17 +23,17 @@ export function getRoomItems(
 }
 
 // 查看空间详情
-export function getRoomDetail(id: number): Promise<DetailRoomData> {
+export function getRoomDetail(id: number, password: string): Promise<DetailRoomData> {
   return service<DetailRoomData>({
-    url: `/items/rooms/${id}`,
+    url: `/items/rooms/${id}?password=${password}`,
     method: 'GET'
   })
 }
 
 // 查看物品详情
-export function getItemDetail(id: number): Promise<DetailItemData> {
+export function getItemDetail(id: number, password: string): Promise<DetailItemData> {
   return service<DetailItemData>({
-    url: `/items/${id}`,
+    url: `/items/${id}?password=${password}`,
     method: 'GET'
   })
 }

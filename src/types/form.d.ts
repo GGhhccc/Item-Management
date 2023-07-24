@@ -52,8 +52,13 @@ interface T2 {
    * 标签数组
    */
   labels: LabelData[]
+  /**
+   * 密码
+   */
+  password: string
 }
 
+//图片数据
 interface imgData {
   /**
    * ID
@@ -87,9 +92,21 @@ export interface RoomForm extends T2 {
 
 // 物品表单
 export interface ItemForm extends T2 {
+  /**
+   * 父空间名
+   */
   fatherName: string
+  /**
+   * 路径数组
+   */
   path: T1[]
+  /**
+   * 链接
+   */
   url: string
+  /**
+   * 数量
+   */
   count: number
 }
 

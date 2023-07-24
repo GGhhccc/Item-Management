@@ -45,6 +45,7 @@
         :bgColor="bgColor(index)"
         @click="chooseItem(index)"
         @longpress="showOperate = true"
+        @setID="setID"
         :item="item"
         :show="showOperate"
       />
@@ -126,6 +127,13 @@
     >
       确认删除?
     </u-modal>
+    <PasswordPopup
+      :popup="popup"
+      @close="popup = false"
+      @confirmGesture="confirmGesture"
+      @confirmNumber="confirmNumber"
+      :isValidate="true"
+    />
   </view>
 </template>
 
@@ -151,7 +159,12 @@ const spaceData = ref<BriefItem[]>([])
 const spacesBox = ref<PathData[]>([])
 //路径加载
 const loading = ref(true)
-
+//暂存ID
+const tempID = ref(0)
+//暂存名
+const tempName = ref('')
+//暂存类型
+const tempType = ref(0)
 useForm.currentFloor++
 
 onMounted(() => {
@@ -179,6 +192,60 @@ onMounted(() => {
     loading.value = false
   })()
 })
+
+//密码弹窗
+const popup = ref(false)
+//验证手势密码
+async function confirmGesture(password: number) {
+  popup.value = false
+  if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
+  else await fetchRoomDetail(tempID.value, password.toString())
+  useForm.currentId = tempID.value
+  useForm.currentName = tempName.value
+  if (isEdit.value)
+    uni.navigateTo({
+      url: `/pages/edit/edit`
+    })
+  else
+    uni.navigateTo({
+      url: `/pages/details/details`
+    })
+  isEdit.value = false
+}
+//验证数字密码
+async function confirmNumber(password: number) {
+  popup.value = false
+  if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
+  else await fetchRoomDetail(tempID.value, password.toString())
+  useForm.currentId = tempID.value
+  useForm.currentName = tempName.value
+  if (isEdit.value)
+    uni.navigateTo({
+      url: `/pages/edit/edit`
+    })
+  else
+    uni.navigateTo({
+      url: `/pages/details/details`
+    })
+  isEdit.value = false
+}
+
+async function setID(id: number, name: string, type: number, privacy: number): Promise<void> {
+  if (privacy) {
+    tempID.value = id
+    tempName.value = name
+    tempType.value = type
+    popup.value = true
+  } else {
+    if (type) await fetchItemDetail(id, '')
+    else await fetchRoomDetail(id, '')
+    useForm.currentId = id
+    useForm.currentName = name
+    uni.navigateTo({
+      url: `/pages/details/details`
+    })
+  }
+}
 
 //多选时的id数组
 let ids = ref<number[]>([])
@@ -220,16 +287,23 @@ const bgColor = (index: number): string | undefined => {
   if (checkbox.value[index]) return 'background-color: #c8dbfe;'
 }
 
+//编辑状态
+const isEdit = ref(false)
 //跳转至编辑页
-const toEdit = (): void => {
+async function toEdit(): Promise<void> {
   let count = 0
   let firstId = 0
   let firstName = ''
+  let firstPrivacy = 0
+  let firstType = 0
+  isEdit.value = true
   for (let i = 0; i < checkbox.value.length; i++) {
     if (checkbox.value[i]) count++
     if (checkbox.value[i] && count === 1) {
       firstName = spaceData.value[i].name
       firstId = spaceData.value[i].id
+      firstPrivacy = spaceData.value[i].privacy
+      firstType = spaceData.value[i].type
     }
   }
   if (count > 1) {
@@ -243,13 +317,22 @@ const toEdit = (): void => {
       url: '/pages/edit/multiple/multiple'
     })
   } else if (count === 1) {
-    useForm.currentId = firstId
-    useForm.currentName = firstName
-    if (useForm.currentFloor === 1) fetchRoomDetail(firstId)
-    else fetchItemDetail(firstId)
-    uni.navigateTo({
-      url: '/pages/edit/edit'
-    })
+    tempID.value = firstId
+    tempName.value = firstName
+    if (firstPrivacy) {
+      tempID.value = firstId
+      tempName.value = firstName
+      tempType.value = firstType
+      popup.value = true
+    } else {
+      if (firstType) await fetchItemDetail(firstId, '')
+      else await fetchRoomDetail(firstId, '')
+      useForm.currentId = firstId
+      useForm.currentName = firstName
+      uni.navigateTo({
+        url: `/pages/edit/edit`
+      })
+    }
   }
 }
 

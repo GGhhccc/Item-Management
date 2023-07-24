@@ -28,7 +28,7 @@
           :type="'text'"
           :name="'名称'"
           :maxLength="30"
-          :readOnly="isDetail"
+          :isDetail="isDetail"
           :placeHolder="'最多输入三十字'"
           v-model:input="form.name"
         />
@@ -71,13 +71,19 @@
             <u-switch :disabled="isDetail" v-model="privacy" size="20" :activeValue="true" />
           </u-col>
         </u-row>
+        <PasswordPopup
+          :popup="popup"
+          @close="popup = false"
+          @confirmGesture="confirmGesture"
+          @confirmNumber="confirmNumber"
+        />
         <FormShow
           v-model:show="showTag"
           @click="addTag = true"
           :name="'标签'"
           :isDetail="isDetail"
         />
-        <view class="form__information__tag">
+        <view v-show="showTag" class="form__information__tag">
           <FormTag
             v-for="(item, index) in labelBox"
             :checked="true"
@@ -192,6 +198,7 @@
           border="none"
           v-model="form.comment"
           placeholder="补充描述该物品/空间"
+          :disabled="isDetail"
         />
       </view>
       <view class="form__information">
@@ -264,7 +271,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, watch } from 'vue'
 import { useTagStore } from '@/stores/tag'
 import { useSpaceStore } from '@/stores/space'
 import { useFormStore } from '@/stores/form'
@@ -362,6 +369,24 @@ const showCode = ref(false)
 
 //隐私权
 const privacy = ref(form.privacy ? true : false)
+//密码弹窗
+const popup = ref(false)
+//密码
+const PIN = ref('')
+//验证手势密码
+const confirmGesture = (password: number) => {
+  PIN.value = password.toString()
+}
+//验证数字密码
+const confirmNumber = (password: number) => {
+  PIN.value = password.toString()
+}
+watch(
+  () => privacy.value,
+  () => {
+    if (privacy.value) popup.value = true
+  }
+)
 
 //日期
 const date = ref(new Date(form.date).getTime())
@@ -472,6 +497,8 @@ const radioClick = (index: number, floor: number): void => {
   }
 }
 
+if (!form.comment) form.comment = ''
+
 //显示历史记录
 const showHistory = ref(false)
 //获取物品日志
@@ -545,7 +572,8 @@ const submitForm = (): void => {
           fatherName: spacesBox.value[pathFloor.value - 1].name,
           url: form.url,
           images: images,
-          figures: figures
+          figures: figures,
+          password: privacy.value ? PIN.value : ''
         }
         updateItemData(currentId, form.id, tempForm)
       } else {
@@ -561,7 +589,8 @@ const submitForm = (): void => {
           date: currentTime(date.value),
           images: images,
           figures: figures,
-          labels: labelBox.value
+          labels: labelBox.value,
+          password: privacy.value ? PIN.value : ''
         }
         updateRoomData(form.id, tempForm)
       }
