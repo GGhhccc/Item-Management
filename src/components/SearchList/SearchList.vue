@@ -34,11 +34,11 @@
 
 <script setup lang="ts">
 import { useSearchStore } from '@/stores/search'
+import { useFormStore } from '@/stores/form'
 import { onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { ref, computed, toRefs, inject, watch } from 'vue'
 import type { ItemList } from '@/types/search'
-
 const searchStore = useSearchStore()
 const { currentSearchList, currentScreenData, currentSearchInputData } = storeToRefs(searchStore)
 const {
@@ -49,7 +49,8 @@ const {
   restoreDeletedItem,
   fetchHistoryItem
 } = searchStore
-
+const useForm = useFormStore()
+const { fetchItemDetail, fetchRoomDetail } = useForm
 // 是否是删除页面
 const isDeleted = inject<boolean>('isDetele', false)
 const isHistory = inject<boolean>('isHistory', false)
@@ -132,6 +133,8 @@ const chooseItem = (item: ItemList) => {
     item.isChecked = !item.isChecked
   } else {
     // 非多选状态下跳转到详情页
+    if (item.type) fetchItemDetail(item.id, '')
+    else fetchRoomDetail(item.id, '')
     uni.navigateTo({
       url: `/pages/details/details`
     })
