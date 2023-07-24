@@ -92,7 +92,7 @@ const showToast = (): void => {
 //表单数据
 const form = reactive({
   count: 0,
-  date: 0,
+  date: Date.now(),
   name: '',
   price: 0,
   privacy: true,
@@ -105,7 +105,7 @@ const form = reactive({
   padding: 30rpx;
   background-color: #f6f6f6;
   padding-top: 200rpx;
-
+  height: 100vh;
   &__information {
     border-radius: 30rpx;
     background-color: #fff;
