@@ -140,7 +140,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import type { PathData } from '@/types/space.d.ts'
 import type { BriefItem } from '@/types/space.d.ts'
@@ -216,6 +216,10 @@ onShow(() => {
     })()
   }
 })
+
+// onReachBottom(()=>{
+
+// })
 
 //密码弹窗
 const popup = ref(false)
@@ -378,7 +382,7 @@ const radioClick = (index: number, floor: number): void => {
 //是否显示删除弹窗
 const showDelete = ref(false)
 //确认移动
-const confirmMove = (): void => {
+async function confirmMove(): Promise<void> {
   showSpace.value = false
   const path = []
   for (let i = 0; i < pathFloor.value; i++) {
@@ -387,10 +391,50 @@ const confirmMove = (): void => {
       name: spacesBox.value[i].name
     })
   }
-  move(useForm.currentId, ids.value, path)
+  await move(useForm.currentId, ids.value, path)
+  //获取路径并初始化路径
+  ;(async () => {
+    await fetchAllPath()
+    for (let i = 0; i < useSpace.pathInfo.length; i++) {
+      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+    }
+    for (let i = 0; i < useForm.currentFloor - 1; i++) {
+      pathFloor.value++
+      spacesBox.value[i] = {
+        fatherId: i ? spacesBox.value[i - 1].id : 0,
+        id: spaces[i].id,
+        name: spaces[i].name,
+        layer: i
+      }
+    }
+    //路径获取完毕后再渲染页面
+    loading.value = false
+  })()
+  //空间初始化
+  if (useForm.currentFloor === 1) {
+    ;(async () => {
+      await fetchAllRooms()
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor - 1])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  } else {
+    ;(async () => {
+      await fetchRoomItems(currentId)
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  }
 }
 //确认删除
-const confirmDelete = (): void => {
+async function confirmDelete(): Promise<void> {
   showDelete.value = false
   let ids = []
   for (let i = 0; i < checkbox.value.length; i++) {
@@ -398,7 +442,47 @@ const confirmDelete = (): void => {
       ids.push(spaceData.value[i].id)
     }
   }
-  modifyDeleteItemData(ids)
+  await modifyDeleteItemData(ids)
+  //获取路径并初始化路径
+  ;(async () => {
+    await fetchAllPath()
+    for (let i = 0; i < useSpace.pathInfo.length; i++) {
+      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+    }
+    for (let i = 0; i < useForm.currentFloor - 1; i++) {
+      pathFloor.value++
+      spacesBox.value[i] = {
+        fatherId: i ? spacesBox.value[i - 1].id : 0,
+        id: spaces[i].id,
+        name: spaces[i].name,
+        layer: i
+      }
+    }
+    //路径获取完毕后再渲染页面
+    loading.value = false
+  })()
+  //空间初始化
+  if (useForm.currentFloor === 1) {
+    ;(async () => {
+      await fetchAllRooms()
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor - 1])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  } else {
+    ;(async () => {
+      await fetchRoomItems(currentId)
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  }
 }
 
 //关闭操作菜单的回调
@@ -520,6 +604,7 @@ const toAdd = (): void => {
     height: 5rpx;
     margin: 100rpx auto;
     position: relative;
+
     &__wrapper {
       position: absolute;
       top: -8rpx;
@@ -528,6 +613,7 @@ const toAdd = (): void => {
       justify-content: flex-start;
       max-width: 600rpx;
       overflow-x: auto;
+
       &-unit {
         width: 100rpx;
         margin-right: 22rpx;

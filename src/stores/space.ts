@@ -37,8 +37,8 @@ export const useSpaceStore = defineStore('space', () => {
     pathInfo.value = await getAllPath()
   }
   // 批量移动物品
-  function move(fatherId: number, ids: number[], path: T1[]): void {
-    moveItem(fatherId, ids, path)
+  async function move(fatherId: number, ids: number[], path: T1[]): Promise<void> {
+    await moveItem(fatherId, ids, path)
   }
 
   return {
