@@ -7,7 +7,9 @@
   >
     <image class="spaceItem-img" :src="item.cover || '../../../static/szlogo.png'" />
     <view class="spaceItem-type">
-      <u-icon size="40rpx" color="#4d94ff" :name="item.type === 2 ? 'grid' : 'home'" />
+      <view class="spaceItem-type__icon iconfont">
+        {{ !item.type ? '&#xf13c;' : item.type === 1 ? '&#xec54;' : '&#xe634;' }}
+      </view>
     </view>
     <view v-if="item.privacy" class="spaceItem-lock">
       <u-icon size="40rpx" color="#4d94ff" name="lock"></u-icon>
@@ -146,6 +148,12 @@ const showOperate = () => {
     top: 35rpx;
     background-color: #fff;
     border-radius: 10rpx;
+    &__icon {
+      margin-top: 5rpx;
+      width: 36rpx;
+      height: 36rpx;
+      color: #4d94ff;
+    }
   }
 
   &-lock {

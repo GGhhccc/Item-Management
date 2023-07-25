@@ -123,7 +123,7 @@
           <view class="space__subSpace__floor">
             <SubordinateSpaceItem
               v-for="(item, subIndex) in pathInfo"
-              :ids="[currentId]"
+              :ids="[]"
               :titlePadding="'10rpx 10rpx'"
               :tagPadding="'0 20rpx'"
               v-show="pathFloor >= subIndex"
@@ -197,7 +197,7 @@ import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/Subord
 const useTag = useTagStore()
 const { fetchAllTags } = useTag
 const useForm = useFormStore()
-const { submitRoom, submitItem, addImg, addFigure, currentFloor, currentId } = useForm
+const { submitRoom, submitItem, addImg, addFigure, currentFloor } = useForm
 const useSpace = useSpaceStore()
 const { pathInfo, spaces } = useSpace
 // 第一次进入页面时，获取所有标签
@@ -325,7 +325,7 @@ const pathFloor = ref<number>(0)
 for (let i = 0; i < pathInfo.length; i++) {
   spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
 }
-for (let i = 0; i < currentFloor - 2; i++) {
+for (let i = 0; i < currentFloor - 1; i++) {
   pathFloor.value++
   spacesBox.value[i] = {
     fatherId: i ? spacesBox.value[i - 1].id : 0,
