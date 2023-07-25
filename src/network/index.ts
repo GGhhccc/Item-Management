@@ -34,12 +34,9 @@ const service = <T>(options: UniApp.RequestOptions): Promise<T> => {
       .then((res: any) => {
         switch (res.data.code) {
           case 200:
-            // 从响应头中获取 token
-            if (res.header.Token) {
-              uni.setStorageSync('token', res.header.Token)
-            }
-            if (res.header.token) {
-              uni.setStorageSync('token', res.header.token)
+            // 从响应体中获取 token
+            if (res.data.data.token) {
+              uni.setStorageSync('token', res.data.data.token)
             }
             resolve(res.data.data)
             break
