@@ -5,7 +5,7 @@
     :style="bgColor"
     class="spaceItem"
   >
-    <image class="spaceItem-img" :src="item.cover || '../../../static/szlogo.png'" />
+    <image class="spaceItem-img" :src="item.cover || '../../../static/defaultRoom.png'" lazy-load />
     <view class="spaceItem-type">
       <view class="spaceItem-type__icon iconfont">
         {{ !item.type ? '&#xf13c;' : item.type === 1 ? '&#xec54;' : '&#xe634;' }}
