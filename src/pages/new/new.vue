@@ -395,7 +395,17 @@ const submitForm = (): void => {
           labels: labelBox.value,
           password: privacy.value ? PIN.value : ''
         }
-        submitRoom(tempForm)
+        await submitRoom(tempForm)
+        uni.showToast({
+          title: '新建成功',
+          icon: 'success',
+          duration: 2000
+        })
+        setTimeout(() => {
+          uni.navigateBack({
+            delta: 1
+          })
+        }, 1000)
       } else {
         const paths = []
         for (let i = 0; i < pathFloor.value; i++) {
@@ -421,7 +431,17 @@ const submitForm = (): void => {
           figures: figures,
           password: privacy.value ? PIN.value : ''
         }
-        submitItem(spacesBox.value[pathFloor.value - 1].id, tempForm)
+        await submitItem(spacesBox.value[pathFloor.value - 1].id, tempForm)
+        uni.showToast({
+          title: '新建成功',
+          icon: 'success',
+          duration: 2000
+        })
+        setTimeout(() => {
+          uni.navigateBack({
+            delta: 1
+          })
+        }, 1000)
       }
     })
     .catch((error: any) => {

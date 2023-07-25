@@ -11,10 +11,10 @@
         <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
       </view>
     </view>
-    <view v-if="!spaceData[0]" class="space__hello">
+    <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__hello">
       <u-text size="80rpx" text="HELLO!"></u-text>
     </view>
-    <view v-if="!spaceData[0]" class="space__empty">
+    <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__empty">
       尚未添加物品,快去添加吧
       <image class="space__empty-chair" src="../../static/chair.png" />
       <image class="space__empty-plant" src="../../static/plant.png" />
@@ -40,6 +40,7 @@
         :list="[{ name: '我的' }, { name: '共同管理' }]"
       />
     </view>
+    <Empty v-if="!spaceData[0] && useForm.currentFloor > 2" />
     <view v-for="(item, index) in spaceData" :key="index">
       <SpaceItem
         :bgColor="bgColor(index)"
@@ -138,7 +139,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import type { PathData } from '@/types/space.d.ts'
 import type { BriefItem } from '@/types/space.d.ts'
@@ -167,7 +169,7 @@ const tempName = ref('')
 const tempType = ref(0)
 useForm.currentFloor++
 
-onMounted(() => {
+onShow(() => {
   //开启分享功能
   uni.showShareMenu({
     withShareTicket: true,
@@ -175,7 +177,7 @@ onMounted(() => {
   })
   //获取路径并初始化路径
   ;(async () => {
-    if (useSpace.pathInfo[0].length === 0) await fetchAllPath()
+    await fetchAllPath()
     for (let i = 0; i < useSpace.pathInfo.length; i++) {
       spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
     }
@@ -191,6 +193,28 @@ onMounted(() => {
     //路径获取完毕后再渲染页面
     loading.value = false
   })()
+  //空间初始化
+  if (useForm.currentFloor === 1) {
+    ;(async () => {
+      await fetchAllRooms()
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor - 1])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  } else {
+    ;(async () => {
+      await fetchRoomItems(currentId)
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  }
 })
 
 //密码弹窗
@@ -247,28 +271,6 @@ let ids = ref<number[]>([])
 const checkbox = ref<boolean[]>([])
 //当前层数
 const pathFloor = ref<number>(0)
-//空间初始化
-if (useForm.currentFloor === 1) {
-  ;(async () => {
-    await fetchAllRooms()
-    spaceData.value = spaceInfo.value.spaceData
-    //初始化是否选择的数组
-    if (spaceData.value[useForm.currentFloor - 1])
-      for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-        checkbox.value[i] = false
-      }
-  })()
-} else {
-  ;(async () => {
-    await fetchRoomItems(currentId)
-    spaceData.value = spaceInfo.value.spaceData
-    //初始化是否选择的数组
-    if (spaceData.value[useForm.currentFloor])
-      for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-        checkbox.value[i] = false
-      }
-  })()
-}
 
 //是否显示操作菜单
 const showOperate = ref(false)
@@ -518,14 +520,14 @@ const toAdd = (): void => {
     height: 5rpx;
     margin: 100rpx auto;
     position: relative;
-
     &__wrapper {
       position: absolute;
       top: -8rpx;
       left: -40rpx;
       display: flex;
       justify-content: flex-start;
-
+      max-width: 600rpx;
+      overflow-x: auto;
       &-unit {
         width: 100rpx;
         margin-right: 22rpx;
