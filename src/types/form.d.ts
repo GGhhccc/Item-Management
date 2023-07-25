@@ -55,7 +55,7 @@ interface T2 {
   /**
    * 密码
    */
-  password: string
+  password?: string
 }
 
 //图片数据

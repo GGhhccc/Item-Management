@@ -184,7 +184,7 @@ import { ref, reactive, watch } from 'vue'
 import { useFormStore } from '@/stores/form'
 import { useTagStore } from '@/stores/tag'
 import { useSpaceStore } from '@/stores/space'
-import type { LabelData, imgData } from '@/types/form.d.ts'
+import type { ItemForm, RoomForm, LabelData, imgData } from '@/types/form.d.ts'
 import type { PathData } from '@/types/space.d.ts'
 // 引入组件
 import FormDate from '@/components/Form/FormDate/FormDate.vue'
@@ -249,9 +249,15 @@ watch(
   () => privacy.value,
   () => {
     if (privacy.value) popup.value = true
+    else PIN.value = ''
   }
 )
-
+watch(
+  () => popup.value,
+  () => {
+    if (!popup.value && !PIN.value) privacy.value = false
+  }
+)
 //显示标签
 const showTag = ref(true)
 //添加标签
@@ -379,14 +385,8 @@ const submitForm = (): void => {
     .then(async () => {
       const images = await uploadImg(form.images, 0)
       const figures = await uploadImg(form.figures, 1)
-      if (privacy.value && !PIN.value) {
-        uni.showToast({
-          title: '请先输入密码',
-          icon: 'none',
-          duration: 2000
-        })
-      } else if (currentFloor === 1) {
-        const tempForm = {
+      if (currentFloor === 1) {
+        const tempForm = <RoomForm>{
           privacy: privacy.value ? 1 : 0,
           type: 0,
           price: Number(form.price),
@@ -401,6 +401,7 @@ const submitForm = (): void => {
           labels: labelBox.value,
           password: privacy.value ? PIN.value : ''
         }
+        if (!PIN.value) delete tempForm.password
         await submitRoom(tempForm)
         uni.showToast({
           title: '新建成功',
@@ -420,7 +421,7 @@ const submitForm = (): void => {
             name: spacesBox.value[i].name
           })
         }
-        const tempForm = {
+        const tempForm = <ItemForm>{
           privacy: privacy.value ? 1 : 0,
           type: radioValue.value === '空间' ? 1 : 2,
           price: Number(form.price),
@@ -437,6 +438,7 @@ const submitForm = (): void => {
           figures: figures,
           password: privacy.value ? PIN.value : ''
         }
+        if (!PIN.value) delete tempForm.password
         await submitItem(spacesBox.value[pathFloor.value - 1].id, tempForm)
         uni.showToast({
           title: '新建成功',

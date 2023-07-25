@@ -276,7 +276,7 @@ import { useTagStore } from '@/stores/tag'
 import { useSpaceStore } from '@/stores/space'
 import { useFormStore } from '@/stores/form'
 import { onShareAppMessage } from '@dcloudio/uni-app'
-import type { imgData } from '@/types/form.d.ts'
+import type { ItemForm, RoomForm, imgData } from '@/types/form.d.ts'
 import type { PathData } from '@/types/space.d.ts'
 // 引入组件
 import FormDate from '@/components/Form/FormDate/FormDate.vue'
@@ -373,6 +373,8 @@ const privacy = ref(form.privacy ? true : false)
 const popup = ref(false)
 //密码
 const PIN = ref('')
+//是否修改过隐私设置
+let changed = false
 //验证手势密码
 const confirmGesture = (password: number) => {
   PIN.value = password.toString()
@@ -384,7 +386,15 @@ const confirmNumber = (password: number) => {
 watch(
   () => privacy.value,
   () => {
+    changed = true
     if (privacy.value) popup.value = true
+    else PIN.value = ''
+  }
+)
+watch(
+  () => popup.value,
+  () => {
+    if (!popup.value && !PIN.value) privacy.value = false
   }
 )
 
@@ -550,13 +560,7 @@ const submitForm = (): void => {
         1
       )
       const figures = originalFigures.concat(newFigures)
-      if (privacy.value && !PIN.value) {
-        uni.showToast({
-          title: '请先输入密码',
-          icon: 'none',
-          duration: 2000
-        })
-      } else if (form.type) {
+      if (form.type) {
         const path = []
         for (let i = 0; i < pathFloor.value; i++) {
           path.push({
@@ -564,8 +568,8 @@ const submitForm = (): void => {
             name: spacesBox.value[i].name
           })
         }
-        const tempForm = {
-          privacy: form.privacy ? 1 : 0,
+        const tempForm = <ItemForm>{
+          privacy: privacy.value ? 1 : 0,
           type: radioValue.value === '空间' ? 1 : 2,
           price: Number(form.price),
           count: Number(form.count),
@@ -579,8 +583,9 @@ const submitForm = (): void => {
           url: form.url,
           images: images,
           figures: figures,
-          password: privacy.value ? PIN.value : ''
+          password: PIN.value
         }
+        if (!changed || !PIN.value) delete tempForm.password
         await updateItemData(currentId, form.id, tempForm)
         uni.showToast({
           title: '修改成功',
@@ -589,12 +594,12 @@ const submitForm = (): void => {
         })
         setTimeout(() => {
           uni.navigateBack({
-            delta: 1
+            delta: 2
           })
         }, 1000)
       } else {
-        const tempForm = {
-          privacy: form.privacy ? 1 : 0,
+        const tempForm = <RoomForm>{
+          privacy: privacy.value ? 1 : 0,
           type: 0,
           price: Number(form.price),
           name: form.name,
@@ -606,8 +611,9 @@ const submitForm = (): void => {
           images: images,
           figures: figures,
           labels: labelBox.value,
-          password: privacy.value ? PIN.value : ''
+          password: PIN.value
         }
+        if (!changed || !PIN.value) delete tempForm.password
         await updateRoomData(form.id, tempForm)
         uni.showToast({
           title: '修改成功',
@@ -616,7 +622,7 @@ const submitForm = (): void => {
         })
         setTimeout(() => {
           uni.navigateBack({
-            delta: 1
+            delta: 2
           })
         }, 1000)
       }
