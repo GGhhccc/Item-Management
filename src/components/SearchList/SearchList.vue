@@ -9,6 +9,7 @@
             :is-checking="checkboxOperate"
             @onClick="chooseItem(item)"
             @longpress="showOperate"
+            @setID="setID"
           />
         </view>
         <!-- 加载更多 -->
@@ -27,6 +28,13 @@
         @cancel="cancelChecking"
         @delete="deleteItem"
         @recover="recoverItem"
+      />
+      <PasswordPopup
+        :popup="popup"
+        @close="popup = false"
+        @confirmGesture="confirmGesture"
+        @confirmNumber="confirmNumber"
+        :isValidate="true"
       />
     </view>
   </u-skeleton>
@@ -71,6 +79,42 @@ watch(
     checkboxOperate.value = false
   }
 )
+
+//密码弹窗
+const popup = ref(false)
+const tempID = ref(0)
+const tempType = ref(0)
+async function setID(id: number, type: number, privacy: number): Promise<void> {
+  if (privacy) {
+    tempID.value = id
+    tempType.value = type
+    popup.value = true
+  } else {
+    if (type) await fetchItemDetail(id, '')
+    else await fetchRoomDetail(id, '')
+    uni.navigateTo({
+      url: `/pages/details/details`
+    })
+  }
+}
+//验证手势密码
+async function confirmGesture(password: number) {
+  popup.value = false
+  if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
+  else await fetchRoomDetail(tempID.value, password.toString())
+  uni.navigateTo({
+    url: `/pages/details/details`
+  })
+}
+//验证数字密码
+async function confirmNumber(password: number) {
+  popup.value = false
+  if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
+  else await fetchRoomDetail(tempID.value, password.toString())
+  uni.navigateTo({
+    url: `/pages/details/details`
+  })
+}
 
 // 是否正在加载更多通知
 const isLoadingMore = ref(false)

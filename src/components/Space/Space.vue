@@ -200,8 +200,6 @@ async function confirmGesture(password: number) {
   popup.value = false
   if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
   else await fetchRoomDetail(tempID.value, password.toString())
-  useForm.currentId = tempID.value
-  useForm.currentName = tempName.value
   if (isEdit.value)
     uni.navigateTo({
       url: `/pages/edit/edit`
@@ -217,8 +215,6 @@ async function confirmNumber(password: number) {
   popup.value = false
   if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
   else await fetchRoomDetail(tempID.value, password.toString())
-  useForm.currentId = tempID.value
-  useForm.currentName = tempName.value
   if (isEdit.value)
     uni.navigateTo({
       url: `/pages/edit/edit`
@@ -239,8 +235,6 @@ async function setID(id: number, name: string, type: number, privacy: number): P
   } else {
     if (type) await fetchItemDetail(id, '')
     else await fetchRoomDetail(id, '')
-    useForm.currentId = id
-    useForm.currentName = name
     uni.navigateTo({
       url: `/pages/details/details`
     })
@@ -334,8 +328,6 @@ async function toEdit(): Promise<void> {
     } else {
       if (firstType) await fetchItemDetail(firstId, '')
       else await fetchRoomDetail(firstId, '')
-      useForm.currentId = firstId
-      useForm.currentName = firstName
       uni.navigateTo({
         url: `/pages/edit/edit`
       })

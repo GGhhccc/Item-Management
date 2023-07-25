@@ -2,7 +2,7 @@
   <view
     class="search-list-item"
     @longpress="showOperate"
-    @click="onClick"
+    @click="onClick(searchItemData.id, searchItemData.type, searchItemData.privacy)"
     :style="searchItemData.isChecked ? 'background-color: rgb(236, 244, 255);' : ''"
   >
     <view class="search-list-item__content">
@@ -96,6 +96,8 @@ const emits = defineEmits<{
   (e: 'longpress'): void
   // 点击
   (e: 'onClick'): void
+  // 设置跳转参数
+  (e: 'setID', id: number, type: number, privacy: number): void
   // 新增多选
   (e: 'addCheckboxVal', val: number): void
   // 移除多选
@@ -167,8 +169,12 @@ const showOperate = () => {
   emits('longpress')
 }
 
-const onClick = () => {
-  emits('onClick')
+const onClick = (id: number, type: number, privacy: number) => {
+  if (checkingStatus.value) {
+    emits('onClick')
+  } else {
+    emits('setID', id, type, privacy)
+  }
 }
 </script>
 
