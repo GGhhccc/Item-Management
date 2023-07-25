@@ -155,6 +155,10 @@ export interface MultipleModify {
    * 隐私设置(0非隐私1隐私)
    */
   privacy: number
+  /**
+   * 入库日期
+   */
+  password: string
 }
 
 // 空间信息

@@ -215,7 +215,7 @@ export function uploadFigure(imgUrl: string): Promise<{
 // 批量修改物品
 export function multipleModifyItem(
   ids: number[],
-  { state, count, price, name, date, privacy }: MultipleModify
+  { state, count, price, name, date, privacy, password }: MultipleModify
 ): Promise<null> {
   return service<null>({
     url: `/items/modify`,
@@ -227,7 +227,8 @@ export function multipleModifyItem(
       price,
       name,
       date,
-      privacy
+      privacy,
+      password
     }
   })
 }

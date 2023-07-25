@@ -20,6 +20,12 @@
           <u-switch :disabled="false" v-model="form.privacy" size="20" :activeValue="true" />
         </u-col>
       </u-row>
+      <PasswordPopup
+        :popup="popup"
+        @close="popup = false"
+        @confirmGesture="confirmGesture"
+        @confirmNumber="confirmNumber"
+      />
       <FormInput
         :type="'number'"
         :name="'金额'"
@@ -64,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useFormStore } from '@/stores/form'
 // 引入组件
 import FormDate from '@/components/Form/FormDate/FormDate.vue'
@@ -78,7 +84,8 @@ const submitMultiple = () => {
     name: form.name,
     price: form.price,
     privacy: form.privacy ? 1 : 0,
-    state: form.state
+    state: form.state,
+    password: form.privacy ? PIN.value : ''
   }
   useForm.changeModifyItem(useForm.ids, tempForm)
 }
@@ -98,6 +105,24 @@ const form = reactive({
   privacy: true,
   state: ''
 })
+//密码弹窗
+const popup = ref(false)
+//密码
+const PIN = ref('')
+//验证手势密码
+const confirmGesture = (password: number) => {
+  PIN.value = password.toString()
+}
+//验证数字密码
+const confirmNumber = (password: number) => {
+  PIN.value = password.toString()
+}
+watch(
+  () => form.privacy,
+  () => {
+    if (form.privacy) popup.value = true
+  }
+)
 </script>
 
 <style lang="scss">

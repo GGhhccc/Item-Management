@@ -296,9 +296,11 @@ async function toEdit(): Promise<void> {
   let firstName = ''
   let firstPrivacy = 0
   let firstType = 0
+  let havePrivacy = false
   isEdit.value = true
   for (let i = 0; i < checkbox.value.length; i++) {
     if (checkbox.value[i]) count++
+    if (checkbox.value[i] && spaceData.value[i].privacy) havePrivacy = true
     if (checkbox.value[i] && count === 1) {
       firstName = spaceData.value[i].name
       firstId = spaceData.value[i].id
@@ -306,7 +308,12 @@ async function toEdit(): Promise<void> {
       firstType = spaceData.value[i].type
     }
   }
-  if (count > 1) {
+  if (count > 1 && havePrivacy) {
+    uni.showToast({
+      title: '多选编辑时,请确保所有物品都是公开的',
+      icon: 'none'
+    })
+  } else if (count > 1) {
     useForm.ids = []
     for (let i = 0; i < checkbox.value.length; i++) {
       if (checkbox.value[i]) {
