@@ -33,6 +33,7 @@ const tagClick = (name: number): void => {
 }
 //标签大小
 const tagSize = (length: number): string => {
+  if (length > 5) return '80px'
   return `width:${length * 15 + 18}px;`
 }
 </script>
@@ -40,5 +41,9 @@ const tagSize = (length: number): string => {
 <style scoped lang="scss">
 .formTag {
   margin: 0 10rpx 10rpx 0;
+  max-width: 80px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
