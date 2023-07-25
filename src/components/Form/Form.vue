@@ -594,7 +594,7 @@ const submitForm = (): void => {
         })
         setTimeout(() => {
           uni.navigateBack({
-            delta: 2
+            delta: 1
           })
         }, 1000)
       } else {
@@ -622,7 +622,7 @@ const submitForm = (): void => {
         })
         setTimeout(() => {
           uni.navigateBack({
-            delta: 2
+            delta: 1
           })
         }, 1000)
       }

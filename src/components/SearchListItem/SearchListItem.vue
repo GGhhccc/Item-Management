@@ -8,7 +8,12 @@
     <view class="search-list-item__content">
       <view class="search-list-item__content__img-wrapper">
         <view class="search-list-item__content__img-wrapper__img">
-          <u-image :src="searchItemData.cover" width="65px" height="65px" radius="4px"></u-image>
+          <image
+            :src="searchItemData.cover"
+            lazy-load
+            :showError="false"
+            style="width: 68px; height: 68px; border-radius: 4px"
+          ></image>
         </view>
         <view class="search-list-item__content__img-wrapper__property">
           <view class="search-list-item__content__img-wrapper__property__icon iconfont">
@@ -159,7 +164,7 @@ const searchItemData = reactive<ExtendItemListPath>({
   name: props.itemData.name,
   type: props.itemData.type,
   privacy: props.itemData.privacy,
-  cover: props.itemData.cover,
+  cover: props.itemData.cover ? props.itemData.cover : '../../static/defaultItem.png',
   isChecked: props.itemData.isChecked,
   log: props.itemData.log,
   path: props.itemData.path ? formatPath(props.itemData.path) : ''
@@ -196,7 +201,6 @@ const onClick = (id: number, type: number, privacy: number) => {
 
       &__img {
         margin-right: 38rpx;
-        border: 1px solid #c4dcff;
         border-radius: 4px;
       }
 
