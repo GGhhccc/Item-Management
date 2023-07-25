@@ -1,7 +1,7 @@
 export const __PROD__ = import.meta.env.PROD
 
 const productionBaseUrl = 'https://lizhouweb.top/writerApi'
-const developmentBaseUrl = 'http://b85s98.natappfree.cc/smart/management/api'
+const developmentBaseUrl = 'http://tihuih.natappfree.cc/smart/management/api'
 
 export const __BASE_URL__ = __PROD__ ? productionBaseUrl : developmentBaseUrl
 

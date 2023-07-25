@@ -550,7 +550,13 @@ const submitForm = (): void => {
         1
       )
       const figures = originalFigures.concat(newFigures)
-      if (form.type) {
+      if (privacy.value && !PIN.value) {
+        uni.showToast({
+          title: '请先输入密码',
+          icon: 'none',
+          duration: 2000
+        })
+      } else if (form.type) {
         const path = []
         for (let i = 0; i < pathFloor.value; i++) {
           path.push({

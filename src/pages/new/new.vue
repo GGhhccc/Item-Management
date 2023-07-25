@@ -379,7 +379,13 @@ const submitForm = (): void => {
     .then(async () => {
       const images = await uploadImg(form.images, 0)
       const figures = await uploadImg(form.figures, 1)
-      if (currentFloor === 1) {
+      if (privacy.value && !PIN.value) {
+        uni.showToast({
+          title: '请先输入密码',
+          icon: 'none',
+          duration: 2000
+        })
+      } else if (currentFloor === 1) {
         const tempForm = {
           privacy: privacy.value ? 1 : 0,
           type: 0,

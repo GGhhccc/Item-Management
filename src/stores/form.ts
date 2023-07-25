@@ -66,11 +66,11 @@ export const useFormStore = defineStore('form', () => {
   //当前名
   const currentName = ref('')
   //添加空间
-  function submitRoom(roomForm: RoomForm) {
-    addRoom(roomForm)
+  async function submitRoom(roomForm: RoomForm) {
+    return await addRoom(roomForm)
   }
-  function submitItem(fatherId: number, itemForm: ItemForm) {
-    addItem(fatherId, itemForm)
+  async function submitItem(fatherId: number, itemForm: ItemForm) {
+    return await addItem(fatherId, itemForm)
   }
   //上传图片
   async function addImg(url: string) {
@@ -82,12 +82,12 @@ export const useFormStore = defineStore('form', () => {
   }
 
   //更新空间内的物品或空间数据
-  function updateItemData(fatherId: number, id: number, itemForm: ItemForm) {
-    updateItem(fatherId, id, itemForm)
+  async function updateItemData(fatherId: number, id: number, itemForm: ItemForm) {
+    return await updateItem(fatherId, id, itemForm)
   }
   //更新空间数据
-  function updateRoomData(id: number, roomForm: RoomForm) {
-    updateRoom(id, roomForm)
+  async function updateRoomData(id: number, roomForm: RoomForm) {
+    return await updateRoom(id, roomForm)
   }
 
   //多选物品id
