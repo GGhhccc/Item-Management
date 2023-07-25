@@ -18,7 +18,8 @@ export function addRoom({
   date,
   labels,
   images,
-  figures
+  figures,
+  password
 }: RoomForm): Promise<DetailRoomData> {
   return service<DetailRoomData>({
     url: '/items/rooms',
@@ -35,7 +36,8 @@ export function addRoom({
       date,
       labels,
       images,
-      figures
+      figures,
+      password
     }
   })
 }
@@ -57,7 +59,8 @@ export function addItem(
     labels,
     count,
     images,
-    figures
+    figures,
+    password
   }: ItemForm
 ): Promise<DetailItemData> {
   return service<DetailItemData>({
@@ -77,7 +80,8 @@ export function addItem(
       labels,
       count,
       images,
-      figures
+      figures,
+      password
     }
   })
 }
@@ -97,7 +101,8 @@ export function updateRoom(
     date,
     labels,
     images,
-    figures
+    figures,
+    password
   }: RoomForm
 ): Promise<DetailRoomData> {
   return service<DetailRoomData>({
@@ -115,7 +120,8 @@ export function updateRoom(
       date,
       labels,
       images,
-      figures
+      figures,
+      password
     }
   })
 }
@@ -138,7 +144,8 @@ export function updateItem(
     labels,
     count,
     images,
-    figures
+    figures,
+    password
   }: ItemForm
 ): Promise<DetailItemData> {
   return service<DetailItemData>({
@@ -158,7 +165,8 @@ export function updateItem(
       labels,
       count,
       images,
-      figures
+      figures,
+      password
     }
   })
 }
@@ -207,7 +215,7 @@ export function uploadFigure(imgUrl: string): Promise<{
 // 批量修改物品
 export function multipleModifyItem(
   ids: number[],
-  { state, count, price, name, date, privacy }: MultipleModify
+  { state, count, price, name, date, privacy, password }: MultipleModify
 ): Promise<null> {
   return service<null>({
     url: `/items/modify`,
@@ -219,7 +227,8 @@ export function multipleModifyItem(
       price,
       name,
       date,
-      privacy
+      privacy,
+      password
     }
   })
 }

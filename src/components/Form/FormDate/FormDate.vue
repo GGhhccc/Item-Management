@@ -61,6 +61,15 @@ const day = ref(time.getDate())
 const defaultDate = ref([new Date().getFullYear() - year.value + 9, month.value - 1, day.value - 1])
 //修改日期时触发的回调
 const changeDate = (e: any) => {
+  const tempDate = new Date()
+  if (e.value[0] === tempDate.getFullYear()) {
+    dateList.value[1] = []
+    for (let i = 1; i <= tempDate.getMonth() + 1; i++) {
+      dateList.value[1].push(i)
+    }
+  } else {
+    dateList.value[1] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  }
   if (e.value[0] % 4 === 0 && e.value[0] % 100 !== 0 && e.value[1] === 2)
     dateList.value[2] = [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
@@ -76,7 +85,12 @@ const changeDate = (e: any) => {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
       27, 28, 29, 30
     ]
-  else
+  else if (e.value[0] === tempDate.getFullYear() && e.value[1] === tempDate.getMonth() + 1) {
+    dateList.value[2] = []
+    for (let i = 1; i <= tempDate.getDate(); i++) {
+      dateList.value[2].push(i)
+    }
+  } else
     dateList.value[2] = [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
       27, 28, 29, 31
@@ -96,12 +110,15 @@ const dateList = ref([
     year.value - 1,
     year.value
   ],
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-  [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-    27, 28, 29, 31
-  ]
+  [],
+  []
 ])
+for (let i = 1; i <= new Date().getMonth() + 1; i++) {
+  dateList.value[1].push(i)
+}
+for (let i = 1; i <= new Date().getDate(); i++) {
+  dateList.value[2].push(i)
+}
 //设置日期的回调
 const setDate = (e: any): void => {
   year.value = e.value[0]

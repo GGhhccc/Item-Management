@@ -53,6 +53,12 @@
             <u-switch v-model="privacy" size="20" :activeValue="true" />
           </u-col>
         </u-row>
+        <PasswordPopup
+          :popup="popup"
+          @close="popup = false"
+          @confirmGesture="confirmGesture"
+          @confirmNumber="confirmNumber"
+        />
         <FormShow :is-detail="false" v-model:show="showTag" @click="addTag = true" :name="'标签'" />
         <view v-if="showTag" class="form__information__tag">
           <FormTag
@@ -117,7 +123,7 @@
           <view class="space__subSpace__floor">
             <SubordinateSpaceItem
               v-for="(item, subIndex) in pathInfo"
-              :ids="[currentId]"
+              :ids="[]"
               :titlePadding="'10rpx 10rpx'"
               :tagPadding="'0 20rpx'"
               v-show="pathFloor >= subIndex"
@@ -174,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useFormStore } from '@/stores/form'
 import { useTagStore } from '@/stores/tag'
 import { useSpaceStore } from '@/stores/space'
@@ -191,7 +197,7 @@ import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/Subord
 const useTag = useTagStore()
 const { fetchAllTags } = useTag
 const useForm = useFormStore()
-const { submitRoom, submitItem, addImg, addFigure, currentFloor, currentId } = useForm
+const { submitRoom, submitItem, addImg, addFigure, currentFloor } = useForm
 const useSpace = useSpaceStore()
 const { pathInfo, spaces } = useSpace
 // 第一次进入页面时，获取所有标签
@@ -227,6 +233,24 @@ const radioValue = ref('空间')
 
 //隐私
 const privacy = ref(false)
+//密码弹窗
+const popup = ref(false)
+//密码
+const PIN = ref('')
+//验证手势密码
+const confirmGesture = (password: number) => {
+  PIN.value = password.toString()
+}
+//验证数字密码
+const confirmNumber = (password: number) => {
+  PIN.value = password.toString()
+}
+watch(
+  () => privacy.value,
+  () => {
+    if (privacy.value) popup.value = true
+  }
+)
 
 //显示标签
 const showTag = ref(true)
@@ -301,7 +325,7 @@ const pathFloor = ref<number>(0)
 for (let i = 0; i < pathInfo.length; i++) {
   spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
 }
-for (let i = 0; i < currentFloor - 2; i++) {
+for (let i = 0; i < currentFloor - 1; i++) {
   pathFloor.value++
   spacesBox.value[i] = {
     fatherId: i ? spacesBox.value[i - 1].id : 0,
@@ -368,7 +392,8 @@ const submitForm = (): void => {
           date: currentTime(date.value),
           images: images,
           figures: figures,
-          labels: labelBox.value
+          labels: labelBox.value,
+          password: privacy.value ? PIN.value : ''
         }
         submitRoom(tempForm)
       } else {
@@ -393,7 +418,8 @@ const submitForm = (): void => {
           fatherName: spacesBox.value[pathFloor.value - 1].name,
           url: form.url,
           images: images,
-          figures: figures
+          figures: figures,
+          password: privacy.value ? PIN.value : ''
         }
         submitItem(spacesBox.value[pathFloor.value - 1].id, tempForm)
       }

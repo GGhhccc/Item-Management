@@ -62,7 +62,7 @@ onShow(() => {
 })
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .message {
   overflow-x: hidden;
 }

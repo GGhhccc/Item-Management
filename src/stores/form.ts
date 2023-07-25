@@ -49,13 +49,13 @@ export const useFormStore = defineStore('form', () => {
     logsInfo.value.logsData = (await getItemLogs(id, { offset: 0 })).records
   }
   //获取空间详情
-  async function fetchRoomDetail(id: number): Promise<void> {
-    const data = await getRoomDetail(id)
+  async function fetchRoomDetail(id: number, password: string): Promise<void> {
+    const data = await getRoomDetail(id, password)
     Object.assign(itemData, data)
   }
   //获取空间内的空间或物品详情
-  async function fetchItemDetail(id: number) {
-    const data = await getItemDetail(id)
+  async function fetchItemDetail(id: number, password: string) {
+    const data = await getItemDetail(id, password)
     Object.assign(itemData, data)
   }
 

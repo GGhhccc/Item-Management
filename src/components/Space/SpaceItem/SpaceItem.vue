@@ -1,13 +1,15 @@
 <template>
   <view
-    @click.stop="toSpace(item.id, item.type, item.name)"
+    @click.stop="toSpace(item.id, item.type, item.name, item.privacy)"
     @longpress="showOperate"
     :style="bgColor"
     class="spaceItem"
   >
     <image class="spaceItem-img" :src="item.cover || '../../../static/szlogo.png'" />
     <view class="spaceItem-type">
-      <u-icon size="40rpx" color="#4d94ff" :name="item.type === 2 ? 'grid' : 'home'" />
+      <view class="spaceItem-type__icon iconfont">
+        {{ !item.type ? '&#xf13c;' : item.type === 1 ? '&#xec54;' : '&#xe634;' }}
+      </view>
     </view>
     <view v-if="item.privacy" class="spaceItem-lock">
       <u-icon size="40rpx" color="#4d94ff" name="lock"></u-icon>
@@ -22,13 +24,11 @@
       <!-- <view class="spaceItem__information-avatar">
         <u-avatar-group size="40rpx" :urls="item.administrator"></u-avatar-group>
       </view> -->
-      <view class="spaceItem__information-list">
-        <u-icon
-          @click.stop="toDetail(item.id, item.name, item.type)"
-          color="#5096fe"
-          size="40rpx"
-          name="list"
-        ></u-icon>
+      <view
+        @click.stop="setID(item.id, item.name, item.type, item.privacy)"
+        class="spaceItem__information-list"
+      >
+        <u-icon color="#5096fe" size="40rpx" name="list"></u-icon>
       </view>
       <view class="spaceItem__information-time">
         <u-icon size="25rpx" :name="item.type ? 'clock' : 'map'"></u-icon>
@@ -58,7 +58,6 @@ import { useSpaceStore } from '@/stores/space'
 import type { BriefItem } from '@/types/space'
 //表单数据
 const useForm = useFormStore()
-const { fetchRoomDetail, fetchItemDetail } = useForm
 const useSpace = useSpaceStore()
 const { spaces } = useSpace
 
@@ -76,10 +75,12 @@ const emits = defineEmits<{
   (e: 'click'): void
   //长按事件
   (e: 'longpress'): void
+  //设置ID
+  (e: 'setID', id: number, name: string, type: number, privacy: number): void
 }>()
 
 //进入下一层
-const toSpace = (id: number, type: number, name: string): void => {
+const toSpace = (id: number, type: number, name: string, privacy: number): void => {
   if (!props.show && (type === 0 || type === 1)) {
     //修改当前表单数据
     useForm.currentId = id
@@ -95,23 +96,25 @@ const toSpace = (id: number, type: number, name: string): void => {
       url: `/pages/home/spaces/spaces`
     })
   } else if (!props.show) {
-    fetchRoomDetail(id)
-    uni.navigateTo({
-      url: `/pages/details/details`
-    })
+    emits('setID', id, name, type, privacy)
   }
   //触发点击事件
   emits('click')
 }
+
 //去到详情页
-const toDetail = (id: number, name: string, type: number): void => {
-  useForm.currentId = id
-  useForm.currentName = name
-  if (type) fetchItemDetail(id)
-  else fetchRoomDetail(id)
-  uni.navigateTo({
-    url: `/pages/details/details`
-  })
+// async function toDetail(id: number, name: string, type: number): Promise<void> {
+//   useForm.currentId = id
+//   useForm.currentName = name
+//   if (type) await fetchItemDetail(id, '6666666')
+//   else await fetchRoomDetail(id, '6666666')
+//   uni.navigateTo({
+//     url: `/pages/details/details`
+//   })
+// }
+
+const setID = (id: number, name: string, type: number, privacy: number): void => {
+  emits('setID', id, name, type, privacy)
 }
 
 //长按回调
@@ -145,6 +148,12 @@ const showOperate = () => {
     top: 35rpx;
     background-color: #fff;
     border-radius: 10rpx;
+    &__icon {
+      margin-top: 5rpx;
+      width: 36rpx;
+      height: 36rpx;
+      color: #4d94ff;
+    }
   }
 
   &-lock {

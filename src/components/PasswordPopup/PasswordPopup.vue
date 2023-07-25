@@ -46,7 +46,7 @@ const emits = defineEmits<{
   // 确认手势密码
   (e: 'confirmGesture', password: number): void
   // 确认数字密码
-  (e: 'confirmNumber', password: number): void
+  (e: 'confirmNumber', password: string): void
 }>()
 // 弹出框是否显示
 const isShow = ref(false)
@@ -64,7 +64,7 @@ const setNumberTime = ref(0)
 // 手势密码的值
 const gesturePassword = ref<number>(0)
 // 数字密码的值
-const numberPassword = ref<number>(0)
+const numberPassword = ref<string>('')
 
 // 密码类型
 const passwordTypeList = ref([
@@ -174,7 +174,7 @@ const setNumberPassword = () => {
   }
   if (!setNumberTime.value) {
     uni.setStorageSync('number', numberPassword.value)
-    numberPassword.value = 0
+    numberPassword.value = ''
     setNumberTime.value = 1
   } else {
     const isPass = uni.getStorageSync('number')
@@ -197,7 +197,7 @@ const setNumberPassword = () => {
 // 数字密码输入框改变时执行
 const inputVerificationChange = (inputValues: string) => {
   if (inputValues.length === 4) {
-    numberPassword.value = Number(inputValues)
+    numberPassword.value = String(inputValues)
     props.isValidate ? validateNumberPassword() : setNumberPassword()
     numberPasswordBox.value.cleanVal()
   }
