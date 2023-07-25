@@ -575,7 +575,17 @@ const submitForm = (): void => {
           figures: figures,
           password: privacy.value ? PIN.value : ''
         }
-        updateItemData(currentId, form.id, tempForm)
+        await updateItemData(currentId, form.id, tempForm)
+        uni.showToast({
+          title: '修改成功',
+          icon: 'success',
+          duration: 2000
+        })
+        setTimeout(() => {
+          uni.navigateBack({
+            delta: 1
+          })
+        }, 1000)
       } else {
         const tempForm = {
           privacy: form.privacy ? 1 : 0,
@@ -592,7 +602,17 @@ const submitForm = (): void => {
           labels: labelBox.value,
           password: privacy.value ? PIN.value : ''
         }
-        updateRoomData(form.id, tempForm)
+        await updateRoomData(form.id, tempForm)
+        uni.showToast({
+          title: '修改成功',
+          icon: 'success',
+          duration: 2000
+        })
+        setTimeout(() => {
+          uni.navigateBack({
+            delta: 1
+          })
+        }, 1000)
       }
     })
     .catch((error: any) => {
