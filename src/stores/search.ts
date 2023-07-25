@@ -80,7 +80,7 @@ export const useSearchStore = defineStore('search', () => {
       // currentSearchList.value.offset -= 1
       currentSearchList.value.offset = 0
       currentSearchList.value.itemList = []
-      await fetchNewSearchList(deleted)
+      isDeleted.value ? await fetchDeletedItem() : await fetchNewSearchList(deleted)
 
       // 筛选后执行多选删除
     } else if (currentScreenData.offset) {
@@ -101,6 +101,8 @@ export const useSearchStore = defineStore('search', () => {
 
   // 获取搜索初始全部物品列表
   async function fetchNewSearchList(deleted: number) {
+    // 当前位置不是已删除列表
+    isDeleted.value = false
     const data = await getAllItems(
       {
         offset: currentSearchList.value.offset + 1
@@ -182,16 +184,19 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   // 批量删除
-  async function batchDeteleSearch(checkedItemList: number[]) {
-    await batchDelete(0, checkedItemList)
+  async function batchDeteleSearch(checkedItemList: number[], type: number) {
+    await batchDelete(type, checkedItemList)
     // 重置列表
     currentSearchList.value.checkedItemList = []
     // 重新获取列表
     resetSearchList(0)
   }
 
+  // 当前是否是已删除列表
+  const isDeleted = ref(false)
   // 获取已删除物品
   async function fetchDeletedItem() {
+    isDeleted.value = true
     const data = await getAllItems(
       {
         offset: currentSearchList.value.offset + 1
@@ -199,7 +204,6 @@ export const useSearchStore = defineStore('search', () => {
       1
     )
     currentSearchList.value.offset = data.current
-    currentSearchList.value.itemList = []
     currentSearchList.value.itemList.push(...data.records)
     setItemList(currentSearchList.value.itemList)
   }

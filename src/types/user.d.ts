@@ -6,5 +6,5 @@ export interface UserInfo extends BasicUserInfo {
   /**
    * token
    */
-  token: string
+  token?: string
 }

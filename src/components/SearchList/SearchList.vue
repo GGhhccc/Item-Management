@@ -186,8 +186,8 @@ const chooseItem = (item: ItemList) => {
 }
 
 // 删除
-const deleteItem = async () => {
-  await batchDeteleSearch(currentSearchList.value.checkedItemList)
+const deleteItem = async (type: number) => {
+  await batchDeteleSearch(currentSearchList.value.checkedItemList, type)
   uni.showToast({
     title: '删除成功',
     icon: 'success'

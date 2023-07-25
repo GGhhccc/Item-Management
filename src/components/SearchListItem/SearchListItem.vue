@@ -121,12 +121,14 @@ watch(
 )
 
 watch(props.itemData, (val) => {
+  val.cover
+    ? (searchItemData.cover = val.cover)
+    : (searchItemData.cover = '../../static/defaultItem.png')
   ;({
     id: searchItemData.id,
     name: searchItemData.name,
     type: searchItemData.type,
     privacy: searchItemData.privacy,
-    cover: searchItemData.cover,
     log: searchItemData.log
   } = val)
   // 如果返回了物品路径则格式化
@@ -233,9 +235,11 @@ const onClick = (id: number, type: number, privacy: number) => {
         color: #666;
 
         &__text {
-          color: $uni-text-color;
+          max-width: 250rpx;
+          overflow: hidden;
           margin-right: 26rpx;
           font-size: 32rpx;
+          color: $uni-text-color;
         }
 
         &__icon {

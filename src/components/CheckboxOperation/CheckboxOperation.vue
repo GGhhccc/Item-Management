@@ -31,7 +31,7 @@
   <!-- 多选删除确认框 -->
   <u-modal
     :show="showDeleteModal"
-    title="确认删除？"
+    :title="isDeleted ? '删除后将无法恢复！' : '确认删除？'"
     showCancelButton
     width="500rpx"
     @cancel="showDeleteModal = false"
@@ -72,12 +72,13 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (e: 'cancel'): void
-  (e: 'delete'): void
+  (e: 'delete', type: number): void
   (e: 'recover'): void
 }>()
 
 const showDeleteModal = ref(false)
 const showRestoreModal = ref(false)
+const showCompleteDeleteModal = ref(false)
 
 // 多选操作
 const checkboxOperate = ref(false)
@@ -146,12 +147,16 @@ const deleteItem = () => {
     mask: true
   })
 
-  emits('delete')
+  const type = isDeleted ? 1 : 0
+
+  emits('delete', type)
   cancelBtn()
 }
 
 // 取消
 const cancelBtn = () => {
+  showRestoreModal.value = false
+  showDeleteModal.value = false
   checkboxOperate.value = false
   currentSearchList.value.checkedItemList = []
   emits('cancel')
