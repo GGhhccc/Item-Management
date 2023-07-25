@@ -5,7 +5,17 @@
     :style="bgColor"
     class="spaceItem"
   >
-    <image class="spaceItem-img" :src="item.cover || '../../../static/defaultRoom.png'" lazy-load />
+    <image
+      class="spaceItem-img"
+      :src="
+        item.cover
+          ? item.cover
+          : item.type === 0
+          ? '../../../static/defaultRoom.png'
+          : '../../../static/defaultItem.png'
+      "
+      lazy-load
+    />
     <view class="spaceItem-type">
       <view class="spaceItem-type__icon iconfont">
         {{ !item.type ? '&#xf13c;' : item.type === 1 ? '&#xec54;' : '&#xe634;' }}
@@ -45,6 +55,7 @@
         v-for="(item2, index2) in item.itemCover"
         :key="index2"
         :src="item2"
+        default-url="/static/defaultItem.png"
         customStyle="margin-right:20rpx"
         size="50rpx"
       />
