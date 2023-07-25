@@ -46,6 +46,8 @@
         font-weight: bold;
         letter-spacing: 2rpx;
       "
+      :loading="isLoading"
+      loadingText="登录中"
       @click="loginSubmit"
     ></u-button>
   </view>
@@ -59,6 +61,8 @@ import { useAuthStore } from '@/stores/auth'
 const auth = useAuthStore()
 
 const loginFormRef = ref()
+
+const isLoading = ref(false)
 // 表单数据
 const loginForm = reactive({
   account: '',
@@ -106,11 +110,13 @@ const rules = {
 const loginSubmit = () => {
   loginFormRef.value.validate().then(async () => {
     try {
+      isLoading.value = true
       const { id } = await loginByPassword(loginForm)
       uni.showToast({
         title: '登录成功',
         icon: 'success'
       })
+      isLoading.value = false
       uni.setStorageSync('uuid', id)
       auth.toLogin = false
       auth.logined = true
