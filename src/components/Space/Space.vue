@@ -11,14 +11,14 @@
         <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
       </view>
     </view>
-    <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__hello">
+    <!-- <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__hello">
       <u-text size="80rpx" text="HELLO!"></u-text>
     </view>
     <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__empty">
       尚未添加物品,快去添加吧
       <image class="space__empty-chair" src="../../static/chair.png" />
       <image class="space__empty-plant" src="../../static/plant.png" />
-    </view>
+    </view> -->
     <view v-if="useForm.currentFloor !== 1" class="space__spaces">
       <view class="space__spaces__wrapper">
         <view

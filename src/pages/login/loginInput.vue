@@ -111,12 +111,13 @@ const loginSubmit = () => {
   loginFormRef.value.validate().then(async () => {
     try {
       isLoading.value = true
-      const { id } = await loginByPassword(loginForm)
+      const { token, id } = await loginByPassword(loginForm)
       uni.showToast({
         title: '登录成功',
         icon: 'success'
       })
       isLoading.value = false
+      uni.setStorageSync('token', token)
       uni.setStorageSync('uuid', id)
       auth.toLogin = false
       auth.logined = true
