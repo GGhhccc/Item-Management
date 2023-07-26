@@ -1,7 +1,7 @@
 <template>
-  <view class="space">
+  <view class="spaces">
+    <u-navbar @leftClick="back" titleWidth="250rpx" :title="name" bgColor="#F5F5F5" autoBack />
     <Space />
-    <u-navbar @leftClick="back" titleWidth="250rpx" :title="name" :autoBack="true" />
   </view>
 </template>
 
@@ -13,8 +13,10 @@ import { storeToRefs } from 'pinia'
 const useSpace = useSpaceStore()
 const { spaceInfo } = storeToRefs(useSpace)
 const name = useFormStore().currentName
+
 const back = () => {
   useFormStore().currentFloor--
+  // 重置请求参数
   spaceInfo.value.current = 0
   spaceInfo.value.spaceData.length = 0
 }

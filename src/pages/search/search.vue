@@ -92,7 +92,7 @@ onShow(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 170rpx;
+    width: 190rpx;
     height: 60rpx;
     padding: 0 20rpx;
     margin-left: 40rpx;

@@ -1,61 +1,72 @@
 <template>
   <view class="space">
-    <view>
-      <view class="space__icon">
-        <u-icon color="#fff" size="50rpx" @click="toSearch()" name="search"></u-icon>
+    <view class="space__bg"></view>
+    <view class="space__header" :style="{ top: navBarHeight + 'px' }">
+      <view class="space__header__icon-wrapper">
+        <view class="space__header__icon-wrapper__icon">
+          <u-icon color="#fff" size="50rpx" @click="toSearch()" name="search"></u-icon>
+        </view>
+        <view class="space__header__icon-wrapper__icon">
+          <u-icon color="#fff" size="40rpx" @click="toAdd()" name="plus"></u-icon>
+        </view>
+        <view class="space__header__icon-wrapper__icon">
+          <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
+        </view>
       </view>
-      <view class="space__icon">
-        <u-icon color="#fff" size="40rpx" @click="toAdd()" name="plus"></u-icon>
+      <!-- <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__header__hello">
+        <u-text size="80rpx" text="HELLO!"></u-text>
       </view>
-      <view class="space__icon">
-        <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
-      </view>
-    </view>
-    <!-- <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__hello">
-      <u-text size="80rpx" text="HELLO!"></u-text>
-    </view>
-    <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__empty">
-      尚未添加物品,快去添加吧
-      <image class="space__empty-chair" src="../../static/chair.png" />
-      <image class="space__empty-plant" src="../../static/plant.png" />
-    </view> -->
-    <view v-if="useForm.currentFloor !== 1" class="space__spaces">
-      <view class="space__spaces__wrapper">
-        <view
-          v-for="(item, index) in spaces.slice(0, useForm.currentFloor - 1)"
-          :key="index"
-          class="space__spaces__wrapper-unit"
-        >
-          <view class="space__spaces__wrapper-unit-circle" />
-          <view class="space__spaces__wrapper-unit-line" />
-          <view class="space__spaces__wrapper-unit-name">
-            {{ item.name }}
+      <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__header__empty">
+        尚未添加物品,快去添加吧
+        <image class="space__header__empty-chair" src="../../static/chair.png" />
+        <image class="space__header__empty-plant" src="../../static/plant.png" />
+      </view> -->
+      <view v-if="useForm.currentFloor !== 1" class="space__header__spaces">
+        <view class="space__header__spaces__wrapper">
+          <view
+            v-for="(item, index) in useSpace.spaces.slice(0, useForm.currentFloor - 1)"
+            :key="index"
+            class="space__header__spaces__wrapper-unit"
+          >
+            <view class="space__header__spaces__wrapper-unit-circle" />
+            <view class="space__header__spaces__wrapper-unit-line" />
+            <view class="space__header__spaces__wrapper-unit-name">
+              {{ item.name }}
+            </view>
           </view>
         </view>
       </view>
     </view>
-    <view class="space__tabs">
+    <!-- <view class="space__tabs">
       <u-tabs itemStyle="color:#666666;padding:0; margin-right:20rpx;height: 34px;" />
-    </view>
-    <view v-for="(item, index) in spaceData" :key="index">
-      <SpaceItem
-        :bgColor="bgColor(index)"
-        @click="chooseItem(index)"
-        @longpress="showOperate = true"
-        @setID="setID"
-        :item="item"
-        :show="showOperate"
-      />
-    </view>
+    </view> -->
+    <view :style="{ height: useForm.currentFloor === 1 ? '70rpx' : '170rpx' }"></view>
+    <u-skeleton rows="20" :loading="isLoading" title animate>
+      <view v-if="!isLoading" style="background-color: #f5f5f5">
+        <template v-for="(item, index) in spaceData" :key="index">
+          <SpaceItem
+            :bgColor="bgColor(index)"
+            @click="chooseItem(index)"
+            @longpress="showOperate = true"
+            @setID="setID"
+            :item="item"
+            :show="showOperate"
+          />
+        </template>
+      </view>
+    </u-skeleton>
     <Empty v-if="isEmpty" />
     <!-- 加载更多 -->
     <u-loadmore
       v-if="!isLoading && !isEmpty"
       :status="loadMoreStatus"
       line
+      bgColor="#f5f5f5"
       loadingText="努力加载中，先喝杯茶"
       nomoreText="实在没有了"
-      marginBottom="50rpx"
+      marginTop="0"
+      marginBottom="0"
+      custom-style="padding: 10px 0 10px 0;"
     />
     <view v-show="showOperate" class="space__operate">
       <view>
@@ -155,7 +166,7 @@ import { useSpaceStore } from '@/stores/space'
 import SpaceItem from '@/components/Space/SpaceItem/SpaceItem.vue'
 import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/SubordinateSpaceItem.vue'
 const useSpace = useSpaceStore()
-const { fetchAllRooms, fetchRoomItems, spaces, move, fetchAllPath } = useSpace
+const { fetchAllRooms, fetchRoomItems, move, fetchAllPath } = useSpace
 const { spaceInfo } = storeToRefs(useSpace)
 const useForm = useFormStore()
 const { fetchRoomDetail, fetchItemDetail, modifyDeleteItemData, currentId } = useForm
@@ -179,6 +190,8 @@ const loadMoreStatus = ref('')
 const isLoading = ref(true)
 // 是否为空
 const isEmpty = ref(false)
+// navbar 高度
+const navBarHeight = ref<number>(44)
 // 是否没有更多了
 const isNoMore = computed(
   () =>
@@ -188,12 +201,22 @@ const isNoMore = computed(
 
 useForm.currentFloor++
 
+// 获取小程序胶囊按钮
+const getCapsule = () => {
+  const menuButton = uni.getMenuButtonBoundingClientRect()
+  navBarHeight.value = menuButton.bottom
+}
+
 onShow(() => {
   //开启分享功能
   uni.showShareMenu({
     withShareTicket: true,
     menus: ['shareAppMessage', 'shareTimeline']
   })
+
+  // 获取小程序胶囊按钮位置
+  getCapsule()
+
   //获取路径并初始化路径
   refresh()
 })
@@ -447,7 +470,7 @@ const refresh = async () => {
   loading.value = true
   //获取路径并初始化路径
 
-  await fetchAllPath()
+  if (!useSpace.pathInfo[0]) await fetchAllPath()
   for (let i = 0; i < useSpace.pathInfo.length; i++) {
     spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
   }
@@ -455,8 +478,8 @@ const refresh = async () => {
     pathFloor.value++
     spacesBox.value[i] = {
       fatherId: i ? spacesBox.value[i - 1].id : 0,
-      id: spaces[i].id,
-      name: spaces[i].name,
+      id: useSpace.spaces[i].id,
+      name: useSpace.spaces[i].name,
       layer: i
     }
   }
@@ -480,13 +503,13 @@ const refresh = async () => {
         checkbox.value[i] = false
       }
   }
+  // 修改正在请求状态
+  isLoading.value = false
   // 请求完后判断是否为空
   if (!spaceData.value.length && useForm.currentFloor > 2) {
     isEmpty.value = true
-    console.log('true')
   } else {
     isEmpty.value = false
-    console.log('false')
   }
 }
 </script>
@@ -495,16 +518,93 @@ const refresh = async () => {
 .space {
   padding-top: 100px;
 
-  &__icon {
-    float: right;
-    width: 70rpx;
-    height: 70rpx;
-    border-radius: 10rpx;
-    background-color: #7d7191;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 20rpx;
+  &__bg {
+    position: absolute;
+    width: 100vw;
+    height: 87vh;
+    background-color: #f5f5f5;
+    z-index: -1;
+  }
+
+  &__header {
+    position: fixed;
+    width: 100vw;
+    min-height: 100rpx;
+    padding-top: 23rpx;
+    background: #f5f5f5;
+    z-index: 999;
+
+    &__icon-wrapper {
+      position: absolute;
+      right: 30rpx;
+      display: flex;
+      flex-direction: row-reverse;
+
+      &__icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 70rpx;
+        height: 70rpx;
+        border-radius: 10rpx;
+        background-color: #7d7191;
+        margin-right: 20rpx;
+      }
+    }
+
+    &__spaces {
+      background-color: #5a5c60;
+      width: 600rpx;
+      height: 5rpx;
+      margin: 100rpx auto;
+      position: relative;
+
+      &__wrapper {
+        position: absolute;
+        top: -8rpx;
+        left: -40rpx;
+        display: flex;
+        justify-content: flex-start;
+        max-width: 600rpx;
+        overflow-x: auto;
+
+        &-unit {
+          width: 100rpx;
+          margin-right: 22rpx;
+
+          &-circle {
+            background-color: #979797;
+            width: 20rpx;
+            height: 20rpx;
+            margin: 0 auto;
+            border-radius: 10rpx;
+          }
+
+          &-line {
+            width: 5rpx;
+            background-color: #b8babe;
+            height: 35rpx;
+            margin: 0 auto;
+          }
+
+          &-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            line-height: 50rpx;
+            width: 100rpx;
+            height: 50rpx;
+            font-size: 25rpx;
+            border-radius: 10rpx;
+            background-color: #fcfcfc;
+            color: #565656;
+            box-shadow: 0 5px 5px #e1e7f0;
+            font-weight: 800;
+          }
+        }
+      }
+    }
   }
 
   &__hello {
@@ -553,60 +653,6 @@ const refresh = async () => {
       position: absolute;
       bottom: 0;
       right: 0;
-    }
-  }
-
-  &__spaces {
-    background-color: #5a5c60;
-    width: 600rpx;
-    height: 5rpx;
-    margin: 100rpx auto;
-    position: relative;
-
-    &__wrapper {
-      position: absolute;
-      top: -8rpx;
-      left: -40rpx;
-      display: flex;
-      justify-content: flex-start;
-      max-width: 600rpx;
-      overflow-x: auto;
-
-      &-unit {
-        width: 100rpx;
-        margin-right: 22rpx;
-
-        &-circle {
-          background-color: #979797;
-          width: 20rpx;
-          height: 20rpx;
-          margin: 0 auto;
-          border-radius: 10rpx;
-        }
-
-        &-line {
-          width: 5rpx;
-          background-color: #b8babe;
-          height: 35rpx;
-          margin: 0 auto;
-        }
-
-        &-name {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          text-align: center;
-          line-height: 50rpx;
-          width: 100rpx;
-          height: 50rpx;
-          font-size: 25rpx;
-          border-radius: 10rpx;
-          background-color: #fcfcfc;
-          color: #565656;
-          box-shadow: 0 5px 5px #e1e7f0;
-          font-weight: 800;
-        }
-      }
     }
   }
 

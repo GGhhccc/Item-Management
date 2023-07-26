@@ -152,6 +152,7 @@ const showOperate = () => {
   border-radius: 30rpx;
   height: 200rpx;
   padding: 25rpx;
+  background-color: #fff;
 
   &-img {
     width: 150rpx;

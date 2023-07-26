@@ -1,5 +1,5 @@
 <template>
-  <u-skeleton rows="18" :loading="isLoading" title animate class="search-list">
+  <u-skeleton rows="18" :loading="isLoading" title animate>
     <view v-if="!isLoading">
       <!-- 总列表 -->
       <template>
@@ -14,6 +14,7 @@
         </view>
         <!-- 加载更多 -->
         <u-loadmore
+          v-if="!isLoading"
           :status="loadMoreStatus"
           line
           loadingText="努力加载中，先喝杯茶"

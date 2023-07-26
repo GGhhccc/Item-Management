@@ -6,131 +6,68 @@
 	},
 	"pages": [
 		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/login/login"
 		},
 		{
-			"path": "pages/login/loginInput",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/login/loginInput"
 		},
 		{
-			"path": "pages/home/home",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/home/home"
 		},
 		{
-			"path": "pages/home/spaces/spaces",
-			"style": {
-					"navigationStyle": "custom"
-			}
-	},
-		{
-			"path": "pages/details/details",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/home/spaces/spaces"
 		},
 		{
-			"path": "pages/new/new",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/details/details"
 		},
 		{
-			"path": "pages/square/square",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/new/new"
 		},
 		{
-			"path": "pages/new/dependence/dependence",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/square/square"
 		},
 		{
-			"path": "pages/new/tag/tag",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/new/dependence/dependence"
 		},
 		{
-			"path": "pages/edit/edit",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/new/tag/tag"
 		},
 		{
-			"path": "pages/edit/multiple/multiple",
-			"style": {
-					"navigationStyle": "custom"
-			}
+			"path": "pages/edit/edit"
 		},
 		{
-			"path": "pages/user/user",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/edit/multiple/multiple"
 		},
 		{
-			"path": "pages/user/update/update",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/user/user"
 		},
 		{
-			"path": "pages/user/feedback/feedback",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/user/update/update"
 		},
 		{
-			"path": "pages/user/deleted/deleted",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/user/feedback/feedback"
 		},
 		{
-			"path": "pages/user/settings/settings",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/user/deleted/deleted"
 		},
 		{
-			"path": "pages/user/history/history",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/user/settings/settings"
 		},
 		{
-			"path": "pages/message/message",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/user/history/history"
 		},
 		{
-			"path": "pages/message/chatbox/chatbox",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/message/message"
 		},
 		{
-			"path": "pages/search/search",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"path": "pages/message/chatbox/chatbox"
+		},
+		{
+			"path": "pages/search/search"
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationStyle": "custom"
 	},
 	"tabBar": {
 		"backgroundColor": "#F2F2F2",
