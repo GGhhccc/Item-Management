@@ -189,7 +189,7 @@ const showOperate = () => {
       line-height: 40rpx;
       white-space: nowrap;
       overflow: hidden;
-      width: 120rpx;
+      width: 200rpx;
       text-overflow: ellipsis;
       font-weight: 1000;
       display: inline-block;

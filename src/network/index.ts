@@ -39,7 +39,7 @@ const service = <T>(options: UniApp.RequestOptions): Promise<T> => {
           case 100:
             uni.showToast({
               title: res.data.msg,
-              icon: 'error'
+              icon: 'none'
             })
             break
           case 101:

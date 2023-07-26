@@ -175,46 +175,7 @@ onShow(() => {
     withShareTicket: true,
     menus: ['shareAppMessage', 'shareTimeline']
   })
-  //获取路径并初始化路径
-  ;(async () => {
-    await fetchAllPath()
-    for (let i = 0; i < useSpace.pathInfo.length; i++) {
-      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
-    }
-    for (let i = 0; i < useForm.currentFloor - 1; i++) {
-      pathFloor.value++
-      spacesBox.value[i] = {
-        fatherId: i ? spacesBox.value[i - 1].id : 0,
-        id: spaces[i].id,
-        name: spaces[i].name,
-        layer: i
-      }
-    }
-    //路径获取完毕后再渲染页面
-    loading.value = false
-  })()
-  //空间初始化
-  if (useForm.currentFloor === 1) {
-    ;(async () => {
-      await fetchAllRooms()
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor - 1])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
-  } else {
-    ;(async () => {
-      await fetchRoomItems(currentId)
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
-  }
+  refresh()
 })
 
 onReachBottom(() => {
@@ -392,46 +353,12 @@ async function confirmMove(): Promise<void> {
     })
   }
   await move(useForm.currentId, ids.value, path)
-  //获取路径并初始化路径
-  ;(async () => {
-    await fetchAllPath()
-    for (let i = 0; i < useSpace.pathInfo.length; i++) {
-      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
-    }
-    for (let i = 0; i < useForm.currentFloor - 1; i++) {
-      pathFloor.value++
-      spacesBox.value[i] = {
-        fatherId: i ? spacesBox.value[i - 1].id : 0,
-        id: spaces[i].id,
-        name: spaces[i].name,
-        layer: i
-      }
-    }
-    //路径获取完毕后再渲染页面
-    loading.value = false
-  })()
-  //空间初始化
-  if (useForm.currentFloor === 1) {
-    ;(async () => {
-      await fetchAllRooms()
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor - 1])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
-  } else {
-    ;(async () => {
-      await fetchRoomItems(currentId)
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
-  }
+  uni.showToast({
+    title: '移动成功',
+    icon: 'none'
+  })
+  refresh()
+  showOperate.value = false
 }
 //确认删除
 async function confirmDelete(): Promise<void> {
@@ -443,46 +370,12 @@ async function confirmDelete(): Promise<void> {
     }
   }
   await modifyDeleteItemData(ids)
-  //获取路径并初始化路径
-  ;(async () => {
-    await fetchAllPath()
-    for (let i = 0; i < useSpace.pathInfo.length; i++) {
-      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
-    }
-    for (let i = 0; i < useForm.currentFloor - 1; i++) {
-      pathFloor.value++
-      spacesBox.value[i] = {
-        fatherId: i ? spacesBox.value[i - 1].id : 0,
-        id: spaces[i].id,
-        name: spaces[i].name,
-        layer: i
-      }
-    }
-    //路径获取完毕后再渲染页面
-    loading.value = false
-  })()
-  //空间初始化
-  if (useForm.currentFloor === 1) {
-    ;(async () => {
-      await fetchAllRooms()
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor - 1])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
-  } else {
-    ;(async () => {
-      await fetchRoomItems(currentId)
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
-  }
+  uni.showToast({
+    title: '删除成功',
+    icon: 'none'
+  })
+  refresh()
+  showOperate.value = false
 }
 
 //关闭操作菜单的回调
@@ -514,6 +407,50 @@ const toAdd = (): void => {
   uni.navigateTo({
     url: '/pages/new/new'
   })
+}
+
+const refresh = (): void => {
+  loading.value = true
+  //获取路径并初始化路径
+  ;(async () => {
+    await fetchAllPath()
+    for (let i = 0; i < useSpace.pathInfo.length; i++) {
+      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+    }
+    for (let i = 0; i < useForm.currentFloor - 1; i++) {
+      pathFloor.value++
+      spacesBox.value[i] = {
+        fatherId: i ? spacesBox.value[i - 1].id : 0,
+        id: spaces[i].id,
+        name: spaces[i].name,
+        layer: i
+      }
+    }
+    //路径获取完毕后再渲染页面
+    loading.value = false
+  })()
+  //空间初始化
+  if (useForm.currentFloor === 1) {
+    ;(async () => {
+      await fetchAllRooms()
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor - 1])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  } else {
+    ;(async () => {
+      await fetchRoomItems(currentId)
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  }
 }
 </script>
 

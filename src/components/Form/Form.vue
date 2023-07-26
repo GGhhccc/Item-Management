@@ -249,7 +249,7 @@
       <view class="form__popup">
         <view class="form__popup__title">
           <u-text bold size="40rpx" :text="'标签'" />
-          <u-icon color="#5196ff" name="edit-pen-fill"></u-icon>
+          <u-icon @click="toTag" color="#5196ff" name="edit-pen-fill"></u-icon>
         </view>
         <view class="form__popup__operate">
           <u-text @click="addTag = false" lines="1" size="20rpx" :text="'取消'" />
@@ -292,9 +292,12 @@ const props = withDefaults(
   defineProps<{
     //是否为详情页
     isDetail?: boolean
+    //是否从详情页跳转来的
+    detailDeparture?: boolean
   }>(),
   {
-    isDetail: false
+    isDetail: false,
+    detailDeparture: false
   }
 )
 
@@ -453,6 +456,12 @@ const confirmTag = (): void => {
 const checkboxClick = (index: number): void => {
   if (!props.isDetail) tagBox.value[index] = !tagBox.value[index]
 }
+//跳转至标签编辑页
+const toTag = (): void => {
+  uni.navigateTo({
+    url: `/pages/new/tag/tag`
+  })
+}
 
 //状态消息提示
 const toast = ref()
@@ -594,7 +603,7 @@ const submitForm = (): void => {
         })
         setTimeout(() => {
           uni.navigateBack({
-            delta: 1
+            delta: props.detailDeparture ? 2 : 1
           })
         }, 1000)
       } else {
@@ -622,7 +631,7 @@ const submitForm = (): void => {
         })
         setTimeout(() => {
           uni.navigateBack({
-            delta: 1
+            delta: props.detailDeparture ? 2 : 1
           })
         }, 1000)
       }

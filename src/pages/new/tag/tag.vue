@@ -142,6 +142,10 @@ const name = ref('')
 const showNew = ref(false)
 const submit = async () => {
   await fetchAddTag(name.value, color.value)
+  uni.showToast({
+    title: '添加成功',
+    icon: 'none'
+  })
   showNew.value = false
 }
 const color = ref('#000')
