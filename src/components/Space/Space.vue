@@ -37,7 +37,6 @@
     <view class="space__tabs">
       <u-tabs itemStyle="color:#666666;padding:0; margin-right:20rpx;height: 34px;" />
     </view>
-    <Empty v-if="!isLoading && !spaceData[0] && useForm.currentFloor > 2" />
     <view v-for="(item, index) in spaceData" :key="index">
       <SpaceItem
         :bgColor="bgColor(index)"
@@ -48,9 +47,10 @@
         :show="showOperate"
       />
     </view>
+    <Empty v-if="isEmpty" />
     <!-- 加载更多 -->
     <u-loadmore
-      v-if="spaceData[0]"
+      v-if="!isLoading && !isEmpty"
       :status="loadMoreStatus"
       line
       loadingText="努力加载中，先喝杯茶"
@@ -177,6 +177,8 @@ const tempType = ref(0)
 const loadMoreStatus = ref('')
 // 是否正在加载
 const isLoading = ref(true)
+// 是否为空
+const isEmpty = ref(false)
 // 是否没有更多了
 const isNoMore = computed(
   () =>
@@ -193,49 +195,7 @@ onShow(() => {
     menus: ['shareAppMessage', 'shareTimeline']
   })
   //获取路径并初始化路径
-  ;(async () => {
-    await fetchAllPath()
-    for (let i = 0; i < useSpace.pathInfo.length; i++) {
-      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
-    }
-    for (let i = 0; i < useForm.currentFloor - 1; i++) {
-      pathFloor.value++
-      spacesBox.value[i] = {
-        fatherId: i ? spacesBox.value[i - 1].id : 0,
-        id: spaces[i].id,
-        name: spaces[i].name,
-        layer: i
-      }
-    }
-    //路径获取完毕后再渲染页面
-    loading.value = false
-  })()
-  //空间初始化
-  spaceInfo.value.current = 0
-  spaceInfo.value.total = 0
-  spaceInfo.value.spaceData = []
-  if (useForm.currentFloor === 1) {
-    ;(async () => {
-      await fetchAllRooms()
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor - 1])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
-  } else {
-    ;(async () => {
-      await fetchRoomItems(currentId)
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
-  }
-  isLoading.value = false
+  refresh()
 })
 
 // 触底加载更多
@@ -479,47 +439,54 @@ const toAdd = (): void => {
   })
 }
 
-const refresh = (): void => {
+const refresh = async () => {
+  // 请求参数初始化
+  spaceInfo.value.current = 0
+  spaceInfo.value.total = 0
+  spaceInfo.value.spaceData = []
   loading.value = true
   //获取路径并初始化路径
-  ;(async () => {
-    await fetchAllPath()
-    for (let i = 0; i < useSpace.pathInfo.length; i++) {
-      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+
+  await fetchAllPath()
+  for (let i = 0; i < useSpace.pathInfo.length; i++) {
+    spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+  }
+  for (let i = 0; i < useForm.currentFloor - 1; i++) {
+    pathFloor.value++
+    spacesBox.value[i] = {
+      fatherId: i ? spacesBox.value[i - 1].id : 0,
+      id: spaces[i].id,
+      name: spaces[i].name,
+      layer: i
     }
-    for (let i = 0; i < useForm.currentFloor - 1; i++) {
-      pathFloor.value++
-      spacesBox.value[i] = {
-        fatherId: i ? spacesBox.value[i - 1].id : 0,
-        id: spaces[i].id,
-        name: spaces[i].name,
-        layer: i
-      }
-    }
-    //路径获取完毕后再渲染页面
-    loading.value = false
-  })()
+  }
+  //路径获取完毕后再渲染页面
+  loading.value = false
   //空间初始化
   if (useForm.currentFloor === 1) {
-    ;(async () => {
-      await fetchAllRooms()
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor - 1])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
+    await fetchAllRooms()
+    spaceData.value = spaceInfo.value.spaceData
+    //初始化是否选择的数组
+    if (spaceData.value[useForm.currentFloor - 1])
+      for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+        checkbox.value[i] = false
+      }
   } else {
-    ;(async () => {
-      await fetchRoomItems(currentId)
-      spaceData.value = spaceInfo.value.spaceData
-      //初始化是否选择的数组
-      if (spaceData.value[useForm.currentFloor])
-        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-          checkbox.value[i] = false
-        }
-    })()
+    await fetchRoomItems(currentId)
+    spaceData.value = spaceInfo.value.spaceData
+    //初始化是否选择的数组
+    if (spaceData.value[useForm.currentFloor])
+      for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+        checkbox.value[i] = false
+      }
+  }
+  // 请求完后判断是否为空
+  if (!spaceData.value.length && useForm.currentFloor > 2) {
+    isEmpty.value = true
+    console.log('true')
+  } else {
+    isEmpty.value = false
+    console.log('false')
   }
 }
 </script>
