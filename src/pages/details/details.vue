@@ -32,7 +32,7 @@ const deleteItem = () => {
 }
 const toEdit = () => {
   uni.navigateTo({
-    url: `/pages/edit/edit`
+    url: `/pages/edit/edit?detail=true`
   })
 }
 </script>
