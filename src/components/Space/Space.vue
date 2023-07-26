@@ -217,9 +217,9 @@ onShow(() => {
   }
 })
 
-// onReachBottom(()=>{
-
-// })
+onReachBottom(() => {
+  console.log(111)
+})
 
 //密码弹窗
 const popup = ref(false)
