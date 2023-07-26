@@ -158,7 +158,7 @@ export interface MultipleModify {
   /**
    * 入库日期
    */
-  password: string
+  password?: string
 }
 
 // 空间信息

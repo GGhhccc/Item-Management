@@ -486,6 +486,9 @@ const refresh = async () => {
   //路径获取完毕后再渲染页面
   loading.value = false
   //空间初始化
+  spaceInfo.value.current = 0
+  spaceInfo.value.total = 0
+  spaceInfo.value.spaceData = []
   if (useForm.currentFloor === 1) {
     await fetchAllRooms()
     spaceData.value = spaceInfo.value.spaceData

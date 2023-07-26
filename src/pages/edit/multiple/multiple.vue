@@ -78,14 +78,16 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
 import { useFormStore } from '@/stores/form'
+import type { MultipleModify } from '@/types/form'
 // 引入组件
 import FormDate from '@/components/Form/FormDate/FormDate.vue'
 import FormInput from '@/components/Form/FormInput/FormInput.vue'
 
 const useForm = useFormStore()
-const submitMultiple = () => {
+const { changeModifyItem } = useForm
+async function submitMultiple() {
   try {
-    const tempForm = {
+    const tempForm = <MultipleModify>{
       count: form.count,
       date: new Date(form.date).toJSON(),
       name: form.name,
@@ -95,7 +97,8 @@ const submitMultiple = () => {
       password: form.privacy ? PIN.value : ''
     }
     isLoading.value = true
-    useForm.changeModifyItem(useForm.ids, tempForm)
+    if (PIN.value) delete tempForm.password
+    await changeModifyItem(useForm.ids, tempForm)
     isLoading.value = false
   } catch {
     isLoading.value = false
@@ -136,6 +139,13 @@ watch(
   () => form.privacy,
   () => {
     if (form.privacy) popup.value = true
+    else PIN.value = ''
+  }
+)
+watch(
+  () => popup.value,
+  () => {
+    if (!popup.value && !PIN.value) form.privacy = false
   }
 )
 </script>

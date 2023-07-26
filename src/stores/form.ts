@@ -93,8 +93,8 @@ export const useFormStore = defineStore('form', () => {
   //多选物品id
   const ids = <number[]>[]
   //多选编辑物品或空间
-  function changeModifyItem(ids: number[], form: MultipleModify) {
-    multipleModifyItem(ids, form)
+  async function changeModifyItem(ids: number[], form: MultipleModify) {
+    await multipleModifyItem(ids, form)
   }
   //多选删除物品或空间
   async function modifyDeleteItemData(ids: number[]): Promise<void> {
