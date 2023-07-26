@@ -209,7 +209,13 @@
       </view>
     </u-form>
     <view v-if="!isDetail" class="form__submit">
-      <u-button @click="submitForm" type="primary" text="确认" />
+      <u-button
+        :loading="isLoading"
+        loadingText="修改中"
+        @click="submitForm"
+        type="primary"
+        text="确认"
+      />
     </view>
     <!-- <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="addAdministrator">
       <view class="form__popup">
@@ -287,6 +293,9 @@ import FormInput from '@/components/Form/FormInput/FormInput.vue'
 import FormMultiple from '@/components/Form/FormMultiple/FormMultiple.vue'
 import FormHistory from '@/components/Form/FormHistory/FormHistory.vue'
 import SubordinateSpaceItem from '@/components/Space/SubordinateSpaceItem/SubordinateSpaceItem.vue'
+
+// 是否正在提交
+const isLoading = ref(false)
 
 const props = withDefaults(
   defineProps<{
@@ -557,83 +566,91 @@ const submitForm = (): void => {
   formVerify.value
     .validate()
     .then(async () => {
-      const originalImgs = form.images.filter((item) => 'id' in item)
-      const newImages = await uploadImg(
-        form.images.filter((item) => !('id' in item)),
-        0
-      )
-      const images = originalImgs.concat(newImages)
-      const originalFigures = useForm.itemData.images.filter((item) => 'id' in item)
-      const newFigures = await uploadImg(
-        form.images.filter((item) => !('id' in item)),
-        1
-      )
-      const figures = originalFigures.concat(newFigures)
-      if (form.type) {
-        const path = []
-        for (let i = 0; i < pathFloor.value; i++) {
-          path.push({
-            id: spacesBox.value[i].id,
-            name: spacesBox.value[i].name
+      try {
+        const originalImgs = form.images.filter((item) => 'id' in item)
+        const newImages = await uploadImg(
+          form.images.filter((item) => !('id' in item)),
+          0
+        )
+        const images = originalImgs.concat(newImages)
+        const originalFigures = useForm.itemData.images.filter((item) => 'id' in item)
+        const newFigures = await uploadImg(
+          form.images.filter((item) => !('id' in item)),
+          1
+        )
+        const figures = originalFigures.concat(newFigures)
+        if (form.type) {
+          const path = []
+          for (let i = 0; i < pathFloor.value; i++) {
+            path.push({
+              id: spacesBox.value[i].id,
+              name: spacesBox.value[i].name
+            })
+          }
+          const tempForm = <ItemForm>{
+            privacy: privacy.value ? 1 : 0,
+            type: radioValue.value === '空间' ? 1 : 2,
+            price: Number(form.price),
+            count: Number(form.count),
+            name: form.name,
+            state: form.state,
+            comment: form.comment,
+            date: currentTime(date.value),
+            path: path,
+            labels: labelBox.value,
+            fatherName: spacesBox.value[pathFloor.value - 1].name,
+            url: form.url,
+            images: images,
+            figures: figures,
+            password: PIN.value
+          }
+          if (!changed || !PIN.value) delete tempForm.password
+          isLoading.value = true
+          await updateItemData(currentId, form.id, tempForm)
+          uni.showToast({
+            title: '修改成功',
+            icon: 'success',
+            duration: 2000
           })
-        }
-        const tempForm = <ItemForm>{
-          privacy: privacy.value ? 1 : 0,
-          type: radioValue.value === '空间' ? 1 : 2,
-          price: Number(form.price),
-          count: Number(form.count),
-          name: form.name,
-          state: form.state,
-          comment: form.comment,
-          date: currentTime(date.value),
-          path: path,
-          labels: labelBox.value,
-          fatherName: spacesBox.value[pathFloor.value - 1].name,
-          url: form.url,
-          images: images,
-          figures: figures,
-          password: PIN.value
-        }
-        if (!changed || !PIN.value) delete tempForm.password
-        await updateItemData(currentId, form.id, tempForm)
-        uni.showToast({
-          title: '修改成功',
-          icon: 'success',
-          duration: 2000
-        })
-        setTimeout(() => {
-          uni.navigateBack({
-            delta: props.detailDeparture ? 2 : 1
+          isLoading.value = false
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: props.detailDeparture ? 2 : 1
+            })
+          }, 1000)
+        } else {
+          const tempForm = <RoomForm>{
+            privacy: privacy.value ? 1 : 0,
+            type: 0,
+            price: Number(form.price),
+            name: form.name,
+            state: form.state,
+            address: '',
+            location: '',
+            comment: form.comment,
+            date: currentTime(date.value),
+            images: images,
+            figures: figures,
+            labels: labelBox.value,
+            password: PIN.value
+          }
+          if (!changed || !PIN.value) delete tempForm.password
+          isLoading.value = true
+          await updateRoomData(form.id, tempForm)
+          uni.showToast({
+            title: '修改成功',
+            icon: 'success',
+            duration: 2000
           })
-        }, 1000)
-      } else {
-        const tempForm = <RoomForm>{
-          privacy: privacy.value ? 1 : 0,
-          type: 0,
-          price: Number(form.price),
-          name: form.name,
-          state: form.state,
-          address: '',
-          location: '',
-          comment: form.comment,
-          date: currentTime(date.value),
-          images: images,
-          figures: figures,
-          labels: labelBox.value,
-          password: PIN.value
+          isLoading.value = false
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: props.detailDeparture ? 2 : 1
+            })
+          }, 1000)
         }
-        if (!changed || !PIN.value) delete tempForm.password
-        await updateRoomData(form.id, tempForm)
-        uni.showToast({
-          title: '修改成功',
-          icon: 'success',
-          duration: 2000
-        })
-        setTimeout(() => {
-          uni.navigateBack({
-            delta: props.detailDeparture ? 2 : 1
-          })
-        }, 1000)
+      } catch {
+        isLoading.value = false
       }
     })
     .catch((error: any) => {

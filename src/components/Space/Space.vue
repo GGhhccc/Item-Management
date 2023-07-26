@@ -35,12 +35,9 @@
       </view>
     </view>
     <view class="space__tabs">
-      <u-tabs
-        itemStyle="color:#666666;padding:0; margin-right:20rpx;height: 34px;"
-        :list="[{ name: '我的' }, { name: '共同管理' }]"
-      />
+      <u-tabs itemStyle="color:#666666;padding:0; margin-right:20rpx;height: 34px;" />
     </view>
-    <Empty v-if="!spaceData[0] && useForm.currentFloor > 2" />
+    <Empty v-if="!isLoading && !spaceData[0] && useForm.currentFloor > 2" />
     <view v-for="(item, index) in spaceData" :key="index">
       <SpaceItem
         :bgColor="bgColor(index)"
@@ -177,7 +174,9 @@ const tempName = ref('')
 //暂存类型
 const tempType = ref(0)
 // 加载更多状态
-const loadMoreStatus = ref('loadmore')
+const loadMoreStatus = ref('')
+// 是否正在加载
+const isLoading = ref(true)
 // 是否没有更多了
 const isNoMore = computed(
   () =>
@@ -236,6 +235,7 @@ onShow(() => {
         }
     })()
   }
+  isLoading.value = false
 })
 
 // 触底加载更多

@@ -64,7 +64,13 @@
       <u-toast ref="toast"></u-toast>
     </view>
     <view class="form__submit">
-      <u-button @click="submitMultiple" type="primary" text="确认" />
+      <u-button
+        :loading="isLoading"
+        loadingText="修改中"
+        @click="submitMultiple"
+        type="primary"
+        text="确认"
+      />
     </view>
   </view>
 </template>
@@ -78,17 +84,26 @@ import FormInput from '@/components/Form/FormInput/FormInput.vue'
 
 const useForm = useFormStore()
 const submitMultiple = () => {
-  const tempForm = {
-    count: form.count,
-    date: new Date(form.date).toJSON(),
-    name: form.name,
-    price: form.price,
-    privacy: form.privacy ? 1 : 0,
-    state: form.state,
-    password: form.privacy ? PIN.value : ''
+  try {
+    const tempForm = {
+      count: form.count,
+      date: new Date(form.date).toJSON(),
+      name: form.name,
+      price: form.price,
+      privacy: form.privacy ? 1 : 0,
+      state: form.state,
+      password: form.privacy ? PIN.value : ''
+    }
+    isLoading.value = true
+    useForm.changeModifyItem(useForm.ids, tempForm)
+    isLoading.value = false
+  } catch {
+    isLoading.value = false
   }
-  useForm.changeModifyItem(useForm.ids, tempForm)
 }
+// 是否正在提交
+const isLoading = ref(false)
+
 const toast = ref()
 //弹出提示
 const showToast = (): void => {

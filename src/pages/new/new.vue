@@ -152,7 +152,13 @@
       </view>
     </u-form>
     <view class="form__submit">
-      <u-button @click="submitForm" type="primary" text="确认" />
+      <u-button
+        :loading="isLoading"
+        loadingText="新建中"
+        @click="submitForm"
+        type="primary"
+        text="确认"
+      />
     </view>
     <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="addTag">
       <view class="form__popup">
@@ -227,6 +233,9 @@ async function uploadImg(images: imgData[], type: number): Promise<imgData[]> {
     }
   return images
 }
+
+// 是否正在提交
+const isLoading = ref(false)
 
 //物品属性
 const radioValue = ref('空间')
@@ -383,73 +392,81 @@ const submitForm = (): void => {
   formVerify.value
     .validate()
     .then(async () => {
-      const images = await uploadImg(form.images, 0)
-      const figures = await uploadImg(form.figures, 1)
-      if (currentFloor === 1) {
-        const tempForm = <RoomForm>{
-          privacy: privacy.value ? 1 : 0,
-          type: 0,
-          price: Number(form.price),
-          name: form.name,
-          state: form.state,
-          address: '',
-          location: '',
-          comment: form.comment,
-          date: currentTime(date.value),
-          images: images,
-          figures: figures,
-          labels: labelBox.value,
-          password: privacy.value ? PIN.value : ''
-        }
-        if (!PIN.value) delete tempForm.password
-        await submitRoom(tempForm)
-        uni.showToast({
-          title: '新建成功',
-          icon: 'success',
-          duration: 2000
-        })
-        setTimeout(() => {
-          uni.navigateBack({
-            delta: 1
+      try {
+        const images = await uploadImg(form.images, 0)
+        const figures = await uploadImg(form.figures, 1)
+        if (currentFloor === 1) {
+          const tempForm = <RoomForm>{
+            privacy: privacy.value ? 1 : 0,
+            type: 0,
+            price: Number(form.price),
+            name: form.name,
+            state: form.state,
+            address: '',
+            location: '',
+            comment: form.comment,
+            date: currentTime(date.value),
+            images: images,
+            figures: figures,
+            labels: labelBox.value,
+            password: privacy.value ? PIN.value : ''
+          }
+          if (!PIN.value) delete tempForm.password
+          isLoading.value = true
+          await submitRoom(tempForm)
+          uni.showToast({
+            title: '新建成功',
+            icon: 'success',
+            duration: 2000
           })
-        }, 1000)
-      } else {
-        const paths = []
-        for (let i = 0; i < pathFloor.value; i++) {
-          paths.push({
-            id: spacesBox.value[i].id,
-            name: spacesBox.value[i].name
+          isLoading.value = false
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: 1
+            })
+          }, 1000)
+        } else {
+          const paths = []
+          for (let i = 0; i < pathFloor.value; i++) {
+            paths.push({
+              id: spacesBox.value[i].id,
+              name: spacesBox.value[i].name
+            })
+          }
+          const tempForm = <ItemForm>{
+            privacy: privacy.value ? 1 : 0,
+            type: radioValue.value === '空间' ? 1 : 2,
+            price: Number(form.price),
+            count: Number(form.count),
+            name: form.name,
+            state: form.state,
+            comment: form.comment,
+            date: currentTime(date.value),
+            path: paths,
+            labels: labelBox.value,
+            fatherName: spacesBox.value[pathFloor.value - 1].name,
+            url: form.url,
+            images: images,
+            figures: figures,
+            password: privacy.value ? PIN.value : ''
+          }
+          if (!PIN.value) delete tempForm.password
+          isLoading.value = true
+          await submitItem(spacesBox.value[pathFloor.value - 1].id, tempForm)
+          uni.showToast({
+            title: '新建成功',
+            icon: 'success',
+            duration: 2000
           })
+          isLoading.value = false
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: 1
+            })
+          }, 1000)
         }
-        const tempForm = <ItemForm>{
-          privacy: privacy.value ? 1 : 0,
-          type: radioValue.value === '空间' ? 1 : 2,
-          price: Number(form.price),
-          count: Number(form.count),
-          name: form.name,
-          state: form.state,
-          comment: form.comment,
-          date: currentTime(date.value),
-          path: paths,
-          labels: labelBox.value,
-          fatherName: spacesBox.value[pathFloor.value - 1].name,
-          url: form.url,
-          images: images,
-          figures: figures,
-          password: privacy.value ? PIN.value : ''
-        }
-        if (!PIN.value) delete tempForm.password
-        await submitItem(spacesBox.value[pathFloor.value - 1].id, tempForm)
-        uni.showToast({
-          title: '新建成功',
-          icon: 'success',
-          duration: 2000
-        })
-        setTimeout(() => {
-          uni.navigateBack({
-            delta: 1
-          })
-        }, 1000)
+      } catch {
+        isLoading.value = false
       }
     })
     .catch((error: any) => {

@@ -130,6 +130,7 @@ const loginSubmit = () => {
     } catch {
       auth.toLogin = true
       auth.logined = false
+      isLoading.value = false
     }
   })
 }
