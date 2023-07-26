@@ -51,6 +51,15 @@
         :show="showOperate"
       />
     </view>
+    <!-- 加载更多 -->
+    <u-loadmore
+      v-if="spaceData[0]"
+      :status="loadMoreStatus"
+      line
+      loadingText="努力加载中，先喝杯茶"
+      nomoreText="实在没有了"
+      marginBottom="50rpx"
+    />
     <view v-show="showOperate" class="space__operate">
       <view>
         <u-icon @click="toEdit" size="50rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
@@ -139,7 +148,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onShow, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import type { PathData } from '@/types/space.d.ts'
@@ -167,6 +176,15 @@ const tempID = ref(0)
 const tempName = ref('')
 //暂存类型
 const tempType = ref(0)
+// 加载更多状态
+const loadMoreStatus = ref('loadmore')
+// 是否没有更多了
+const isNoMore = computed(
+  () =>
+    spaceInfo.value.spaceData.length < spaceInfo.value.size ||
+    (spaceInfo.value.spaceData.length && spaceInfo.value.spaceData.length === spaceInfo.value.total)
+)
+
 useForm.currentFloor++
 
 onShow(() => {
@@ -175,12 +193,64 @@ onShow(() => {
     withShareTicket: true,
     menus: ['shareAppMessage', 'shareTimeline']
   })
-  refresh()
+  //获取路径并初始化路径
+  ;(async () => {
+    await fetchAllPath()
+    for (let i = 0; i < useSpace.pathInfo.length; i++) {
+      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
+    }
+    for (let i = 0; i < useForm.currentFloor - 1; i++) {
+      pathFloor.value++
+      spacesBox.value[i] = {
+        fatherId: i ? spacesBox.value[i - 1].id : 0,
+        id: spaces[i].id,
+        name: spaces[i].name,
+        layer: i
+      }
+    }
+    //路径获取完毕后再渲染页面
+    loading.value = false
+  })()
+  //空间初始化
+  spaceInfo.value.current = 0
+  spaceInfo.value.total = 0
+  spaceInfo.value.spaceData = []
+  if (useForm.currentFloor === 1) {
+    ;(async () => {
+      await fetchAllRooms()
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor - 1])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  } else {
+    ;(async () => {
+      await fetchRoomItems(currentId)
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    })()
+  }
 })
 
-onReachBottom(() => {
-  console.log(111)
+// 触底加载更多
+onReachBottom(async () => {
+  if (!isNoMore.value) {
+    loadMoreStatus.value = 'loading'
+    await loadMoreItem()
+  } else {
+    loadMoreStatus.value = 'nomore'
+  }
 })
+
+async function loadMoreItem() {
+  fetchAllRooms()
+}
 
 //密码弹窗
 const popup = ref(false)
@@ -457,22 +527,6 @@ const refresh = (): void => {
 <style lang="scss">
 .space {
   padding-top: 100px;
-  height: calc(100vh - 150rpx);
-  overflow: auto;
-  background: linear-gradient(
-    to top left,
-    #dfecff 0%,
-    #f0f4fe 10%,
-    #f3f3fd 20%,
-    #f4f4fe 30%,
-    #f5f5fe 40%,
-    #fefefe 50%,
-    #fff 60%,
-    #fbfcff 70%,
-    #eff6ff 80%,
-    #e6f0ff 90%,
-    #dceaff 100%
-  );
 
   &__icon {
     float: right;

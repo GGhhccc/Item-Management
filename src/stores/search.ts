@@ -103,6 +103,7 @@ export const useSearchStore = defineStore('search', () => {
   async function fetchNewSearchList(deleted: number) {
     // 当前位置不是已删除列表
     isDeleted.value = false
+    // 发起请求
     const data = await getAllItems(
       {
         offset: currentSearchList.value.offset + 1

@@ -163,25 +163,25 @@ const goToSettings = (index: number) => {
         url: '/pages/user/update/update'
       })
       break
-    // 设置
-    case 1:
-      uni.navigateTo({
-        url: '/pages/user/settings/settings'
-      })
-      break
-    // 意见反馈
-    case 2:
-      uni.navigateTo({
-        url: '/pages/user/feedback/feedback'
-      })
-      break
-    // 我的二维码
-    case 3:
-      uni.showToast({
-        title: '该功能暂未开放',
-        icon: 'error'
-      })
-      break
+    // // 设置
+    // case 1:
+    //   uni.navigateTo({
+    //     url: '/pages/user/settings/settings'
+    //   })
+    //   break
+    // // 意见反馈
+    // case 2:
+    //   uni.navigateTo({
+    //     url: '/pages/user/feedback/feedback'
+    //   })
+    //   break
+    // // 我的二维码
+    // case 3:
+    //   uni.showToast({
+    //     title: '该功能暂未开放',
+    //     icon: 'error'
+    //   })
+    //   break
     // 最近删除
     case 4:
       uni.navigateTo({
@@ -192,6 +192,12 @@ const goToSettings = (index: number) => {
     case 5:
       uni.navigateTo({
         url: '/pages/user/history/history'
+      })
+      break
+    default:
+      uni.showToast({
+        title: '该功能暂未开放',
+        icon: 'error'
       })
       break
   }

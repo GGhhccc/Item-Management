@@ -237,6 +237,7 @@ const onClick = (id: number, type: number, privacy: number) => {
         &__text {
           max-width: 250rpx;
           overflow: hidden;
+          text-overflow: ellipsis;
           margin-right: 26rpx;
           font-size: 32rpx;
           color: $uni-text-color;
@@ -276,6 +277,7 @@ const onClick = (id: number, type: number, privacy: number) => {
         &__history {
           display: flex;
           align-items: flex-start;
+          max-width: 420rpx;
           height: 40rpx;
           margin-bottom: 35rpx;
         }

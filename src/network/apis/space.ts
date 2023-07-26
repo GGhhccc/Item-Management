@@ -3,7 +3,7 @@ import type { PagingParams, Pages } from '@/utils/typings'
 import type { T1, BriefItem, DetailItemData, DetailRoomData, PathData } from '@/types/space.d.ts'
 
 // 查看空间列表
-export function getAllRooms({ offset, limit = 100 }: PagingParams): Promise<Pages<BriefItem>> {
+export function getAllRooms({ offset, limit = 10 }: PagingParams): Promise<Pages<BriefItem>> {
   return service<Pages<BriefItem>>({
     url: `/items/rooms?offset=${offset}&limit=${limit}`,
     method: 'GET'
@@ -14,7 +14,7 @@ export function getAllRooms({ offset, limit = 100 }: PagingParams): Promise<Page
 export function getRoomItems(
   // 要查询的空间 id
   itemId: number,
-  { offset, limit = 100 }: PagingParams
+  { offset, limit = 10 }: PagingParams
 ): Promise<Pages<BriefItem>> {
   return service<Pages<BriefItem>>({
     url: `/items/${itemId}/items?offset=${offset}&limit=${limit}`,

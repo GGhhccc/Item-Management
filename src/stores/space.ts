@@ -14,18 +14,27 @@ export const useSpaceStore = defineStore('space', () => {
   // 获取所有空间
   async function fetchAllRooms(): Promise<void> {
     const data = await getAllRooms({
-      offset: 0
+      offset: spaceInfo.value.current + 1
     })
-    spaceInfo.value.spaceData = data.records
+    spaceInfo.value.current = data.current
+    spaceInfo.value.size = data.size
+    spaceInfo.value.total = data.total
+    spaceInfo.value.spaceData.push(...data.records)
   }
 
   // 获取某个空间中的物品
   async function fetchRoomItems(id: number): Promise<void> {
     const data = await getRoomItems(id, {
-      offset: spaceInfo.value.current
+      offset: spaceInfo.value.current + 1
     })
-    if (data) spaceInfo.value.spaceData = data.records
-    else spaceInfo.value.spaceData = []
+    if (data) {
+      spaceInfo.value.current = data.current
+      spaceInfo.value.size = data.size
+      spaceInfo.value.total = data.total
+      spaceInfo.value.spaceData.push(...data.records)
+    } else {
+      spaceInfo.value.spaceData = []
+    }
   }
 
   //所有路径信息

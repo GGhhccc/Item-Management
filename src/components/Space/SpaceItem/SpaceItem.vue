@@ -67,10 +67,13 @@
 import { useFormStore } from '@/stores/form'
 import { useSpaceStore } from '@/stores/space'
 import type { BriefItem } from '@/types/space'
+import { storeToRefs } from 'pinia'
+
 //表单数据
 const useForm = useFormStore()
 const useSpace = useSpaceStore()
 const { spaces } = useSpace
+const { spaceInfo } = storeToRefs(useSpace)
 
 const props = defineProps<{
   //表单数据类型
@@ -93,6 +96,9 @@ const emits = defineEmits<{
 //进入下一层
 const toSpace = (id: number, type: number, name: string, privacy: number): void => {
   if (!props.show && (type === 0 || type === 1)) {
+    spaceInfo.value.current = 0
+    spaceInfo.value.total = 0
+    spaceInfo.value.spaceData = []
     //修改当前表单数据
     useForm.currentId = id
     useForm.currentName = name

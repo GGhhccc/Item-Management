@@ -25,10 +25,10 @@
 		},
 		{
 			"path": "pages/home/spaces/spaces",
-             "style": {
-                 "navigationStyle": "custom"
-             }
-		},
+			"style": {
+					"navigationStyle": "custom"
+			}
+	},
 		{
 			"path": "pages/details/details",
 			"style": {
@@ -67,9 +67,9 @@
 		},
 		{
 			"path": "pages/edit/multiple/multiple",
-             "style": {
-                 "navigationStyle": "custom"
-             }
+			"style": {
+					"navigationStyle": "custom"
+			}
 		},
 		{
 			"path": "pages/user/user",
