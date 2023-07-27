@@ -25,6 +25,7 @@ export const useFormStore = defineStore('form', () => {
     qrCode: '',
     privacy: 0,
     labels: [],
+    items: [],
     count: 0,
     price: 0,
     date: '',

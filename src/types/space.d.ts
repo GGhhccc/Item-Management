@@ -117,6 +117,10 @@ export interface DetailItemData extends ItemData, T2 {
    */
   labels: LabelData[]
   /**
+   * 关联物品
+   */
+  items: T1[]
+  /**
    * 所属路径
    */
   path: PathData[]
