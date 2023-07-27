@@ -5,11 +5,11 @@
       title="物品修改记录"
       titleStyle="font-weight:bold"
       autoBack
-      bgColor="transparent"
+      :bgColor="navBarColor"
     ></u-navbar>
 
     <view style="display: flex">
-      <SearchInput @onFocus="onFocus" @searchEmpty="searchEmpty" />
+      <SearchInput @onFocus="onFocus" @searchEmpty="determineEmpty" />
       <!-- <SearchScreen /> -->
     </view>
 
@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { onShow, onPullDownRefresh } from '@dcloudio/uni-app'
+import { onShow, onPullDownRefresh, onPageScroll } from '@dcloudio/uni-app'
 import { ref, provide } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
@@ -46,16 +46,20 @@ const onFocus = () => {
 
 // 是否正在加载
 const isLoading = ref(false)
-
 // 手动控制禁用加载
 const manualDisable = ref(false)
-
 // 列表是否为空
 const isEmpty = ref(false)
+// navBar 颜色
+const navBarColor = ref('transparent')
 
-// 判断搜索后是否为空
-const searchEmpty = (val: boolean) => {
-  val ? (isEmpty.value = true) : (isEmpty.value = false)
+// 判断搜索/筛选后是否为空
+const determineEmpty = () => {
+  if (!currentSearchList.value.itemList.length) {
+    isEmpty.value = true
+  } else {
+    isEmpty.value = false
+  }
 }
 
 // 请求列表
@@ -80,6 +84,15 @@ async function loadHistoryList() {
 onPullDownRefresh(async () => {
   await loadHistoryList()
   uni.stopPullDownRefresh()
+})
+
+// 监听滚动
+onPageScroll((e) => {
+  if (e.scrollTop !== 0) {
+    navBarColor.value = '#ffffff'
+  } else {
+    navBarColor.value = 'transparent'
+  }
 })
 
 onShow(() => {

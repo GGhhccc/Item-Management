@@ -122,7 +122,7 @@
           <text v-if="index < pathFloor - 1"> >&nbsp; </text>
         </text>
       </view>
-      <view v-if="!loading" class="space__subordinateSpace__floor">
+      <view v-if="!loading && showSpace" class="space__subordinateSpace__floor">
         <SubordinateSpaceItem
           v-for="(item, subIndex) in useSpaceStore().pathInfo"
           :ids="ids"
@@ -485,7 +485,7 @@ const refresh = async () => {
     loading.value = true
     //获取路径并初始化路径
 
-    if (!useSpace.pathInfo[0]) await fetchAllPath()
+    if (!useSpace.pathInfo[0][0]) await fetchAllPath()
     for (let i = 0; i < useSpace.pathInfo.length; i++) {
       spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
     }

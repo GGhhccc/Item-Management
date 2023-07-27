@@ -179,6 +179,10 @@ const showPopup = ref(false)
 const priceForm = ref()
 const isSubmitting = ref(false)
 
+const emits = defineEmits<{
+  (e: 'screenEmpty'): void
+}>()
+
 // 筛选标题是否选择
 const showControl = reactive<ShowControl>({
   showProperties: true,
@@ -278,8 +282,6 @@ const closePopupEvent = () => {
 const openPopup = () => {
   showPopup.value = !showPopup.value
   fetchTagList()
-  // console.log(currentTagList.value.tagsList)
-  // console.log(currentSearchList.value.itemList)
 }
 
 const cancelScreen = () => {
@@ -295,12 +297,14 @@ const submitScreen = () => {
       try {
         isSubmitting.value = true
         updateScreenData()
-        await fetchScreenSearchList(0)
+        // 1 表示在已删除的数据中筛选
+        await fetchScreenSearchList(1)
         isSubmitting.value = false
         uni.showToast({
           title: '筛选成功',
           icon: 'success'
         })
+        emits('screenEmpty')
         closePopupEvent()
         resetAllScreen()
       } catch {}

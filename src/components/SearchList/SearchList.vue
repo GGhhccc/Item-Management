@@ -25,7 +25,7 @@
       <!-- 多选状态的弹出框 -->
       <CheckboxOperation
         :isLongpressing="checkboxOperate"
-        :checkedId="currentSearchList.checkedItemList"
+        @edit="editMultiple"
         @cancel="cancelChecking"
         @delete="deleteItem"
         @recover="recoverItem"
@@ -122,7 +122,7 @@ async function confirmNumber(password: number) {
 const isLoadingMore = ref(false)
 
 // 是否无法加载更多了
-const loadMoreStatus = ref('')
+const loadMoreStatus = ref('nomore')
 const isNoMore = computed(
   () =>
     currentSearchList.value.itemList.length < currentSearchList.value.limit ||
@@ -185,6 +185,13 @@ const chooseItem = (item: ItemList) => {
       url: `/pages/details/details`
     })
   }
+}
+
+// 多选编辑
+const editMultiple = async () => {
+  uni.navigateTo({
+    url: `/pages/edit/multiple/multiple`
+  })
 }
 
 // 删除

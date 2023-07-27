@@ -50,9 +50,11 @@
 
 <script setup lang="ts">
 import { useSearchStore } from '@/stores/search'
+import { useFormStore } from '@/stores/form'
 import { storeToRefs } from 'pinia'
 import { ref, watch, inject } from 'vue'
 
+const useForm = useFormStore()
 const searchStore = useSearchStore()
 const { currentSearchList } = storeToRefs(searchStore)
 
@@ -66,11 +68,10 @@ const isDeleted = inject<boolean>('isDetele', false)
 const props = defineProps<{
   // 是否长按
   isLongpressing: boolean
-  // 选中的 id
-  checkedId: number[]
 }>()
 
 const emits = defineEmits<{
+  (e: 'edit'): void
   (e: 'cancel'): void
   (e: 'delete', type: number): void
   (e: 'recover'): void
@@ -89,7 +90,19 @@ watch(
 )
 
 const toEdit = () => {
-  console.log('编辑')
+  if (currentSearchList.value.itemList.filter((item) => item.isChecked).length) {
+    useForm.ids = currentSearchList.value.itemList
+      .filter((item) => item.isChecked)
+      .map((item) => item.id)
+
+    emits('edit')
+    cancelBtn()
+  } else {
+    uni.showToast({
+      title: '未选择物品',
+      icon: 'error'
+    })
+  }
 }
 
 const move = () => {

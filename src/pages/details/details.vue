@@ -26,9 +26,20 @@ import { useFormStore } from '@/stores/form'
 const useForm = useFormStore()
 const { modifyDeleteItemData, itemData } = useForm
 const showDelete = ref(false)
-const deleteItem = () => {
-  modifyDeleteItemData([itemData.id])
+const deleteItem = async () => {
   showDelete.value = false
+  uni.showToast({
+    title: '删除中...',
+    icon: 'none'
+  })
+  await modifyDeleteItemData([itemData.id])
+  uni.showToast({
+    title: '删除成功',
+    icon: 'success'
+  })
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 1500)
 }
 const toEdit = () => {
   uni.navigateTo({
