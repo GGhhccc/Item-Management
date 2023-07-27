@@ -19,5 +19,6 @@ const back = () => {
   // 重置请求参数
   spaceInfo.value.current = 0
   spaceInfo.value.spaceData.length = 0
+  uni.navigateBack()
 }
 </script>

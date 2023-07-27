@@ -687,6 +687,7 @@ const submitForm = (): void => {
 
     &__tags {
       padding: 20rpx;
+      max-height: 200rpx;
     }
   }
 
