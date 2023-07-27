@@ -1,10 +1,10 @@
 <template>
   <view class="search" :style="{ paddingTop: navBarHeight + 'px' }">
-    <u-navbar title="搜索" autoBack titleStyle="font-weight:bold" bgColor="transparent"></u-navbar>
+    <u-navbar title="搜索" autoBack titleStyle="font-weight:bold" :bgColor="navBarColor"></u-navbar>
 
     <view style="display: flex">
-      <SearchInput @onFocus="onFocus" @searchEmpty="searchEmpty" />
-      <SearchScreen />
+      <SearchInput @onFocus="onFocus" @searchEmpty="determineEmpty" />
+      <SearchScreen @screenEmpty="determineEmpty" />
     </view>
 
     <view class="search__total">
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { onShow, onPullDownRefresh } from '@dcloudio/uni-app'
+import { onShow, onPullDownRefresh, onPageScroll } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
@@ -39,10 +39,16 @@ const isLoading = ref(false)
 const manualDisable = ref(false)
 // 是否为空
 const isEmpty = ref(false)
+// navBar 颜色
+const navBarColor = ref('transparent')
 
-// 判断搜索后是否为空
-const searchEmpty = (val: boolean) => {
-  val ? (isEmpty.value = true) : (isEmpty.value = false)
+// 判断搜索/筛选后是否为空
+const determineEmpty = () => {
+  if (!currentSearchList.value.itemList.length) {
+    isEmpty.value = true
+  } else {
+    isEmpty.value = false
+  }
 }
 
 // 搜索框获取焦点之后取消多选状态
@@ -82,6 +88,15 @@ const getCapsule = () => {
 onPullDownRefresh(async () => {
   await loadSearchList()
   uni.stopPullDownRefresh()
+})
+
+// 监听滚动
+onPageScroll((e) => {
+  if (e.scrollTop !== 0) {
+    navBarColor.value = '#ffffff'
+  } else {
+    navBarColor.value = 'transparent'
+  }
 })
 
 onShow(() => {

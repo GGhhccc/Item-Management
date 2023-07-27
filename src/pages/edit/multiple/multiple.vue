@@ -120,7 +120,7 @@ const form = reactive({
   date: Date.now(),
   name: '',
   price: 0,
-  privacy: true,
+  privacy: false,
   state: ''
 })
 //密码弹窗

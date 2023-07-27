@@ -205,6 +205,7 @@ export const useSearchStore = defineStore('search', () => {
       1
     )
     currentSearchList.value.offset = data.current
+    currentSearchList.value.total = data.total
     currentSearchList.value.itemList.push(...data.records)
     setItemList(currentSearchList.value.itemList)
   }
@@ -224,6 +225,7 @@ export const useSearchStore = defineStore('search', () => {
       name
     )
     currentSearchList.value.offset = data.current
+    currentSearchList.value.total = data.total
     currentSearchList.value.itemList.push(...data.records)
     setItemList(currentSearchList.value.itemList)
   }

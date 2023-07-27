@@ -79,7 +79,6 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref, getCurrentInstance } from 'vue'
-import { nextTick } from 'vue'
 
 const instance = getCurrentInstance()
 

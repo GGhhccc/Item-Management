@@ -31,7 +31,7 @@ const { searchItemByInput, fetchHistoryItem } = searchStore
 
 const emits = defineEmits<{
   (e: 'onFocus'): void
-  (e: 'searchEmpty', searchEmpty: boolean): void
+  (e: 'searchEmpty'): void
 }>()
 
 const isDeleted = inject<boolean>('isDetele', false)
@@ -65,11 +65,7 @@ const submitSearch = async () => {
     icon: 'success'
   })
   // 搜索完后返回是否为空
-  if (!currentSearchList.value.itemList.length) {
-    emits('searchEmpty', true)
-  } else {
-    emits('searchEmpty', false)
-  }
+  emits('searchEmpty')
 }
 
 watch(
