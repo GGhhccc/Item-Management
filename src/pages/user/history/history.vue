@@ -1,6 +1,12 @@
 <template>
   <view class="history">
-    <u-navbar placeholder title="物品修改记录" titleStyle="font-weight:bold" autoBack></u-navbar>
+    <u-navbar
+      placeholder
+      title="物品修改记录"
+      titleStyle="font-weight:bold"
+      autoBack
+      bgColor="transparent"
+    ></u-navbar>
 
     <view style="display: flex">
       <SearchInput @onFocus="onFocus" @searchEmpty="searchEmpty" />
@@ -20,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onPullDownRefresh } from '@dcloudio/uni-app'
 import { ref, provide } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
@@ -69,6 +75,12 @@ async function loadHistoryList() {
     currentSearchList.value.itemList.length ? (isEmpty.value = false) : (isEmpty.value = true)
   }
 }
+
+// 下拉刷新
+onPullDownRefresh(async () => {
+  await loadHistoryList()
+  uni.stopPullDownRefresh()
+})
 
 onShow(() => {
   loadHistoryList()

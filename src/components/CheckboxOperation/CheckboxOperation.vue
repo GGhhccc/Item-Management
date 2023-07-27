@@ -78,7 +78,6 @@ const emits = defineEmits<{
 
 const showDeleteModal = ref(false)
 const showRestoreModal = ref(false)
-const showCompleteDeleteModal = ref(false)
 
 // 多选操作
 const checkboxOperate = ref(false)

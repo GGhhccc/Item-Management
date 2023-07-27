@@ -18,7 +18,7 @@
           :status="loadMoreStatus"
           line
           loadingText="努力加载中，先喝杯茶"
-          nomoreText="实在没有了"
+          nomoreText="没有更多了"
           marginBottom="50rpx"
         />
       </template>
@@ -98,6 +98,7 @@ async function setID(id: number, type: number, privacy: number): Promise<void> {
     })
   }
 }
+
 //验证手势密码
 async function confirmGesture(password: number) {
   popup.value = false

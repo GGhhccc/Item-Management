@@ -1,6 +1,6 @@
 <template>
   <view class="search" :style="{ paddingTop: navBarHeight + 'px' }">
-    <u-navbar title="搜索" autoBack titleStyle="font-weight:bold"></u-navbar>
+    <u-navbar title="搜索" autoBack titleStyle="font-weight:bold" bgColor="transparent"></u-navbar>
 
     <view style="display: flex">
       <SearchInput @onFocus="onFocus" @searchEmpty="searchEmpty" />
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onPullDownRefresh } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
@@ -77,6 +77,12 @@ const getCapsule = () => {
   const menuButton = uni.getMenuButtonBoundingClientRect()
   navBarHeight.value = menuButton.bottom + 16
 }
+
+// 下拉刷新
+onPullDownRefresh(async () => {
+  await loadSearchList()
+  uni.stopPullDownRefresh()
+})
 
 onShow(() => {
   getCapsule()

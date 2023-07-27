@@ -1,6 +1,8 @@
 <template>
   <view class="space">
+    <!-- 背景颜色 -->
     <view class="space__bg"></view>
+    <!-- header -->
     <view class="space__header" :style="{ top: navBarHeight + 'px' }">
       <view class="space__header__icon-wrapper">
         <view class="space__header__icon-wrapper__icon">
@@ -40,7 +42,10 @@
     <!-- <view class="space__tabs">
       <u-tabs itemStyle="color:#666666;padding:0; margin-right:20rpx;height: 34px;" />
     </view> -->
+
+    <!-- header 占位元素 -->
     <view :style="{ height: useForm.currentFloor === 1 ? '70rpx' : '170rpx' }"></view>
+    <!-- 列表主体 -->
     <u-skeleton rows="20" :loading="isLoading" title animate>
       <view v-if="!isLoading" style="background-color: #f5f5f5">
         <template v-for="(item, index) in spaceData" :key="index">
@@ -55,6 +60,11 @@
         </template>
       </view>
     </u-skeleton>
+    <!-- 加载失败 -->
+    <view v-if="!isLoading && isError" class="space__error" @click="refresh">
+      <view>加载失败，点击屏幕重新加载</view>
+    </view>
+    <!-- 空 -->
     <Empty v-if="isEmpty" />
     <!-- 加载更多 -->
     <u-loadmore
@@ -63,11 +73,12 @@
       line
       bgColor="#f5f5f5"
       loadingText="努力加载中，先喝杯茶"
-      nomoreText="实在没有了"
+      nomoreText="没有更多了"
       marginTop="0"
       marginBottom="0"
       custom-style="padding: 10px 0 10px 0;"
     />
+    <!-- 多选弹出框 -->
     <view v-show="showOperate" class="space__operate">
       <view>
         <u-icon @click="toEdit" size="50rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
@@ -86,15 +97,7 @@
         <u-text size="25rpx" color="#88898c" align="center" text="取消" :bold="true" />
       </view>
     </view>
-    <u-modal
-      @cancel="showDelete = false"
-      @confirm="confirmDelete"
-      :showCancelButton="true"
-      :show="showDelete"
-      width="600rpx"
-    >
-      确认删除?
-    </u-modal>
+    <!-- 从属空间 -->
     <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="showSpace">
       <view class="space__subordinateSpace">
         <view class="space__subordinateSpace__title">
@@ -136,15 +139,17 @@
         />
       </view>
     </u-popup>
+    <!-- 确认删除弹出框 -->
     <u-modal
+      title="确认删除？"
       @cancel="showDelete = false"
       @confirm="confirmDelete"
       :showCancelButton="true"
       :show="showDelete"
-      width="600rpx"
+      width="500rpx"
     >
-      确认删除?
     </u-modal>
+    <!-- 密码弹窗 -->
     <PasswordPopup
       :popup="popup"
       @close="popup = false"
@@ -157,7 +162,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { onShow, onReachBottom } from '@dcloudio/uni-app'
+import { onShow, onReachBottom, onPullDownRefresh } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import type { PathData } from '@/types/space.d.ts'
 import type { BriefItem } from '@/types/space.d.ts'
@@ -192,6 +197,8 @@ const isLoading = ref(true)
 const isEmpty = ref(false)
 // navbar 高度
 const navBarHeight = ref<number>(44)
+// 是否加载失败
+const isError = ref(false)
 // 是否没有更多了
 const isNoMore = computed(
   () =>
@@ -219,6 +226,12 @@ onShow(() => {
 
   //获取路径并初始化路径
   refresh()
+})
+
+//下拉刷新
+onPullDownRefresh(async () => {
+  await refresh()
+  uni.stopPullDownRefresh()
 })
 
 // 触底加载更多
@@ -463,56 +476,61 @@ const toAdd = (): void => {
 }
 
 const refresh = async () => {
-  // 请求参数初始化
-  spaceInfo.value.current = 0
-  spaceInfo.value.total = 0
-  spaceInfo.value.spaceData = []
-  loading.value = true
-  //获取路径并初始化路径
+  try {
+    isError.value = false
+    // 请求参数初始化
+    spaceInfo.value.current = 0
+    spaceInfo.value.total = 0
+    spaceInfo.value.spaceData = []
+    loading.value = true
+    //获取路径并初始化路径
 
-  if (!useSpace.pathInfo[0]) await fetchAllPath()
-  for (let i = 0; i < useSpace.pathInfo.length; i++) {
-    spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
-  }
-  for (let i = 0; i < useForm.currentFloor - 1; i++) {
-    pathFloor.value++
-    spacesBox.value[i] = {
-      fatherId: i ? spacesBox.value[i - 1].id : 0,
-      id: useSpace.spaces[i].id,
-      name: useSpace.spaces[i].name,
-      layer: i
+    if (!useSpace.pathInfo[0]) await fetchAllPath()
+    for (let i = 0; i < useSpace.pathInfo.length; i++) {
+      spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
     }
-  }
-  //路径获取完毕后再渲染页面
-  loading.value = false
-  //空间初始化
-  spaceInfo.value.current = 0
-  spaceInfo.value.total = 0
-  spaceInfo.value.spaceData = []
-  if (useForm.currentFloor === 1) {
-    await fetchAllRooms()
-    spaceData.value = spaceInfo.value.spaceData
-    //初始化是否选择的数组
-    if (spaceData.value[useForm.currentFloor - 1])
-      for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-        checkbox.value[i] = false
+    for (let i = 0; i < useForm.currentFloor - 1; i++) {
+      pathFloor.value++
+      spacesBox.value[i] = {
+        fatherId: i ? spacesBox.value[i - 1].id : 0,
+        id: useSpace.spaces[i].id,
+        name: useSpace.spaces[i].name,
+        layer: i
       }
-  } else {
-    await fetchRoomItems(currentId)
-    spaceData.value = spaceInfo.value.spaceData
-    //初始化是否选择的数组
-    if (spaceData.value[useForm.currentFloor])
-      for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
-        checkbox.value[i] = false
-      }
-  }
-  // 修改正在请求状态
-  isLoading.value = false
-  // 请求完后判断是否为空
-  if (!spaceData.value.length && useForm.currentFloor > 2) {
-    isEmpty.value = true
-  } else {
-    isEmpty.value = false
+    }
+    //路径获取完毕后再渲染页面
+    loading.value = false
+    //空间初始化
+    spaceInfo.value.current = 0
+    spaceInfo.value.total = 0
+    spaceInfo.value.spaceData = []
+    if (useForm.currentFloor === 1) {
+      await fetchAllRooms()
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor - 1])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    } else {
+      await fetchRoomItems(currentId)
+      spaceData.value = spaceInfo.value.spaceData
+      //初始化是否选择的数组
+      if (spaceData.value[useForm.currentFloor])
+        for (let i = 0; i < spaceInfo.value.spaceData.length; i++) {
+          checkbox.value[i] = false
+        }
+    }
+    // 修改正在请求状态
+    isLoading.value = false
+    // 请求完后判断是否为空
+    if (!spaceData.value.length && useForm.currentFloor > 2) {
+      isEmpty.value = true
+    } else {
+      isEmpty.value = false
+    }
+  } catch {
+    isError.value = true
   }
 }
 </script>
@@ -608,6 +626,19 @@ const refresh = async () => {
         }
       }
     }
+  }
+
+  &__error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    font-size: 18px;
+    background-color: #fff;
   }
 
   &__hello {
