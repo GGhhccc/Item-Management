@@ -1,21 +1,22 @@
 <template>
   <view class="space">
-    <!-- 背景颜色 -->
-    <view class="space__bg"></view>
-    <!-- header -->
-    <view class="space__header" :style="{ top: navBarHeight + 'px' }">
-      <view class="space__header__icon-wrapper">
-        <view class="space__header__icon-wrapper__icon">
-          <u-icon color="#fff" size="50rpx" @click="toSearch()" name="search"></u-icon>
+    <template v-if="!isLoading && !isError">
+      <!-- 背景颜色 -->
+      <view class="space__bg"></view>
+      <!-- header -->
+      <view class="space__header" :style="{ top: navBarHeight + 'px' }">
+        <view class="space__header__icon-wrapper">
+          <view class="space__header__icon-wrapper__icon">
+            <u-icon color="#fff" size="50rpx" @click="toSearch()" name="search"></u-icon>
+          </view>
+          <view class="space__header__icon-wrapper__icon">
+            <u-icon color="#fff" size="40rpx" @click="toAdd()" name="plus"></u-icon>
+          </view>
+          <view class="space__header__icon-wrapper__icon">
+            <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
+          </view>
         </view>
-        <view class="space__header__icon-wrapper__icon">
-          <u-icon color="#fff" size="40rpx" @click="toAdd()" name="plus"></u-icon>
-        </view>
-        <view class="space__header__icon-wrapper__icon">
-          <u-icon color="#fff" size="50rpx" @click="scanCode()" name="scan"></u-icon>
-        </view>
-      </view>
-      <!-- <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__header__hello">
+        <!-- <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__header__hello">
         <u-text size="80rpx" text="HELLO!"></u-text>
       </view>
       <view v-if="!spaceData[0] && useForm.currentFloor === 2" class="space__header__empty">
@@ -23,140 +24,142 @@
         <image class="space__header__empty-chair" src="../../static/chair.png" />
         <image class="space__header__empty-plant" src="../../static/plant.png" />
       </view> -->
-      <view v-if="useForm.currentFloor !== 1" class="space__header__spaces">
-        <view class="space__header__spaces__wrapper">
-          <view
-            v-for="(item, index) in useSpace.spaces.slice(0, useForm.currentFloor - 1)"
-            :key="index"
-            class="space__header__spaces__wrapper-unit"
-          >
-            <view class="space__header__spaces__wrapper-unit-circle" />
-            <view class="space__header__spaces__wrapper-unit-line" />
-            <view class="space__header__spaces__wrapper-unit-name">
-              {{ item.name }}
+        <view v-if="useForm.currentFloor !== 1" class="space__header__spaces">
+          <view class="space__header__spaces__wrapper">
+            <view
+              v-for="(item, index) in useSpace.spaces.slice(0, useForm.currentFloor - 1)"
+              :key="index"
+              class="space__header__spaces__wrapper-unit"
+            >
+              <view class="space__header__spaces__wrapper-unit-circle" />
+              <view class="space__header__spaces__wrapper-unit-line" />
+              <view class="space__header__spaces__wrapper-unit-name">
+                {{ item.name }}
+              </view>
             </view>
           </view>
         </view>
       </view>
-    </view>
-    <!-- <view class="space__tabs">
+      <!-- <view class="space__tabs">
       <u-tabs itemStyle="color:#666666;padding:0; margin-right:20rpx;height: 34px;" />
-    </view> -->
+      </view> -->
 
-    <!-- header 占位元素 -->
-    <view :style="{ height: useForm.currentFloor === 1 ? '70rpx' : '170rpx' }"></view>
-    <!-- 列表主体 -->
-    <u-skeleton rows="20" :loading="isLoading" title animate>
-      <view v-if="!isLoading" style="background-color: #f5f5f5">
-        <template v-for="(item, index) in spaceData" :key="index">
-          <SpaceItem
-            :bgColor="bgColor(index)"
-            @click="chooseItem(index)"
-            @longpress="showOperate = true"
-            @setID="setID"
-            :item="item"
-            :show="showOperate"
-          />
-        </template>
+      <!-- header 占位元素 -->
+      <view :style="{ height: useForm.currentFloor === 1 ? '70rpx' : '170rpx' }"></view>
+      <!-- 列表主体 -->
+      <u-skeleton rows="20" :loading="isLoading" title animate>
+        <view v-if="!isLoading" style="background-color: #f5f5f5">
+          <template v-for="(item, index) in spaceData" :key="index">
+            <SpaceItem
+              :bgColor="bgColor(index)"
+              @click="chooseItem(index)"
+              @longpress="showOperate = true"
+              @setID="setID"
+              :item="item"
+              :show="showOperate"
+            />
+          </template>
+        </view>
+      </u-skeleton>
+      <!-- 空 -->
+      <Empty v-if="isEmpty" />
+      <!-- 加载更多 -->
+      <u-loadmore
+        v-if="!isLoading && !isEmpty"
+        :status="loadMoreStatus"
+        line
+        bgColor="#f5f5f5"
+        loadingText="努力加载中，先喝杯茶"
+        nomoreText="没有更多了"
+        marginTop="0"
+        marginBottom="0"
+        custom-style="padding: 10px 0 10px 0;"
+      />
+      <!-- 多选弹出框 -->
+      <view v-show="showOperate" class="space__operate">
+        <view>
+          <u-icon @click="toEdit" size="50rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
+          <u-text size="25rpx" color="#88898c" align="center" text="编辑" :bold="true" />
+        </view>
+        <view v-if="useForm.currentFloor !== 1">
+          <u-icon @click="openSpace" size="50rpx" name="rewind-right-fill" color="#3988ff"></u-icon>
+          <u-text size="25rpx" color="#88898c" align="center" text="移动" :bold="true" />
+        </view>
+        <view>
+          <u-icon @click="showDelete = true" size="50rpx" name="trash" color="#898a8d"></u-icon>
+          <u-text size="25rpx" color="#88898c" align="center" text="删除" :bold="true" />
+        </view>
+        <view>
+          <u-icon @click="cancel" size="50rpx" name="close" color="#898a8d"></u-icon>
+          <u-text size="25rpx" color="#88898c" align="center" text="取消" :bold="true" />
+        </view>
       </view>
-    </u-skeleton>
+      <!-- 从属空间 -->
+      <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="showSpace">
+        <view class="space__subordinateSpace">
+          <view class="space__subordinateSpace__title">
+            <u-text bold size="40rpx" :text="'从属空间'" />
+          </view>
+          <view class="space__subordinateSpace__confirm">
+            <u-text @click="showSpace = false" lines="1" size="20rpx" :text="'取消'" />
+            <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
+            <u-text @click="confirmMove()" color="#82b4fe" lines="1" size="20rpx" :text="'确认'" />
+          </view>
+        </view>
+        <view class="space__subordinateSpace__currentSpace">
+          <view class="space__subordinateSpace__currentSpace__icon">
+            <u-icon size="27rpx" name="play-right-fill" color="#3988ff"></u-icon>
+          </view>
+          <text
+            style="font-weight: 600"
+            v-for="(item, index) in spacesBox.slice(0, pathFloor)"
+            :key="index"
+          >
+            {{ item.name }}
+            <text v-if="index < pathFloor - 1"> >&nbsp; </text>
+          </text>
+        </view>
+        <view v-if="!loading && showSpace" class="space__subordinateSpace__floor">
+          <SubordinateSpaceItem
+            v-for="(item, subIndex) in useSpaceStore().pathInfo"
+            :ids="ids"
+            :titlePadding="'10rpx 40rpx'"
+            :tagPadding="'0 70rpx'"
+            v-show="pathFloor >= subIndex"
+            @radioClick="radioClick"
+            :parent="subIndex ? spacesBox[subIndex - 1].id : 0"
+            :id="spacesBox[subIndex].id"
+            :subordinateSpaces="item"
+            :key="subIndex"
+            :floor="subIndex + 1"
+            :currentFloor="useForm.currentFloor"
+          />
+        </view>
+      </u-popup>
+      <!-- 确认删除弹出框 -->
+      <u-modal
+        title="确认删除？"
+        @cancel="showDelete = false"
+        @confirm="confirmDelete"
+        :showCancelButton="true"
+        :show="showDelete"
+        width="500rpx"
+      >
+      </u-modal>
+      <!-- 密码弹窗 -->
+      <PasswordPopup
+        :popup="popup"
+        @close="popup = false"
+        @confirmGesture="confirmGesture"
+        @confirmNumber="confirmNumber"
+        :isValidate="true"
+      />
+    </template>
+
     <!-- 加载失败 -->
     <view v-if="!isLoading && isError" class="space__error" @click="refresh">
       <view>加载失败，点击屏幕重新加载</view>
     </view>
-    <!-- 空 -->
-    <Empty v-if="isEmpty" />
-    <!-- 加载更多 -->
-    <u-loadmore
-      v-if="!isLoading && !isEmpty"
-      :status="loadMoreStatus"
-      line
-      bgColor="#f5f5f5"
-      loadingText="努力加载中，先喝杯茶"
-      nomoreText="没有更多了"
-      marginTop="0"
-      marginBottom="0"
-      custom-style="padding: 10px 0 10px 0;"
-    />
-    <!-- 多选弹出框 -->
-    <view v-show="showOperate" class="space__operate">
-      <view>
-        <u-icon @click="toEdit" size="50rpx" name="edit-pen-fill" color="#3988ff"></u-icon>
-        <u-text size="25rpx" color="#88898c" align="center" text="编辑" :bold="true" />
-      </view>
-      <view v-if="useForm.currentFloor !== 1">
-        <u-icon @click="openSpace" size="50rpx" name="rewind-right-fill" color="#3988ff"></u-icon>
-        <u-text size="25rpx" color="#88898c" align="center" text="移动" :bold="true" />
-      </view>
-      <view>
-        <u-icon @click="showDelete = true" size="50rpx" name="trash" color="#898a8d"></u-icon>
-        <u-text size="25rpx" color="#88898c" align="center" text="删除" :bold="true" />
-      </view>
-      <view>
-        <u-icon @click="cancel" size="50rpx" name="close" color="#898a8d"></u-icon>
-        <u-text size="25rpx" color="#88898c" align="center" text="取消" :bold="true" />
-      </view>
-    </view>
-    <!-- 从属空间 -->
-    <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="showSpace">
-      <view class="space__subordinateSpace">
-        <view class="space__subordinateSpace__title">
-          <u-text bold size="40rpx" :text="'从属空间'" />
-        </view>
-        <view class="space__subordinateSpace__confirm">
-          <u-text @click="showSpace = false" lines="1" size="20rpx" :text="'取消'" />
-          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
-          <u-text @click="confirmMove()" color="#82b4fe" lines="1" size="20rpx" :text="'确认'" />
-        </view>
-      </view>
-      <view class="space__subordinateSpace__currentSpace">
-        <view class="space__subordinateSpace__currentSpace__icon">
-          <u-icon size="27rpx" name="play-right-fill" color="#3988ff"></u-icon>
-        </view>
-        <text
-          style="font-weight: 600"
-          v-for="(item, index) in spacesBox.slice(0, pathFloor)"
-          :key="index"
-        >
-          {{ item.name }}
-          <text v-if="index < pathFloor - 1"> >&nbsp; </text>
-        </text>
-      </view>
-      <view v-if="!loading && showSpace" class="space__subordinateSpace__floor">
-        <SubordinateSpaceItem
-          v-for="(item, subIndex) in useSpaceStore().pathInfo"
-          :ids="ids"
-          :titlePadding="'10rpx 40rpx'"
-          :tagPadding="'0 70rpx'"
-          v-show="pathFloor >= subIndex"
-          @radioClick="radioClick"
-          :parent="subIndex ? spacesBox[subIndex - 1].id : 0"
-          :id="spacesBox[subIndex].id"
-          :subordinateSpaces="item"
-          :key="subIndex"
-          :floor="subIndex + 1"
-          :currentFloor="useForm.currentFloor"
-        />
-      </view>
-    </u-popup>
-    <!-- 确认删除弹出框 -->
-    <u-modal
-      title="确认删除？"
-      @cancel="showDelete = false"
-      @confirm="confirmDelete"
-      :showCancelButton="true"
-      :show="showDelete"
-      width="500rpx"
-    >
-    </u-modal>
-    <!-- 密码弹窗 -->
-    <PasswordPopup
-      :popup="popup"
-      @close="popup = false"
-      @confirmGesture="confirmGesture"
-      @confirmNumber="confirmNumber"
-      :isValidate="true"
-    />
   </view>
 </template>
 
@@ -238,15 +241,11 @@ onPullDownRefresh(async () => {
 onReachBottom(async () => {
   if (!isNoMore.value) {
     loadMoreStatus.value = 'loading'
-    await loadMoreItem()
+    await fetchAllRooms()
   } else {
     loadMoreStatus.value = 'nomore'
   }
 })
-
-async function loadMoreItem() {
-  fetchAllRooms()
-}
 
 //密码弹窗
 const popup = ref(false)
