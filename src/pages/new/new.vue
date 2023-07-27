@@ -59,7 +59,7 @@
           @confirmGesture="confirmGesture"
           @confirmNumber="confirmNumber"
         />
-        <FormShow :is-detail="false" v-model:show="showTag" @click="addTag = true" :name="'标签'" />
+        <FormShow :is-detail="false" v-model:show="showTag" @click="openTag" :name="'标签'" />
         <view v-if="showTag" class="form__information__tag">
           <FormTag
             v-for="(item, index) in labelBox"
@@ -115,11 +115,11 @@
       <view v-if="currentFloor !== 1" class="form__information">
         <FormShow
           v-model:show="showSpace"
-          :url="'new/tag/tag'"
+          @click="openSpace"
           :name="'从属空间'"
           :isDetail="false"
         />
-        <view class="form__information__subSpace" v-show="showSpace">
+        <view class="form__information__subSpace" v-if="showSpace">
           <view class="space__subSpace__floor">
             <SubordinateSpaceItem
               v-for="(item, subIndex) in pathInfo"
@@ -167,7 +167,7 @@
           <u-icon @click="toTag" color="#5196ff" name="edit-pen-fill"></u-icon>
         </view>
         <view class="form__popup__operate">
-          <u-text @click="addTag = false" lines="1" size="20rpx" :text="'取消'" />
+          <u-text @click="cancelTag" lines="1" size="20rpx" :text="'取消'" />
           <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
           <u-text @click="clearTag()" color="#82b4fe" lines="1" size="20rpx" :text="'清除'" />
           <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
@@ -182,11 +182,46 @@
         </view>
       </view>
     </u-popup>
+    <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="changeSpace">
+      <view class="form__popup">
+        <view class="form__popup__title">
+          <u-text bold size="40rpx" :text="'从属空间'" />
+        </view>
+        <view class="form__popup__operate">
+          <u-text @click="cancelSpace" lines="1" size="20rpx" :text="'取消'" />
+          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
+          <u-text
+            @click="changeSpace = false"
+            color="#82b4fe"
+            lines="1"
+            size="20rpx"
+            :text="'确认'"
+          />
+        </view>
+        <view v-if="changeSpace" class="form__popup__tags">
+          <SubordinateSpaceItem
+            v-for="(item, subIndex) in pathInfo"
+            :ids="[]"
+            :titlePadding="'10rpx 10rpx'"
+            :tagPadding="'0 20rpx'"
+            v-show="pathFloor >= subIndex"
+            @radioClick="radioClick"
+            :parent="subIndex ? spacesBox[subIndex - 1].id : 0"
+            :id="spacesBox[subIndex].id"
+            :subordinateSpaces="item"
+            :key="subIndex"
+            :floor="subIndex + 1"
+            :currentFloor="currentFloor"
+          />
+        </view>
+      </view>
+    </u-popup>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useFormStore } from '@/stores/form'
 import { useTagStore } from '@/stores/tag'
 import { useSpaceStore } from '@/stores/space'
@@ -273,9 +308,15 @@ const showTag = ref(true)
 const addTag = ref(false)
 //标签数组
 const labelBox = ref<LabelData[]>([])
+//标签缓存
+let tempTagBox = <boolean[]>[]
 //初始化选取标签数组
-const tagBox = ref<boolean[]>(new Array(useTag.tagInfo.tagData).fill(false))
+const tagBox = ref<boolean[]>([])
 //清空标签
+onShow(() => {
+  labelBox.value = []
+  tagBox.value = new Array(useTag.tagInfo.tagData).fill(false)
+})
 const clearTag = (): void => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tagBox.value.forEach((item) => (item = false))
@@ -293,6 +334,17 @@ const confirmTag = (): void => {
   for (let i = 0; i < tagBox.value.length; i++) {
     if (tagBox.value[i]) labelBox.value.push(useTag.tagInfo.tagData[i])
   }
+}
+const openTag = (): void => {
+  addTag.value = true
+  tempTagBox = []
+  for (let i = 0; i < tagBox.value.length; i++) {
+    tempTagBox[i] = tagBox.value[i]
+  }
+}
+const cancelTag = (): void => {
+  addTag.value = false
+  tagBox.value = tempTagBox
 }
 //跳转至标签编辑页
 const toTag = (): void => {
@@ -331,7 +383,13 @@ const showToast = (): void => {
 }
 
 //显示从属空间
-const showSpace = ref(true)
+const showSpace = ref(false)
+//修改从属空间
+const changeSpace = ref(false)
+//从属空间缓存
+let tempSpaces = <PathData[]>[]
+//当前楼层缓存
+let tempPathFloor = 0
 //选择从属空间
 const spacesBox = ref<PathData[]>([])
 //当前层数
@@ -373,6 +431,19 @@ const radioClick = (index: number, floor: number): void => {
       spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
     }
   }
+}
+const openSpace = (): void => {
+  changeSpace.value = true
+  for (let i = 0; i < spacesBox.value.length; i++) {
+    tempSpaces[i] = spacesBox.value[i]
+  }
+  tempPathFloor = pathFloor.value
+}
+
+const cancelSpace = (): void => {
+  changeSpace.value = false
+  spacesBox.value = tempSpaces
+  pathFloor.value = tempPathFloor
 }
 
 //表单规则

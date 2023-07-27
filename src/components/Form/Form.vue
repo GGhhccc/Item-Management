@@ -140,31 +140,30 @@
         <u-toast ref="toast"></u-toast>
       </view>
       <view v-if="form.type" class="form__information">
-        <!-- <FormShow
+        <FormShow
           v-model:show="showAssociate"
           :url="'new/dependence/dependence'"
           :name="'关联物品'"
           :isDetail="isDetail"
-        /> -->
+        />
         <FormShow
           v-if="form.type"
           v-model:show="showSpace"
-          :url="'new/tag/tag'"
+          @click="openSpace"
           :name="'从属空间'"
           :isDetail="isDetail"
         />
-        <view class="form__information__subordinateSpace" v-show="showSpace">
+        <view class="form__information__subordinateSpace" v-if="showSpace">
           <view class="space__subordinateSpace__floor">
             <SubordinateSpaceItem
-              v-for="(item, subIndex) in pathInfo"
+              v-for="(item, subIndex) in spacesBox"
               :ids="[form.id]"
               :titlePadding="'10rpx 10rpx'"
               :tagPadding="'0 20rpx'"
               v-show="pathFloor >= subIndex"
-              @radioClick="radioClick"
               :parent="subIndex ? spacesBox[subIndex - 1].id : 0"
               :id="spacesBox[subIndex].id"
-              :subordinateSpaces="item"
+              :subordinateSpaces="[item]"
               :key="subIndex"
               :floor="subIndex + 1"
               :currentFloor="currentFloor"
@@ -273,6 +272,40 @@
         </view>
       </view>
     </u-popup>
+    <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="changeSpace">
+      <view class="form__popup">
+        <view class="form__popup__title">
+          <u-text bold size="40rpx" :text="'从属空间'" />
+        </view>
+        <view class="form__popup__operate">
+          <u-text @click="cancelSpace" lines="1" size="20rpx" :text="'取消'" />
+          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
+          <u-text
+            @click="changeSpace = false"
+            color="#82b4fe"
+            lines="1"
+            size="20rpx"
+            :text="'确认'"
+          />
+        </view>
+        <view v-if="changeSpace" class="form__popup__tags">
+          <SubordinateSpaceItem
+            v-for="(item, subIndex) in pathInfo"
+            :ids="[form.id]"
+            :titlePadding="'10rpx 10rpx'"
+            :tagPadding="'0 20rpx'"
+            v-show="pathFloor >= subIndex"
+            @radioClick="radioClick"
+            :parent="subIndex ? spacesBox[subIndex - 1].id : 0"
+            :id="spacesBox[subIndex].id"
+            :subordinateSpaces="item"
+            :key="subIndex"
+            :floor="subIndex + 1"
+            :currentFloor="currentFloor"
+          />
+        </view>
+      </view>
+    </u-popup>
   </view>
 </template>
 
@@ -281,7 +314,7 @@ import { ref, onMounted, reactive, watch } from 'vue'
 import { useTagStore } from '@/stores/tag'
 import { useSpaceStore } from '@/stores/space'
 import { useFormStore } from '@/stores/form'
-import { onShareAppMessage } from '@dcloudio/uni-app'
+import { onShareAppMessage, onShow } from '@dcloudio/uni-app'
 import type { ItemForm, RoomForm, imgData } from '@/types/form.d.ts'
 import type { PathData } from '@/types/space.d.ts'
 // 引入组件
@@ -338,7 +371,7 @@ const {
   updateItemData
 } = useForm
 const useSpace = useSpaceStore()
-const { spaces, pathInfo } = useSpace
+const { pathInfo } = useSpace
 if (useTag.tagInfo.tagData.length === 0) fetchAllTags()
 
 //表单数据
@@ -436,16 +469,20 @@ const showTag = ref(true)
 //添加标签
 const addTag = ref(false)
 //当前标签数组
-const labelBox = ref(form.labels)
+const labelBox = ref()
 //选取标签数组
-const tagBox = ref<boolean[]>(new Array(useTag.tagInfo.tagData).fill(false))
-for (let i = 0; i < form.labels.length; i++) {
-  for (let j = 0; j < useTag.tagInfo.tagData.length; j++) {
-    if (form.labels[i].id === useTag.tagInfo.tagData[j].id) {
-      tagBox.value[j] = true
+const tagBox = ref<boolean[]>([])
+onShow(() => {
+  labelBox.value = useForm.itemData.labels
+  tagBox.value = new Array(useTag.tagInfo.tagData).fill(false)
+  for (let i = 0; i < useForm.itemData.labels.length; i++) {
+    for (let j = 0; j < useTag.tagInfo.tagData.length; j++) {
+      if (form.labels[i].id === useTag.tagInfo.tagData[j].id) {
+        tagBox.value[j] = true
+      }
     }
   }
-}
+})
 //清空标签
 const clearTag = (): void => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -467,6 +504,7 @@ const checkboxClick = (index: number): void => {
 }
 //跳转至标签编辑页
 const toTag = (): void => {
+  form.labels = labelBox.value
   uni.navigateTo({
     url: `/pages/new/tag/tag`
   })
@@ -480,8 +518,16 @@ const showToast = (): void => {
   })
 }
 
+const showAssociate = ref(true)
+
 //显示从属空间
 const showSpace = ref(false)
+//修改从属空间
+const changeSpace = ref(false)
+//从属空间缓存
+let tempSpaces = <PathData[]>[]
+//当前楼层缓存
+let tempPathFloor = 0
 //当前路径
 const spacesBox = ref<PathData[]>([])
 //当前层数
@@ -490,12 +536,12 @@ const pathFloor = ref<number>(0)
 for (let i = 0; i < pathInfo.length; i++) {
   spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
 }
-for (let i = 0; i < currentFloor - 1; i++) {
+for (let i = 0; i < form.path.length; i++) {
   pathFloor.value++
-  spacesBox.value[i] = {
-    fatherId: i ? spacesBox.value[i - 1].id : 0,
-    id: spaces[i].id,
-    name: spaces[i].name,
+  spacesBox.value[form.path.length - 1 - i] = {
+    fatherId: i ? form.path[i - 1].id : 0,
+    id: form.path[i].id,
+    name: form.path[i].name,
     layer: i
   }
 }
@@ -523,6 +569,19 @@ const radioClick = (index: number, floor: number): void => {
       spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
     }
   }
+}
+const openSpace = (): void => {
+  changeSpace.value = true
+  for (let i = 0; i < spacesBox.value.length; i++) {
+    tempSpaces[i] = spacesBox.value[i]
+  }
+  tempPathFloor = pathFloor.value
+}
+
+const cancelSpace = (): void => {
+  changeSpace.value = false
+  spacesBox.value = tempSpaces
+  pathFloor.value = tempPathFloor
 }
 
 if (!form.comment) form.comment = ''
@@ -687,7 +746,8 @@ const submitForm = (): void => {
 
     &__tags {
       padding: 20rpx;
-      max-height: 200rpx;
+      max-height: 500rpx;
+      overflow: auto;
     }
   }
 
