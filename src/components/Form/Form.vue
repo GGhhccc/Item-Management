@@ -146,15 +146,6 @@
           :name="'关联物品'"
           :isDetail="isDetail"
         />
-        <view v-show="showAssociate" class="form__information__tag">
-          <FormTag
-            v-for="(item, index) in form.items"
-            :checked="true"
-            :tag="item"
-            :key="index"
-            :shape="'square'"
-          ></FormTag>
-        </view>
         <FormShow
           v-if="form.type"
           v-model:show="showSpace"
