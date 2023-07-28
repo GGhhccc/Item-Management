@@ -111,7 +111,15 @@ export interface ItemForm extends T2 {
   /**
    * 关联物品
    */
-  items: T1[]
+  items: RelateItem[]
+}
+
+// 关联物品
+export interface RelateItem extends T1 {
+  /**
+   * 图片
+   */
+  cover: string
 }
 
 //历史记录类型

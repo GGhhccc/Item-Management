@@ -61,19 +61,8 @@ export const useSearchStore = defineStore('search', () => {
     }
   })
 
-  // 给列表的每一项添加 checked 属性用于多选
-  // function setTagsList(tagList: TagItem[], startIndex: number, endIndex: number) {
-  //   tagList.forEach((value) => {
-  //     value.checked = false
-  //   })
-  //   for (let i = startIndex; i < endIndex; i++) {
-  //     tagList[i].checked = false
-  //   }
-  // }
+  // 给列表的每一项添加 isChecked 属性用于多选
   function setItemList(itemList: ItemList[] | TagItem[], startIndex: number, endIndex: number) {
-    // itemList.forEach((value) => {
-    //   value.isChecked = false
-    // })
     for (let i = startIndex; i < endIndex; i++) {
       itemList[i].isChecked = false
     }

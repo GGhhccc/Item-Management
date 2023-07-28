@@ -95,7 +95,8 @@ const confirmRelated = () => {
         .map((item) => {
           return {
             id: item.id,
-            name: item.name
+            name: item.name,
+            cover: item.cover
           }
         })
     )

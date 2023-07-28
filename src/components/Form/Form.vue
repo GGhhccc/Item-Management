@@ -152,7 +152,7 @@
             :key="index"
             class="form__information__items__item"
           >
-            <u-avatar size="80rpx" src="../../static/avatar.png"></u-avatar>
+            <u-avatar size="80rpx" :src="item.cover"></u-avatar>
             <u-text size="20rpx" lines="1" :bold="true" align="center" :text="item.name" />
             <view @click="deleteAssociate(index)" class="form__information__items__item-delete">
               <view class="form__information__items__item-delete-minus"></view>

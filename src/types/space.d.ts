@@ -1,3 +1,4 @@
+import type { RelateItem } from './form'
 // 通用类型
 export interface T1 {
   /**
@@ -119,7 +120,7 @@ export interface DetailItemData extends ItemData, T2 {
   /**
    * 关联物品
    */
-  items: T1[]
+  items: RelateItem[]
   /**
    * 所属路径
    */
