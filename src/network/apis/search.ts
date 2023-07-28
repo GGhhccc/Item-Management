@@ -25,7 +25,7 @@ export function getAllItems(
 }
 
 // 获取所有标签
-export function getAllTags({ offset, limit = 10 }: PagingParams): Promise<ResponseTagList> {
+export function getAllTags({ offset, limit = 100 }: PagingParams): Promise<ResponseTagList> {
   return service({
     url: `/labels?offset=${offset}&limit=${limit}`,
     method: 'GET'

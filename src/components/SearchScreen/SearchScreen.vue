@@ -70,7 +70,7 @@
               <SortButton
                 width="100%"
                 :title="item.name"
-                :is-active="item.checked"
+                :is-active="item.isChecked"
                 @on-click="selectTag(index)"
               />
             </view>
@@ -166,7 +166,6 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { onShow } from '@dcloudio/uni-app'
 import { ref, reactive } from 'vue'
 import { useSearchStore } from '@/stores/search'
 import { storeToRefs } from 'pinia'
@@ -174,7 +173,7 @@ import type { ShowControl } from '@/types/search'
 
 const searchStore = useSearchStore()
 const { currentTagList, currentScreenData } = storeToRefs(searchStore)
-const { setTagsList, fetchScreenSearchList, fetchTagList } = searchStore
+const { fetchScreenSearchList, fetchTagList } = searchStore
 const showPopup = ref(false)
 const priceForm = ref()
 const isSubmitting = ref(false)
@@ -236,7 +235,7 @@ const sortByProperties = (index: number) => {
 
 // 筛选标签
 const selectTag = (index: number) => {
-  currentTagList.value.tagsList[index].checked = !currentTagList.value.tagsList[index].checked
+  currentTagList.value.tagsList[index].isChecked = !currentTagList.value.tagsList[index].isChecked
 }
 
 // 筛选金额
@@ -326,7 +325,7 @@ const resetAllScreen = () => {
   sortInTime.value = false
   sortInReverseTime.value = false
   currentTagList.value.tagsList.forEach((item) => {
-    item.checked = false
+    item.isChecked = false
   })
   resetShowControl()
   showControl.showProperties = true
@@ -351,7 +350,7 @@ const updateScreenData = () => {
 
   // 筛选标签
   currentScreenData.value.screenData.labelId = currentTagList.value.tagsList
-    .filter((item) => item.checked)
+    .filter((item) => item.isChecked)
     .map((item) => item.id)
 
   // 筛选金额
@@ -377,10 +376,6 @@ const updateScreenData = () => {
     currentScreenData.value.screenData.dateType = -1
   }
 }
-
-onShow(() => {
-  setTagsList(currentTagList.value.tagsList)
-})
 </script>
 
 <style lang="scss" scoped>

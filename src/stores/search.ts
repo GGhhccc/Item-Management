@@ -62,15 +62,21 @@ export const useSearchStore = defineStore('search', () => {
   })
 
   // 给列表的每一项添加 checked 属性用于多选
-  function setTagsList(tagList: TagItem[]) {
-    tagList.forEach((value) => {
-      value.checked = false
-    })
-  }
-  function setItemList(itemList: ItemList[]) {
-    itemList.forEach((value) => {
-      value.isChecked = false
-    })
+  // function setTagsList(tagList: TagItem[], startIndex: number, endIndex: number) {
+  //   tagList.forEach((value) => {
+  //     value.checked = false
+  //   })
+  //   for (let i = startIndex; i < endIndex; i++) {
+  //     tagList[i].checked = false
+  //   }
+  // }
+  function setItemList(itemList: ItemList[] | TagItem[], startIndex: number, endIndex: number) {
+    // itemList.forEach((value) => {
+    //   value.isChecked = false
+    // })
+    for (let i = startIndex; i < endIndex; i++) {
+      itemList[i].isChecked = false
+    }
   }
 
   // 更新数据后重新获取搜索页的主体列表
@@ -96,7 +102,7 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     // 为新列表重新添加 checked 属性
-    setItemList(currentSearchList.value.itemList)
+    setItemList(currentSearchList.value.itemList, 0, 10)
   }
 
   // 获取搜索初始全部物品列表
@@ -110,10 +116,21 @@ export const useSearchStore = defineStore('search', () => {
       },
       deleted
     )
+    // 更新列表
+    currentSearchList.value.itemList.push(...data.records)
+    let lastPageNum = data.size
+    if (data.current === data.pages) {
+      lastPageNum = data.total % data.size
+    }
+    // 给新增的元素加上 isChecked 属性
+    setItemList(
+      currentSearchList.value.itemList,
+      currentSearchList.value.offset * data.size,
+      currentSearchList.value.offset * data.size + lastPageNum
+    )
+    // 更新 searchList 的 total 和 offset
     currentSearchList.value.total = data.total
     currentSearchList.value.offset = data.current
-    currentSearchList.value.itemList.push(...data.records)
-    setItemList(currentSearchList.value.itemList)
   }
 
   // 获取筛选中的标签列表
@@ -121,7 +138,7 @@ export const useSearchStore = defineStore('search', () => {
     const data = await getAllTags({
       offset: currentTagList.offset + 1
     })
-    currentTagList.offset = data.current
+    // 更新标签列表
     currentTagList.tagsList.push(...data.records)
   }
 
@@ -136,23 +153,33 @@ export const useSearchStore = defineStore('search', () => {
       deleted
     )
 
-    // 筛选后重置 currentSearchList 的 offset
-    currentSearchList.value.offset = 0
-
-    // 获取总数更新 searchList
-    currentSearchList.value.total = data.total
-
     // 筛选第一页则替换整个列表，否则追加
     if (currentScreenData.offset === 0) {
       currentSearchList.value.itemList = data.records
     } else {
       currentSearchList.value.itemList.push(...data.records)
     }
+    // 筛选后重置 currentSearchList 的 offset
+    currentSearchList.value.offset = 0
+
+    // 获取最后一页的数量
+    let lastPageNum = data.size
+    if (data.current === data.pages) {
+      lastPageNum = data.total % data.size
+    }
+    if (data.pages) {
+      // 为新列表重新添加 isChecked 属性
+      setItemList(
+        currentSearchList.value.itemList,
+        currentScreenData.offset * data.size,
+        currentScreenData.offset * data.size + lastPageNum
+      )
+    }
+
+    // 获取总数更新 searchList
+    currentSearchList.value.total = data.total
     // 更新当前页数
     currentScreenData.offset = data.current
-
-    // 为新列表重新添加 checked 属性
-    setItemList(currentSearchList.value.itemList)
   }
 
   // 输入框搜索物品
@@ -165,23 +192,33 @@ export const useSearchStore = defineStore('search', () => {
       deleted
     )
 
-    // 筛选后重置 currentSearchList 的 offset
-    currentSearchList.value.offset = 0
-
-    // 获取总数更新 searchList
-    currentSearchList.value.total = data.total
-
     // 筛选第一页则替换整个列表，否则追加
     if (currentSearchInputData.offset === 0) {
       currentSearchList.value.itemList = data.records
     } else {
       currentSearchList.value.itemList.push(...data.records)
     }
+
+    // 搜索后重置 currentSearchList 的 offset
+    currentSearchList.value.offset = 0
+
+    // 获取最后一页的数量
+    let lastPageNum = data.size
+    if (data.current === data.pages) {
+      lastPageNum = data.total % data.size
+    }
+    if (data.pages) {
+      setItemList(
+        currentSearchList.value.itemList,
+        currentSearchInputData.offset * data.size,
+        currentSearchInputData.offset * data.size + lastPageNum
+      )
+    }
+
+    // 获取总数更新 searchList
+    currentSearchList.value.total = data.total
     // 更新当前页数
     currentSearchInputData.offset = data.current
-
-    // 为新列表重新添加 checked 属性
-    setItemList(currentSearchList.value.itemList)
   }
 
   // 批量删除
@@ -204,10 +241,19 @@ export const useSearchStore = defineStore('search', () => {
       },
       1
     )
-    currentSearchList.value.offset = data.current
-    currentSearchList.value.total = data.total
     currentSearchList.value.itemList.push(...data.records)
-    setItemList(currentSearchList.value.itemList)
+    let lastPageNum = data.size
+    if (data.current === data.pages) {
+      lastPageNum = data.total % data.size
+    }
+    setItemList(
+      currentSearchList.value.itemList,
+      currentSearchList.value.offset * data.size,
+      currentSearchList.value.offset * data.size + lastPageNum
+    )
+    console.log(currentSearchList.value.itemList)
+    currentSearchList.value.total = data.total
+    currentSearchList.value.offset = data.current
   }
 
   // 恢复已删除物品
@@ -224,10 +270,18 @@ export const useSearchStore = defineStore('search', () => {
       },
       name
     )
-    currentSearchList.value.offset = data.current
-    currentSearchList.value.total = data.total
     currentSearchList.value.itemList.push(...data.records)
-    setItemList(currentSearchList.value.itemList)
+    let lastPageNum = data.size
+    if (data.current === data.pages) {
+      lastPageNum = data.total % data.size
+    }
+    setItemList(
+      currentSearchList.value.itemList,
+      currentSearchList.value.offset * data.size,
+      currentSearchList.value.offset * data.size + lastPageNum
+    )
+    currentSearchList.value.total = data.total
+    currentSearchList.value.offset = data.current
   }
 
   return {
@@ -235,7 +289,6 @@ export const useSearchStore = defineStore('search', () => {
     currentTagList,
     currentScreenData,
     currentSearchInputData,
-    setTagsList,
     setItemList,
     fetchNewSearchList,
     fetchScreenSearchList,

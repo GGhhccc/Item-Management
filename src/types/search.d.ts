@@ -65,7 +65,7 @@ export interface TagItem {
   /**
    * 是否选中
    */
-  checked?: boolean
+  isChecked?: boolean
 }
 
 // 响应的标签列表
