@@ -115,18 +115,22 @@
       <view v-if="currentFloor !== 1" class="form__information">
         <FormShow
           v-model:show="showAssociate"
-          @click="deleteAssociate = true"
+          :url="'new/dependence/dependence'"
           :name="'关联物品'"
           :isDetail="false"
         />
-        <view v-show="showAssociate" class="form__information__tag">
-          <FormTag
+        <view v-show="showAssociate" class="form__information__items">
+          <view
             v-for="(item, index) in form.items"
-            :checked="true"
-            :tag="item"
             :key="index"
-            :shape="'square'"
-          ></FormTag>
+            class="form__information__items__item"
+          >
+            <u-avatar size="80rpx" src="../../static/avatar.png"></u-avatar>
+            <u-text size="20rpx" lines="1" :bold="true" align="center" :text="item.name" />
+            <view @click="deleteAssociate(index)" class="form__information__items__item-delete">
+              <view class="form__information__items__item-delete-minus"></view>
+            </view>
+          </view>
         </view>
         <FormShow
           v-model:show="showSpace"
@@ -228,28 +232,6 @@
             :floor="subIndex + 1"
             :currentFloor="currentFloor"
           />
-        </view>
-      </view>
-    </u-popup>
-    <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="deleteAssociate">
-      <view class="form__popup">
-        <view class="form__popup__title">
-          <u-text bold size="35rpx" :text="'关联物品'" />
-          <u-icon @click="toAssociate" color="#5196ff" name="edit-pen-fill"></u-icon>
-        </view>
-        <view class="form__popup__operate">
-          <u-text @click="cancelAssociate" lines="1" size="20rpx" :text="'取消'" />
-          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
-          <u-text
-            @click="confirmAssociate()"
-            color="#82b4fe"
-            lines="1"
-            size="20rpx"
-            :text="'确认'"
-          />
-        </view>
-        <view class="form__popup__tags">
-          <FormMultiple :tagBox="associateBox" :tags="form.items" @checkboxClick="associateClick" />
         </view>
       </view>
     </u-popup>
@@ -533,32 +515,10 @@ const toTag = (): void => {
 }
 
 const showAssociate = ref(true)
-const deleteAssociate = ref(false)
-const toAssociate = (): void => {
-  useForm.itemData.items = form.items
-  uni.navigateTo({
-    url: `/pages/new/dependence/dependence`
-  })
+const deleteAssociate = (index: number) => {
+  form.items.splice(index, 1)
 }
 const associateBox = ref(new Array(form.items.length).fill(true))
-const associateClick = (index: number): void => {
-  associateBox.value[index] = !associateBox.value[index]
-}
-const cancelAssociate = () => {
-  deleteAssociate.value = false
-  associateBox.value.fill(true)
-}
-const confirmAssociate = () => {
-  for (let i = 0; i < form.items.length; i++) {
-    if (!associateBox.value[i]) {
-      form.items.splice(i, 1)
-      associateBox.value.splice(i, 1)
-      i--
-    }
-  }
-  associateBox.value.fill(true)
-  deleteAssociate.value = false
-}
 
 //日期
 const date = ref(Date.now())
@@ -805,6 +765,36 @@ const submitForm = (): void => {
       display: flex;
       justify-content: flex-start;
       flex-flow: row wrap;
+    }
+
+    &__items {
+      display: flex;
+      justify-content: flex-start;
+      flex-flow: row nowrap;
+      overflow-x: auto;
+      &__item {
+        width: 80rpx;
+        margin-right: 20rpx;
+        position: relative;
+        &-delete {
+          width: 30rpx;
+          height: 30rpx;
+          position: absolute;
+          border-radius: 15rpx;
+          right: -6rpx;
+          top: 0;
+          background-color: #2979ff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          &-minus {
+            width: 22rpx;
+            height: 4rpx;
+            border-radius: 2rpx;
+            background-color: #fff;
+          }
+        }
+      }
     }
 
     &__icon {

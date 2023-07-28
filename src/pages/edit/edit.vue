@@ -10,7 +10,6 @@ import { ref } from 'vue'
 const detailDeparture = ref(false)
 onLoad((options: any) => {
   detailDeparture.value = options.detail
-  console.log(options)
 })
 </script>
 
