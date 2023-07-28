@@ -245,7 +245,7 @@
       是否存入草稿箱?
     </u-modal>
     <u-modal
-      @cancel="showWrite = false"
+      @cancel="cancelWrite"
       @confirm="confirmWrite"
       :showCancelButton="true"
       :show="showWrite"
@@ -285,8 +285,10 @@ const showSave = ref(false)
 
 const loading = ref(false)
 
+const firstIn = ref(true)
+
 const back = () => {
-  if (!submitted.value) {
+  if (!submitted.value && form.name) {
     showSave.value = true
   } else {
     uni.navigateBack()
@@ -323,6 +325,7 @@ const draftForm = uni.getStorageSync('form')
 
 const cancelSave = () => {
   showSave.value = false
+  uni.removeStorageSync('form')
   uni.navigateBack()
 }
 
@@ -426,6 +429,11 @@ const confirmWrite = () => {
   showWrite.value = false
   loading.value = true
 }
+const cancelWrite = () => {
+  showWrite.value = false
+  loading.value = true
+  uni.removeStorageSync('form')
+}
 
 // 是否正在提交
 const isLoading = ref(false)
@@ -472,10 +480,11 @@ let tempTagBox = <boolean[]>[]
 const tagBox = ref<boolean[]>([])
 //清空标签
 onShow(() => {
-  labelBox.value = tagBox.value[0] ? useForm.itemData.labels : []
+  labelBox.value = firstIn.value ? [] : useForm.itemData.labels
   tagBox.value = new Array(useTag.tagInfo.tagData.length).fill(false)
-  form.items = associateBox.value[0] ? useForm.itemData.items : []
+  form.items = firstIn.value ? [] : useForm.itemData.items
   associateBox.value = new Array(form.items.length).fill(true)
+  firstIn.value = false
 })
 const clearTag = (): void => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
