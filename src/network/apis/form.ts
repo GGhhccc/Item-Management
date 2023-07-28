@@ -60,7 +60,8 @@ export function addItem(
     count,
     images,
     figures,
-    password
+    password,
+    items
   }: ItemForm
 ): Promise<DetailItemData> {
   return service<DetailItemData>({
@@ -81,7 +82,8 @@ export function addItem(
       count,
       images,
       figures,
-      password
+      password,
+      items
     }
   })
 }
@@ -145,7 +147,8 @@ export function updateItem(
     count,
     images,
     figures,
-    password
+    password,
+    items
   }: ItemForm
 ): Promise<DetailItemData> {
   return service<DetailItemData>({
@@ -166,7 +169,8 @@ export function updateItem(
       count,
       images,
       figures,
-      password
+      password,
+      items
     }
   })
 }

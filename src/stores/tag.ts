@@ -5,7 +5,7 @@ import { getAllTags, addTag, deleteTag, changeTag } from '@/network/apis/tag'
 export const useTagStore = defineStore('tag', () => {
   const tagInfo = reactive<any>({
     current: 0,
-    total: 10,
+    total: 100,
     pages: 0,
     size: 0,
     tagData: []
@@ -13,16 +13,19 @@ export const useTagStore = defineStore('tag', () => {
 
   //获取所有标签
   async function fetchAllTags() {
-    const data = await getAllTags({
-      offset: tagInfo.current
-    })
-    tagInfo.tagData = data.records
+    tagInfo.tagData = []
+    do {
+      const data = await getAllTags({
+        offset: tagInfo.tagData.length / 100 + 1
+      })
+      tagInfo.tagData.push(...data.records)
+      tagInfo.total = data.total
+    } while (tagInfo.tagData.length < tagInfo.total)
   }
 
   //添加标签
   async function fetchAddTag(name: string, color: string) {
-    const data = await addTag(name, color)
-    console.log(data)
+    await addTag(name, color)
   }
 
   //删除标签
@@ -32,8 +35,7 @@ export const useTagStore = defineStore('tag', () => {
 
   //删除标签
   async function fetchChangeTag(id: number, name: string, color: string) {
-    const data = await changeTag(id, name, color)
-    console.log(data)
+    await changeTag(id, name, color)
   }
 
   return {

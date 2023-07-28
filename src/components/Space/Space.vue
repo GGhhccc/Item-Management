@@ -157,7 +157,7 @@
     </template>
 
     <!-- 加载失败 -->
-    <view v-if="!isLoading && isError" class="space__error" @click="refresh">
+    <view v-if="!isLoading && isError" class="space__error" @click="refresh()">
       <view>加载失败，点击屏幕重新加载</view>
     </view>
   </view>
@@ -370,7 +370,7 @@ async function toEdit(): Promise<void> {
 //显示从属空间
 const showSpace = ref(false)
 //多选移动打开时的回调
-const openSpace = () => {
+async function openSpace() {
   showSpace.value = true
   ids.value = []
   for (let i = 0; i < checkbox.value.length; i++) {
@@ -422,7 +422,7 @@ async function confirmMove(): Promise<void> {
     title: '移动成功',
     icon: 'none'
   })
-  refresh()
+  refresh(true)
   showOperate.value = false
 }
 //确认删除
@@ -439,8 +439,8 @@ async function confirmDelete(): Promise<void> {
     title: '删除成功',
     icon: 'none'
   })
-  refresh()
   showOperate.value = false
+  refresh(true)
 }
 
 //关闭操作菜单的回调
@@ -474,7 +474,7 @@ const toAdd = (): void => {
   })
 }
 
-const refresh = async () => {
+const refresh = async (refreshPath = false) => {
   try {
     isError.value = false
     // 请求参数初始化
@@ -483,8 +483,7 @@ const refresh = async () => {
     spaceInfo.value.spaceData = []
     loading.value = true
     //获取路径并初始化路径
-
-    if (!useSpace.pathInfo[0][0]) await fetchAllPath()
+    if (!useSpace.pathInfo[0][0] || refreshPath) await fetchAllPath()
     for (let i = 0; i < useSpace.pathInfo.length; i++) {
       spacesBox.value[i] = { fatherId: 0, id: 0, name: '', layer: 0 }
     }

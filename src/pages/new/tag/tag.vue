@@ -114,7 +114,8 @@ import { ref } from 'vue'
 import { useTagStore } from '@/stores/tag'
 const useTag = useTagStore()
 const { fetchAllTags, fetchAddTag, fetchDeleteTag, fetchChangeTag } = useTag
-fetchAllTags()
+import { useFormStore } from '@/stores/form'
+const useForm = useFormStore()
 const showDelete = ref(false)
 let currentId = 0
 const deleteTag = (id: number) => {
@@ -130,12 +131,19 @@ const changeColor = (id: number, color: string) => {
 
 const confirmChangeColor = async () => {
   await fetchChangeTag(currentId, currentName, currentColor)
+  fetchAllTags()
   showChangeColor.value = false
 }
 
 const confirmDelete = async () => {
-  console.log(currentId)
   await fetchDeleteTag(currentId)
+  fetchAllTags()
+  for (let i = 0; i < useForm.itemData.labels.length; i++) {
+    if (useForm.itemData.labels[i].id === currentId) {
+      useForm.itemData.labels.splice(i, 1)
+      break
+    }
+  }
   showDelete.value = false
 }
 const name = ref('')
@@ -146,6 +154,7 @@ const submit = async () => {
     title: '添加成功',
     icon: 'none'
   })
+  fetchAllTags()
   showNew.value = false
 }
 const color = ref('#000')
@@ -164,6 +173,13 @@ const blur = (name: string): void => {
 }
 const confirmChangeName = async () => {
   await fetchChangeTag(currentId, currentName, currentColor)
+  fetchAllTags()
+  for (let i = 0; i < useForm.itemData.labels.length; i++) {
+    if (useForm.itemData.labels[i].id === currentId) {
+      useForm.itemData.labels[i].name = currentName
+      break
+    }
+  }
   showChangeName.value = false
 }
 </script>

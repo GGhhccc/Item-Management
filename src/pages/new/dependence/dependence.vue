@@ -81,18 +81,35 @@ async function loadSearchList() {
   }
 }
 
+function uniqueFunc(arr: any, uniId: string) {
+  const res = new Map()
+  return arr.filter((item: any) => !res.has(item[uniId]) && res.set(item[uniId], 1))
+}
+
 // 确认关联
 const confirmRelated = () => {
   if (currentSearchList.value.itemList.filter((item) => item.isChecked).length) {
-    formStore.itemData.items = currentSearchList.value.itemList
-      .filter((item) => item.isChecked)
-      .map((item) => {
-        return {
-          id: item.id,
-          name: item.name
-        }
-      })
-
+    formStore.itemData.items.push(
+      ...currentSearchList.value.itemList
+        .filter((item) => item.isChecked)
+        .map((item) => {
+          return {
+            id: item.id,
+            name: item.name
+          }
+        })
+    )
+    console.log(
+      currentSearchList.value.itemList
+        .filter((item) => item.isChecked)
+        .map((item) => {
+          return {
+            id: item.id,
+            name: item.name
+          }
+        })
+    )
+    formStore.itemData.items = uniqueFunc(formStore.itemData.items, 'id')
     console.log(formStore.itemData.items)
     uni.showToast({
       title: '关联成功',

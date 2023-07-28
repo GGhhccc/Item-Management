@@ -108,6 +108,10 @@ export interface ItemForm extends T2 {
    * 数量
    */
   count: number
+  /**
+   * 关联物品
+   */
+  items: T1[]
 }
 
 //历史记录类型

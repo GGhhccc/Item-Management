@@ -26,7 +26,7 @@ import { useFormStore } from '@/stores/form'
 const useForm = useFormStore()
 const { modifyDeleteItemData, itemData } = useForm
 const showDelete = ref(false)
-const deleteItem = async () => {
+async function deleteItem() {
   showDelete.value = false
   uni.showToast({
     title: '删除中...',
