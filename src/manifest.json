@@ -18,7 +18,7 @@
         "modules" : {}
     },
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : "wxac15883042b81d3e",
         "setting" : {
             "urlCheck" : false
         },
