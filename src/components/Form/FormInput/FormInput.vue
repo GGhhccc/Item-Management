@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 const props = withDefaults(
   defineProps<{
     //是否显示输入框

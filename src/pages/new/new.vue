@@ -275,8 +275,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
+import { ref, reactive, watch } from 'vue'
 import { useFormStore } from '@/stores/form'
 import { useTagStore } from '@/stores/tag'
 import { useSpaceStore } from '@/stores/space'
@@ -343,6 +343,59 @@ const cancelSave = () => {
   showSave.value = false
   uni.navigateBack()
 }
+
+// // 剪切板链接一键导入信息
+// const getItemByUrl = (itemUrl: string) => {
+//   uni.request({
+//     url: `http://7frv47.natappfree.cc/CrawlProducts?url=${itemUrl}`,
+//     method: 'GET',
+//     success: (res: any) => {
+//       console.log(res.data)
+//       if (!res.data.name) {
+//         uni.showToast({
+//           title: '导入失败',
+//           icon: 'error'
+//         })
+//         return
+//       }
+//       form.name = res.data.name
+//       form.images.push({
+//         url: res.data.url
+//       })
+//       form.price = res.data.price.replace(/\s/g, '')
+//       console.log(form)
+//       uni.showToast({
+//         title: '导入成功',
+//         icon: 'success'
+//       })
+//     },
+//     fail: (err) => {
+//       console.log(err)
+//     }
+//   })
+// }
+
+// if (!draftForm) {
+//   uni.getClipboardData({
+//     success: (res) => {
+//       console.log(res)
+//       const regex = /^(https:\/\/item\.taobao\.com\/item|https:\/\/item\.jd\.com)/
+//       if (regex.test(res.data)) {
+//         uni.showModal({
+//           title: '链接导入',
+//           content: '检测到链接，是否一键导入信息？',
+//           success: () => {
+//             getItemByUrl(res.data)
+//             uni.showLoading({
+//               title: '导入中'
+//             })
+//           }
+//         })
+//       }
+//     }
+//   })
+// }
+
 //表单数据
 const form = reactive({
   images: [] as imgData[],
