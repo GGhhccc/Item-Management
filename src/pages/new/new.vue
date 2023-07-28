@@ -1,9 +1,9 @@
 <template>
   <view class="form">
-    <u-form errorType="toast" :rules="rules" :model="form" ref="formVerify">
+    <u-form v-if="loading" errorType="toast" :rules="rules" :model="form" ref="formVerify">
       <!-- 表单验证 -->
       <u-form-item prop="name" />
-      <u-navbar titleWidth="250rpx" :title="'新建'" bgColor="#f6f6f6" :autoBack="true" />
+      <u-navbar @leftClick="back" titleWidth="250rpx" :title="'新建'" bgColor="#f6f6f6" />
       <view class="form__photo">
         <FormPhoto :size="'310rpx'" v-model:photoList="form.images" />
       </view>
@@ -114,6 +114,21 @@
       </view>
       <view v-if="currentFloor !== 1" class="form__information">
         <FormShow
+          v-model:show="showAssociate"
+          @click="deleteAssociate = true"
+          :name="'关联物品'"
+          :isDetail="false"
+        />
+        <view v-show="showAssociate" class="form__information__tag">
+          <FormTag
+            v-for="(item, index) in form.items"
+            :checked="true"
+            :tag="item"
+            :key="index"
+            :shape="'square'"
+          ></FormTag>
+        </view>
+        <FormShow
           v-model:show="showSpace"
           @click="openSpace"
           :name="'从属空间'"
@@ -122,7 +137,7 @@
         <view class="form__information__subSpace" v-if="showSpace">
           <view class="space__subSpace__floor">
             <SubordinateSpaceItem
-              v-for="(item, subIndex) in pathInfo"
+              v-for="(item, subIndex) in spacesBox"
               :ids="[]"
               :titlePadding="'10rpx 10rpx'"
               :tagPadding="'0 20rpx'"
@@ -130,7 +145,7 @@
               @radioClick="radioClick"
               :parent="subIndex ? spacesBox[subIndex - 1].id : 0"
               :id="spacesBox[subIndex].id"
-              :subordinateSpaces="item"
+              :subordinateSpaces="[item]"
               :key="subIndex"
               :floor="subIndex + 1"
               :currentFloor="currentFloor - 1"
@@ -151,7 +166,7 @@
         />
       </view>
     </u-form>
-    <view class="form__submit">
+    <view v-if="loading" class="form__submit">
       <u-button
         :loading="isLoading"
         loadingText="新建中"
@@ -163,7 +178,7 @@
     <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="addTag">
       <view class="form__popup">
         <view class="form__popup__title">
-          <u-text bold size="40rpx" :text="'标签'" />
+          <u-text bold size="35rpx" :text="'标签'" />
           <u-icon @click="toTag" color="#5196ff" name="edit-pen-fill"></u-icon>
         </view>
         <view class="form__popup__operate">
@@ -185,7 +200,7 @@
     <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="changeSpace">
       <view class="form__popup">
         <view class="form__popup__title">
-          <u-text bold size="40rpx" :text="'从属空间'" />
+          <u-text bold size="35rpx" :text="'从属空间'" />
         </view>
         <view class="form__popup__operate">
           <u-text @click="cancelSpace" lines="1" size="20rpx" :text="'取消'" />
@@ -216,6 +231,46 @@
         </view>
       </view>
     </u-popup>
+    <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="deleteAssociate">
+      <view class="form__popup">
+        <view class="form__popup__title">
+          <u-text bold size="35rpx" :text="'关联物品'" />
+          <u-icon @click="toAssociate" color="#5196ff" name="edit-pen-fill"></u-icon>
+        </view>
+        <view class="form__popup__operate">
+          <u-text @click="cancelAssociate" lines="1" size="20rpx" :text="'取消'" />
+          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
+          <u-text
+            @click="confirmAssociate()"
+            color="#82b4fe"
+            lines="1"
+            size="20rpx"
+            :text="'确认'"
+          />
+        </view>
+        <view class="form__popup__tags">
+          <FormMultiple :tagBox="associateBox" :tags="form.items" @checkboxClick="associateClick" />
+        </view>
+      </view>
+    </u-popup>
+    <u-modal
+      @cancel="cancelSave"
+      @confirm="confirmSave"
+      :showCancelButton="true"
+      :show="showSave"
+      width="600rpx"
+    >
+      是否存入草稿箱?
+    </u-modal>
+    <u-modal
+      @cancel="showWrite = false"
+      @confirm="confirmWrite"
+      :showCancelButton="true"
+      :show="showWrite"
+      width="600rpx"
+    >
+      是否写入草稿箱数据?
+    </u-modal>
   </view>
 </template>
 
@@ -244,6 +299,50 @@ const { pathInfo, spaces } = useSpace
 // 第一次进入页面时，获取所有标签
 if (!useTag.tagInfo.tagData.length) fetchAllTags()
 
+const showSave = ref(false)
+
+const loading = ref(false)
+
+const back = () => {
+  if (!submitted.value) {
+    showSave.value = true
+  } else {
+    uni.navigateBack()
+  }
+}
+
+const confirmSave = () => {
+  if (!form.name) {
+    uni.showToast({
+      title: '名称不能为空',
+      icon: 'none'
+    })
+    showSave.value = false
+  } else {
+    uni.setStorageSync('form', {
+      privacy: privacy.value,
+      type: radioValue.value,
+      price: form.price,
+      count: form.count,
+      name: form.name,
+      state: form.state,
+      comment: form.comment,
+      date: date.value,
+      url: form.url,
+      images: form.images,
+      figures: form.figures,
+      password: PIN.value
+    })
+  }
+  uni.navigateBack()
+}
+
+const draftForm = uni.getStorageSync('form')
+
+const cancelSave = () => {
+  showSave.value = false
+  uni.navigateBack()
+}
 //表单数据
 const form = reactive({
   images: [] as imgData[],
@@ -253,7 +352,8 @@ const form = reactive({
   price: '',
   url: '',
   state: '',
-  comment: ''
+  comment: '',
+  items: [] as any[]
 })
 
 //上传图片
@@ -267,6 +367,29 @@ async function uploadImg(images: imgData[], type: number): Promise<imgData[]> {
       images[i] = await addImg(images[i].url)
     }
   return images
+}
+
+const showWrite = ref(false)
+if (draftForm) {
+  showWrite.value = true
+} else {
+  loading.value = true
+}
+const confirmWrite = () => {
+  form.images = draftForm.images
+  form.figures = draftForm.figures
+  form.name = draftForm.name
+  form.count = draftForm.count
+  form.price = draftForm.price
+  form.url = draftForm.url
+  form.state = draftForm.state
+  form.comment = draftForm.comment
+  radioValue.value = draftForm.type
+  date.value = draftForm.date
+  privacy.value = draftForm.privacy
+  PIN.value = draftForm.password
+  showWrite.value = false
+  loading.value = true
 }
 
 // 是否正在提交
@@ -314,8 +437,10 @@ let tempTagBox = <boolean[]>[]
 const tagBox = ref<boolean[]>([])
 //清空标签
 onShow(() => {
-  labelBox.value = []
-  tagBox.value = new Array(useTag.tagInfo.tagData).fill(false)
+  labelBox.value = tagBox.value[0] ? useForm.itemData.labels : []
+  tagBox.value = new Array(useTag.tagInfo.tagData.length).fill(false)
+  form.items = associateBox.value[0] ? useForm.itemData.items : []
+  associateBox.value = new Array(form.items.length).fill(true)
 })
 const clearTag = (): void => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -348,9 +473,38 @@ const cancelTag = (): void => {
 }
 //跳转至标签编辑页
 const toTag = (): void => {
+  useForm.itemData.labels = labelBox.value as any
   uni.navigateTo({
     url: `/pages/new/tag/tag`
   })
+}
+
+const showAssociate = ref(true)
+const deleteAssociate = ref(false)
+const toAssociate = (): void => {
+  useForm.itemData.items = form.items
+  uni.navigateTo({
+    url: `/pages/new/dependence/dependence`
+  })
+}
+const associateBox = ref(new Array(form.items.length).fill(true))
+const associateClick = (index: number): void => {
+  associateBox.value[index] = !associateBox.value[index]
+}
+const cancelAssociate = () => {
+  deleteAssociate.value = false
+  associateBox.value.fill(true)
+}
+const confirmAssociate = () => {
+  for (let i = 0; i < form.items.length; i++) {
+    if (!associateBox.value[i]) {
+      form.items.splice(i, 1)
+      associateBox.value.splice(i, 1)
+      i--
+    }
+  }
+  associateBox.value.fill(true)
+  deleteAssociate.value = false
 }
 
 //日期
@@ -458,6 +612,7 @@ const rules = {
   ]
 }
 
+const submitted = ref(false)
 //上传表单时的回调
 const submitForm = (): void => {
   formVerify.value
@@ -480,7 +635,7 @@ const submitForm = (): void => {
             images: images,
             figures: figures,
             labels: labelBox.value,
-            password: privacy.value ? PIN.value : ''
+            password: PIN.value
           }
           if (!PIN.value) delete tempForm.password
           isLoading.value = true
@@ -519,7 +674,8 @@ const submitForm = (): void => {
             url: form.url,
             images: images,
             figures: figures,
-            password: privacy.value ? PIN.value : ''
+            password: PIN.value,
+            items: form.items
           }
           if (!PIN.value) delete tempForm.password
           isLoading.value = true
@@ -536,6 +692,8 @@ const submitForm = (): void => {
             })
           }, 1000)
         }
+        submitted.value = true
+        uni.removeStorageSync('form')
       } catch {
         isLoading.value = false
       }
@@ -557,8 +715,7 @@ const submitForm = (): void => {
   }
 
   &__popup {
-    padding: 30rpx;
-    padding-bottom: 0;
+    padding: 30rpx 0 0 30rpx;
     display: flex;
     flex-wrap: wrap;
 
@@ -574,6 +731,7 @@ const submitForm = (): void => {
 
     &__tags {
       padding: 20rpx;
+      min-height: 200rpx;
       max-height: 500rpx;
       overflow: auto;
     }

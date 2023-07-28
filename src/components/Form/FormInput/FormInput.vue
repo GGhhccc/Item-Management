@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue'
+import { defineProps, defineEmits, ref, watch } from 'vue'
 const props = withDefaults(
   defineProps<{
     //是否显示输入框
@@ -70,6 +70,12 @@ const emits = defineEmits<{
 const changeInput = (): void => {
   emits('update:input', tempInput.value)
 }
+watch(
+  () => props.input,
+  (val) => {
+    tempInput.value = val
+  }
+)
 </script>
 
 <style scoped lang="scss">

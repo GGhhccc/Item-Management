@@ -142,10 +142,19 @@
       <view v-if="form.type" class="form__information">
         <FormShow
           v-model:show="showAssociate"
-          :url="'new/dependence/dependence'"
+          @click="deleteAssociate = true"
           :name="'关联物品'"
           :isDetail="isDetail"
         />
+        <view v-show="showAssociate" class="form__information__tag">
+          <FormTag
+            v-for="(item, index) in form.items"
+            :checked="true"
+            :tag="item"
+            :key="index"
+            :shape="'square'"
+          ></FormTag>
+        </view>
         <FormShow
           v-if="form.type"
           v-model:show="showSpace"
@@ -253,7 +262,7 @@
     <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="addTag">
       <view class="form__popup">
         <view class="form__popup__title">
-          <u-text bold size="40rpx" :text="'标签'" />
+          <u-text bold size="35rpx" :text="'标签'" />
           <u-icon @click="toTag" color="#5196ff" name="edit-pen-fill"></u-icon>
         </view>
         <view class="form__popup__operate">
@@ -272,10 +281,32 @@
         </view>
       </view>
     </u-popup>
+    <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="deleteAssociate">
+      <view class="form__popup">
+        <view class="form__popup__title">
+          <u-text bold size="35rpx" :text="'关联物品'" />
+          <u-icon @click="toAssociate" color="#5196ff" name="edit-pen-fill"></u-icon>
+        </view>
+        <view class="form__popup__operate">
+          <u-text @click="cancelAssociate" lines="1" size="20rpx" :text="'取消'" />
+          <u-line margin="15rpx 20rpx" color="#efeff2" length="50%" direction="col"></u-line>
+          <u-text
+            @click="confirmAssociate()"
+            color="#82b4fe"
+            lines="1"
+            size="20rpx"
+            :text="'确认'"
+          />
+        </view>
+        <view class="form__popup__tags">
+          <FormMultiple :tagBox="associateBox" :tags="form.items" @checkboxClick="associateClick" />
+        </view>
+      </view>
+    </u-popup>
     <u-popup :safeAreaInsetBottom="false" round="20rpx" mode="bottom" :show="changeSpace">
       <view class="form__popup">
         <view class="form__popup__title">
-          <u-text bold size="40rpx" :text="'从属空间'" />
+          <u-text bold size="35rpx" :text="'从属空间'" />
         </view>
         <view class="form__popup__operate">
           <u-text @click="cancelSpace" lines="1" size="20rpx" :text="'取消'" />
@@ -474,7 +505,7 @@ const labelBox = ref()
 const tagBox = ref<boolean[]>([])
 onShow(() => {
   labelBox.value = useForm.itemData.labels
-  tagBox.value = new Array(useTag.tagInfo.tagData).fill(false)
+  tagBox.value = new Array(useTag.tagInfo.tagData.length).fill(false)
   for (let i = 0; i < useForm.itemData.labels.length; i++) {
     for (let j = 0; j < useTag.tagInfo.tagData.length; j++) {
       if (form.labels[i].id === useTag.tagInfo.tagData[j].id) {
@@ -482,6 +513,8 @@ onShow(() => {
       }
     }
   }
+  form.items = useForm.itemData.items
+  associateBox.value = new Array(form.items.length).fill(true)
 })
 //清空标签
 const clearTag = (): void => {
@@ -519,6 +552,36 @@ const showToast = (): void => {
 }
 
 const showAssociate = ref(true)
+const deleteAssociate = ref(false)
+const toAssociate = (): void => {
+  useForm.itemData.items = form.items
+  uni.navigateTo({
+    url: `/pages/new/dependence/dependence`
+  })
+}
+if (!useForm.itemData.items) {
+  useForm.itemData.items = []
+  form.items = []
+}
+const associateBox = ref(new Array(form.items.length).fill(true))
+const associateClick = (index: number): void => {
+  associateBox.value[index] = !associateBox.value[index]
+}
+const cancelAssociate = () => {
+  deleteAssociate.value = false
+  associateBox.value.fill(true)
+}
+const confirmAssociate = () => {
+  for (let i = 0; i < form.items.length; i++) {
+    if (!associateBox.value[i]) {
+      form.items.splice(i, 1)
+      associateBox.value.splice(i, 1)
+      i--
+    }
+  }
+  associateBox.value.fill(true)
+  deleteAssociate.value = false
+}
 
 //显示从属空间
 const showSpace = ref(false)
@@ -661,7 +724,8 @@ const submitForm = (): void => {
             url: form.url,
             images: images,
             figures: figures,
-            password: PIN.value
+            password: PIN.value,
+            items: form.items
           }
           if (!changed || !PIN.value) delete tempForm.password
           isLoading.value = true
@@ -729,7 +793,7 @@ const submitForm = (): void => {
   }
 
   &__popup {
-    padding: 30rpx;
+    padding: 30rpx 0 0 30rpx;
     padding-bottom: 0;
     display: flex;
     flex-wrap: wrap;
@@ -746,6 +810,7 @@ const submitForm = (): void => {
 
     &__tags {
       padding: 20rpx;
+      min-height: 200rpx;
       max-height: 500rpx;
       overflow: auto;
     }
