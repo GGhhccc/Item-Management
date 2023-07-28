@@ -132,7 +132,7 @@ const isNoMore = computed(
 
 // 触底加载更多
 onReachBottom(async () => {
-  if (!isNoMore.value) {
+  if (!isNoMore.value && !manualDisable.value) {
     loadMoreStatus.value = 'loading'
     await loadMoreItem()
   } else {
