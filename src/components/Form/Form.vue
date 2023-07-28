@@ -142,7 +142,7 @@
       <view v-if="form.type" class="form__information">
         <FormShow
           v-model:show="showAssociate"
-          :url="'new/dependence/dependence'"
+          @click="toAssociate"
           :name="'关联物品'"
           :isDetail="isDetail"
         />
@@ -154,7 +154,11 @@
           >
             <u-avatar size="80rpx" :src="item.cover"></u-avatar>
             <u-text size="20rpx" lines="1" :bold="true" align="center" :text="item.name" />
-            <view @click="deleteAssociate(index)" class="form__information__items__item-delete">
+            <view
+              v-if="!isDetail"
+              @click="deleteAssociate(index)"
+              class="form__information__items__item-delete"
+            >
               <view class="form__information__items__item-delete-minus"></view>
             </view>
           </view>
@@ -541,6 +545,12 @@ if (!useForm.itemData.items) {
 const associateBox = ref(new Array(form.items.length).fill(true))
 const deleteAssociate = (index: number) => {
   form.items.splice(index, 1)
+}
+const toAssociate = () => {
+  useForm.itemData.items = form.items
+  uni.navigateTo({
+    url: `/pages/new/dependence/dependence`
+  })
 }
 
 //显示从属空间

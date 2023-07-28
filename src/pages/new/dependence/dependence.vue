@@ -100,16 +100,6 @@ const confirmRelated = () => {
           }
         })
     )
-    console.log(
-      currentSearchList.value.itemList
-        .filter((item) => item.isChecked)
-        .map((item) => {
-          return {
-            id: item.id,
-            name: item.name
-          }
-        })
-    )
     formStore.itemData.items = uniqueFunc(formStore.itemData.items, 'id')
     console.log(formStore.itemData.items)
     uni.showToast({
