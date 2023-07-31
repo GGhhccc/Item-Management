@@ -117,7 +117,7 @@ const change = (data: any) => {
     lineError.value = true
     return
   }
-  gesturePassword.value = Number(data.join(''))
+  gesturePassword.value = data.join('')
   // 设置手势密码
   if (!props.isValidate) {
     !setGestureTime.value ? firstSetGesture() : secondSetGesture()
@@ -197,7 +197,7 @@ const setNumberPassword = () => {
 // 数字密码输入框改变时执行
 const inputVerificationChange = (inputValues: string) => {
   if (inputValues.length === 4) {
-    numberPassword.value = String(inputValues)
+    numberPassword.value = inputValues
     props.isValidate ? validateNumberPassword() : setNumberPassword()
     numberPasswordBox.value.cleanVal()
   }

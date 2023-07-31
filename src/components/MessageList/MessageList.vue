@@ -5,12 +5,9 @@
         <!-- 总列表 -->
         <template v-if="!isEmpty">
           <view v-for="(item, index) in currentMessageList.messageList" :key="index">
-            <MessageItem :message-data="item" @onClick="chooseMessage()" />
+            <MessageItem :message-data="item" @onClick="chooseMessage(index)" />
           </view>
         </template>
-
-        <!-- 空 -->
-        <!-- <Empty v-if="isEmpty" /> -->
       </view>
     </u-skeleton>
   </template>
@@ -20,6 +17,7 @@
 import { useMessageStore } from '@/stores/message'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
+import type { MessageItem } from '@/types/message'
 
 const searchStore = useMessageStore()
 const { currentMessageList } = storeToRefs(searchStore)
@@ -30,10 +28,32 @@ const isLoading = ref(false)
 const isEmpty = ref(false)
 
 // 点击消息进入聊天界面
-const chooseMessage = () => {
-  // uni.navigateTo({
-  //   url: `/pages/message/chatbox/chatbox?index=${index}`
-  // })
+const chooseMessage = (index: number) => {
+  switch (index) {
+    case 0:
+      uni.navigateTo({
+        url: `/pages/message/chatbox/systemMessage?index=${index}`
+      })
+      break
+    case 1:
+      uni.navigateTo({
+        url: `/pages/message/chatbox/friendApplications?index=${index}`
+      })
+      break
+    case 2:
+      uni.navigateTo({
+        url: `/pages/message/chatbox/managingApplications?index=${index}`
+      })
+      break
+    case 3:
+      uni.navigateTo({
+        url: `/pages/message/chatbox/itemShare?index=${index}`
+      })
+      break
+
+    default:
+      break
+  }
 }
 </script>
 

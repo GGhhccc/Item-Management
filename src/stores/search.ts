@@ -7,7 +7,7 @@ import {
   searchByInput,
   batchDelete
 } from '@/network/apis/search'
-import { roloadDeletedItems, getAllHistory } from '@/network/apis/user'
+import { reloadDeletedItems, getAllHistory } from '@/network/apis/user'
 import type {
   CompleteSearchList,
   TagList,
@@ -211,7 +211,7 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   // 批量删除
-  async function batchDeteleSearch(checkedItemList: number[], type: number) {
+  async function batchDeleteSearch(checkedItemList: number[], type: number) {
     await batchDelete(type, checkedItemList)
     // 重置列表
     currentSearchList.value.checkedItemList = []
@@ -247,7 +247,7 @@ export const useSearchStore = defineStore('search', () => {
 
   // 恢复已删除物品
   async function restoreDeletedItem(itemIds: number[]) {
-    await roloadDeletedItems(itemIds)
+    await reloadDeletedItems(itemIds)
     resetSearchList(1)
   }
 
@@ -283,7 +283,7 @@ export const useSearchStore = defineStore('search', () => {
     fetchScreenSearchList,
     fetchTagList,
     searchItemByInput,
-    batchDeteleSearch,
+    batchDeleteSearch,
     fetchDeletedItem,
     restoreDeletedItem,
     fetchHistoryItem

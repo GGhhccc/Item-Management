@@ -5,9 +5,7 @@
     </view>
     <view class="message-item__info">
       <view class="message-item__info__username">{{ messageData.username }}</view>
-      <view class="message-item__info__time">{{
-        `Last Talked ${props.messageData.lastTime}`
-      }}</view>
+      <view class="message-item__info__time">{{ messageData.content }}</view>
     </view>
   </view>
 </template>
@@ -29,8 +27,9 @@ const onClick = () => {
 <style lang="scss">
 .message-item {
   display: flex;
+  align-items: center;
   width: 100vw;
-  padding-left: 80rpx;
+  padding-left: 70rpx;
   height: 170rpx;
   background-color: #fcfcfe;
   margin-top: 14rpx;
@@ -45,7 +44,8 @@ const onClick = () => {
   &__info {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
+    height: 60%;
 
     &__username {
       font-size: 30rpx;

@@ -54,7 +54,7 @@ const {
   fetchNewSearchList,
   fetchScreenSearchList,
   searchItemByInput,
-  batchDeteleSearch,
+  batchDeleteSearch,
   restoreDeletedItem,
   fetchHistoryItem
 } = searchStore
@@ -100,19 +100,19 @@ async function setID(id: number, type: number, privacy: number): Promise<void> {
 }
 
 //验证手势密码
-async function confirmGesture(password: number) {
+async function confirmGesture(password: string) {
   popup.value = false
-  if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
-  else await fetchRoomDetail(tempID.value, password.toString())
+  if (tempType.value) await fetchItemDetail(tempID.value, password)
+  else await fetchRoomDetail(tempID.value, password)
   uni.navigateTo({
     url: `/pages/details/details`
   })
 }
 //验证数字密码
-async function confirmNumber(password: number) {
+async function confirmNumber(password: string) {
   popup.value = false
-  if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
-  else await fetchRoomDetail(tempID.value, password.toString())
+  if (tempType.value) await fetchItemDetail(tempID.value, password)
+  else await fetchRoomDetail(tempID.value, password)
   uni.navigateTo({
     url: `/pages/details/details`
   })
@@ -196,7 +196,7 @@ const editMultiple = async () => {
 
 // 删除
 const deleteItem = async (type: number) => {
-  await batchDeteleSearch(currentSearchList.value.checkedItemList, type)
+  await batchDeleteSearch(currentSearchList.value.checkedItemList, type)
   uni.showToast({
     title: '删除成功',
     icon: 'success'

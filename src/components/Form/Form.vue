@@ -438,12 +438,12 @@ const PIN = ref('')
 //是否修改过隐私设置
 let changed = false
 //验证手势密码
-const confirmGesture = (password: number) => {
-  PIN.value = password.toString()
+const confirmGesture = (password: string) => {
+  PIN.value = password
 }
 //验证数字密码
-const confirmNumber = (password: number) => {
-  PIN.value = password.toString()
+const confirmNumber = (password: string) => {
+  PIN.value = password
 }
 watch(
   () => privacy.value,

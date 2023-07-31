@@ -27,9 +27,9 @@ export interface MessageItem {
    */
   username: string
   /**
-   * 最后交流时间
+   * 简介显示内容
    */
-  lastTime: string
+  content: string
   /**
    * 聊天记录界面
    */
@@ -55,7 +55,7 @@ export interface MessageDetailLogs {
    */
   id: string
   /**
-   * 类型
+   * 类型，0 系统消息，1 好友申请，2 管理申请，3 物品分享
    */
   types: number
   /**
@@ -63,7 +63,23 @@ export interface MessageDetailLogs {
    */
   time: string
   /**
+   * 标题
+   */
+  title: string
+  /**
    * 内容
    */
   content: string
+  /**
+   * 图片
+   */
+  cover: string
+  /**
+   * 房子名
+   */
+  roomName: string
+  /**
+   * 状态，0 已失效，1 未失效
+   */
+  status: number
 }

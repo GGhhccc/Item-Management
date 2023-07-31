@@ -163,12 +163,12 @@ const goToSettings = (index: number) => {
         url: '/pages/user/update/update'
       })
       break
-    // // 设置
-    // case 1:
-    //   uni.navigateTo({
-    //     url: '/pages/user/settings/settings'
-    //   })
-    //   break
+    // 设置
+    case 1:
+      uni.navigateTo({
+        url: '/pages/user/settings/settings'
+      })
+      break
     // // 意见反馈
     // case 2:
     //   uni.navigateTo({

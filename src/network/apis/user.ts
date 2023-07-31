@@ -27,7 +27,7 @@ export function changeUserName(name: string): Promise<UserInfo> {
 }
 
 // 恢复删除物品
-export function roloadDeletedItems(itemIds: number[]): Promise<null> {
+export function reloadDeletedItems(itemIds: number[]): Promise<null> {
   return service({
     url: `/items/restore`,
     method: 'PUT',

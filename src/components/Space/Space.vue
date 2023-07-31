@@ -250,10 +250,10 @@ onReachBottom(async () => {
 //密码弹窗
 const popup = ref(false)
 //验证手势密码
-async function confirmGesture(password: number) {
+async function confirmGesture(password: string) {
   popup.value = false
-  if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
-  else await fetchRoomDetail(tempID.value, password.toString())
+  if (tempType.value) await fetchItemDetail(tempID.value, password)
+  else await fetchRoomDetail(tempID.value, password)
   if (isEdit.value)
     uni.navigateTo({
       url: `/pages/edit/edit`
@@ -265,10 +265,10 @@ async function confirmGesture(password: number) {
   isEdit.value = false
 }
 //验证数字密码
-async function confirmNumber(password: number) {
+async function confirmNumber(password: string) {
   popup.value = false
-  if (tempType.value) await fetchItemDetail(tempID.value, password.toString())
-  else await fetchRoomDetail(tempID.value, password.toString())
+  if (tempType.value) await fetchItemDetail(tempID.value, password)
+  else await fetchRoomDetail(tempID.value, password)
   if (isEdit.value)
     uni.navigateTo({
       url: `/pages/edit/edit`
