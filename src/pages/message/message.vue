@@ -5,7 +5,7 @@
       title="消息"
       placeholder
       bgColor="#8CBAFF"
-      titleStyle="font-weight:bold"
+      titleStyle="font-weight: bold"
     ></u-navbar>
 
     <MessageList />
